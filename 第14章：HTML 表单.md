@@ -119,4 +119,51 @@
 ```html
 <input type="url">
 ```
+# 将这些 `<input>` 元素放在 HTML 中
+
+现在要把这些 `<input>` 元素放在表单中。查看下面增加的元素，然后在你的 form.html 文件中完成修改。
+```html
+<form action="http://starbuzzcoffee.com/processorder.php" method="POST">
+	<p>
+		Ship to: <br>
+		Name: <input type="text" name="name"> <br>
+		Address: <input type="text" name="address"> <br>
+		City: <input type="text" name="city"> <br>
+		State: <input type="text" name="state"> <br>
+		Zip: <input type="text" name="zip"> <br>
+		Phone: <input type="tel" name="phone"> <br>
+	</p>
+	<p>
+		<input type="submit" value="Order Now">
+	</p>
+</form>
+```
+# 增加 `<select>` 元素
+
+```html
+<form action="http://starbuzzcoffee.com/processorder.php" method="post">
+	<p>
+		Choose your beans:
+		<select name="beans">
+			<option value="House Blend">House Blend</option>
+			<option value="Bolivia">Shade Grown Bolivia Supremo</option>
+			<option value="Guatemala">Organic Guatemala</option>
+			<option value="Kenya">Kenya</option>
+		</select>
+	</p>
+	
+	<p>
+		Ship to: <br>
+		Name: <input type="text" name="name" value=""> <br>
+		Address: <input type="text" name="address" value=""> <br>
+		City: <input type="text" name="city" value=""> <br>
+		State: <input type="text" name="state" value=""> <br>
+		Zip: <input type="text" name="zip" value=""> <br>
+		Phone: <input type="tel" name="phone" value=""> <br>
+	</p>
+	<p>
+		<input type="submit" value="Order Now">
+	</p>
+</form>
+```
 
