@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="星陨纪元 - 次世代开放世界RPG" />
+    <title>星陨纪元 · 次世代开放世界 RPG</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --gold: #f5b942;
+        --gold-bright: #ffd700;
+        --cyan: #00d4ff;
+        --purple: #9d4edd;
+        --red: #e63946;
+        --bg: #0a0a12;
+        --bg-soft: #13131f;
+        --bg-card: #1a1a2e;
+        --border: #2a2a40;
+        --text: #e8e8f0;
+        --muted: #8888a0;
+      }
+      body {
+        font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 32px;
+        border-radius: 4px;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: 0.25s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .btn-gold {
+        background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+        color: #0a0a12;
+      }
+      .btn-gold:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(245, 185, 66, 0.4);
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--text);
+        border: 2px solid var(--border);
+      }
+      .btn-outline:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+
+      /* Top nav */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(10, 10, 18, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--gold);
+        letter-spacing: 2px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        list-style: none;
+      }
+      .nav-links a {
+        font-size: 14px;
+        color: var(--text);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        transition: 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--gold);
+      }
+
+      /* Cinematic hero */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background:
+          linear-gradient(180deg, rgba(10, 10, 18, 0.3) 0%, rgba(10, 10, 18, 0.95) 100%),
+          url('https://picsum.photos/seed/galaxy/1920/1080') center/cover;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 70% 30%, rgba(157, 78, 221, 0.3), transparent 60%);
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 20% 70%, rgba(0, 212, 255, 0.2), transparent 60%);
+      }
+      .stars {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: #fff;
+        border-radius: 50%;
+        animation: twinkle 3s infinite;
+      }
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 780px;
+      }
+      .hero .tagline {
+        display: inline-block;
+        padding: 5px 14px;
+        background: rgba(245, 185, 66, 0.15);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        border-radius: 3px;
+        margin-bottom: 20px;
+      }
+      .hero h1 {
+        font-size: 80px;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 18px;
+        background: linear-gradient(180deg, #fff 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 4px;
+      }
+      .hero h1 .sub {
+        display: block;
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--text);
+        letter-spacing: 8px;
+        margin-top: 8px;
+        -webkit-text-fill-color: var(--text);
+      }
+      .hero p {
+        font-size: 18px;
+        color: #bbbbe0;
+        margin-bottom: 32px;
+        max-width: 560px;
+        line-height: 1.7;
+      }
+      .hero-cta {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 36px;
+      }
+      .hero-stats {
+        display: flex;
+        gap: 40px;
+      }
+      .hero-stats div strong {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--gold);
+        display: block;
+      }
+      .hero-stats div span {
+        font-size: 13px;
+        color: var(--muted);
+        letter-spacing: 1px;
+      }
+      .scroll-hint {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 2px;
+        animation: bounce 2s infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translate(-50%, 0);
+        }
+        50% {
+          transform: translate(-50%, 8px);
+        }
+      }
+
+      /* Section */
+      .section {
+        padding: 100px 0;
+      }
+      .section-head {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      .section-head .label {
+        display: inline-block;
+        padding: 4px 14px;
+        background: rgba(245, 185, 66, 0.1);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 12px;
+        letter-spacing: 2px;
+        border-radius: 3px;
+        margin-bottom: 16px;
+      }
+      .section-head h2 {
+        font-size: 44px;
+        font-weight: 900;
+        letter-spacing: 2px;
+        margin-bottom: 14px;
+      }
+      .section-head p {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Features */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .feat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+      }
+      .feat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        transform: scaleX(0);
+        transition: 0.3s;
+      }
+      .feat-card:hover {
+        transform: translateY(-6px);
+        border-color: var(--gold);
+        box-shadow: 0 20px 40px rgba(245, 185, 66, 0.1);
+      }
+      .feat-card:hover::before {
+        transform: scaleX(1);
+      }
+      .feat-icon {
+        font-size: 40px;
+        margin-bottom: 18px;
+      }
+      .feat-card h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--gold);
+      }
+      .feat-card p {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      /* Characters */
+      .char-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      .char-card {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        aspect-ratio: 3/4;
+        transition: 0.3s;
+      }
+      .char-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+      .char-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.4s;
+      }
+      .char-card:hover img {
+        transform: scale(1.08);
+      }
+      .char-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 40%, rgba(10, 10, 18, 0.95) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 20px;
+      }
+      .char-card .element {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 3px;
+        margin-bottom: 8px;
+        width: fit-content;
+      }
+      .char-card h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .char-card .role {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      /* Screenshots */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .gallery-item {
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        aspect-ratio: 16/10;
+      }
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.4s;
+      }
+      .gallery-item:hover img {
+        transform: scale(1.1);
+      }
+      .gallery-item .cap {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 14px;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.85));
+        font-size: 13px;
+        font-weight: 600;
+        opacity: 0;
+        transition: 0.3s;
+      }
+      .gallery-item:hover .cap {
+        opacity: 1;
+      }
+
+      /* Sys req */
+      .sysreq-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      .sysreq-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 28px;
+      }
+      .sysreq-card h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .sysreq-card ul {
+        list-style: none;
+      }
+      .sysreq-card li {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+      .sysreq-card li:last-child {
+        border: none;
+      }
+      .sysreq-card li span:first-child {
+        color: var(--muted);
+      }
+      .sysreq-card li span:last-child {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      /* Pre-register CTA */
+      .cta-section {
+        padding: 120px 0;
+        text-align: center;
+        position: relative;
+        background: linear-gradient(180deg, var(--bg), var(--bg-soft), var(--bg));
+      }
+      .cta-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, rgba(245, 185, 66, 0.1), transparent 60%);
+      }
+      .cta-content {
+        position: relative;
+        z-index: 1;
+      }
+      .cta-content h2 {
+        font-size: 52px;
+        font-weight: 900;
+        letter-spacing: 3px;
+        margin-bottom: 16px;
+        background: linear-gradient(180deg, #fff, var(--gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .cta-content p {
+        font-size: 18px;
+        color: var(--muted);
+        margin-bottom: 36px;
+      }
+      .countdown {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .cd-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 18px 24px;
+        min-width: 90px;
+      }
+      .cd-item strong {
+        font-size: 36px;
+        font-weight: 900;
+        color: var(--gold);
+        display: block;
+        font-family: 'Courier New', monospace;
+      }
+      .cd-item span {
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 1px;
+      }
+      .platforms {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 30px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .platforms span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      footer {
+        background: var(--bg-soft);
+        border-top: 1px solid var(--border);
+        padding: 40px 0;
+        text-align: center;
+      }
+      footer .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-bottom: 20px;
+        font-size: 13px;
+      }
+      footer .footer-links a {
+        color: var(--muted);
+      }
+      footer .footer-links a:hover {
+        color: var(--gold);
+      }
+      footer p {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .hero h1 {
+          font-size: 48px;
+        }
+        .features-grid,
+        .gallery,
+        .char-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .sysreq-wrap {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+        .countdown {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container nav">
+        <a href="#" class="logo">星陨纪元</a>
+        <ul class="nav-links">
+          <li><a href="#features">游戏特色</a></li>
+          <li><a href="#characters">角色</a></li>
+          <li><a href="#gallery">截图</a></li>
+          <li><a href="#sysreq">配置</a></li>
+          <li><a href="#prereg">预约</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="stars" id="stars"></div>
+      <div class="container hero-content">
+        <span class="tagline">次世代开放世界 RPG</span>
+        <h1>
+          星陨纪元
+          <span class="sub">EPOCH OF STARFALL</span>
+        </h1>
+        <p>
+          当星陨降临，世界崩塌。你将作为最后的"觉醒者"，踏上拯救艾瑟尔大陆的史诗征程。探索广袤的开放世界，邂逅命运羁绊的伙伴，揭开星陨背后的真相。
+        </p>
+        <div class="hero-cta">
+          <a href="#prereg" class="btn btn-gold">▶ 立即预约</a>
+          <a href="#features" class="btn btn-outline">观看预告片</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <strong>2026</strong>
+            <span>全球公测</span>
+          </div>
+          <div>
+            <strong>500+</strong>
+            <span>平方公里地图</span>
+          </div>
+          <div>
+            <strong>4K</strong>
+            <span>次世代画质</span>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint">SCROLL ▼</div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-head">
+          <span class="label">GAME FEATURES</span>
+          <h2>游戏特色</h2>
+          <p>沉浸式的次世代游戏体验，每一处细节都精心打磨</p>
+        </div>
+        <div class="features-grid">
+          <div class="feat-card">
+            <div class="feat-icon">🌍</div>
+            <h3>无缝开放世界</h3>
+            <p>500+ 平方公里无缝大地图，从雪山到沙漠，从深海到天空之城，自由探索无加载。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">⚔️</div>
+            <h3>实时战斗系统</h3>
+            <p>融合动作与策略的即时战斗，元素反应、连招组合、闪避格挡，操作上限无止境。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🎭</div>
+            <h3>多线剧情</h3>
+            <p>主线分支超过 20 条，每个选择都将改变世界走向，解锁多重结局。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">👥</div>
+            <h3>伙伴羁绊</h3>
+            <p>30+ 可控角色，每位伙伴拥有独立剧情、技能树与好感度系统。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🎨</div>
+            <h3>次世代画质</h3>
+            <p>支持 4K HDR、光线追踪、DLSS 3.0，电影级画面呈现震撼视觉盛宴。</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon">🎼</div>
+            <h3>史诗配乐</h3>
+            <p>由格莱美获奖作曲家操刀，百人交响乐团实录，200+ 首原声音乐。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background: var(--bg-soft)" id="characters">
+      <div class="container">
+        <div class="section-head">
+          <span class="label">CHARACTERS</span>
+          <h2>命运伙伴</h2>
+          <p>邂逅与你并肩作战的英雄</p>
+        </div>
+        <div class="char-grid">
+          <div class="char-card">
+            <img src="https://picsum.photos/seed/char1/400/520" alt="角色" />
+            <div class="char-overlay">
+              <span class="element" style="background: rgba(0, 212, 255, 0.2); color: var(--cyan)">冰元素</span>
+              <h3>凛冬</h3>
+              <span class="role">剑士 · 觉醒者</span>
+            </div>
+          </div>
+          <div class="char-card">
+            <img src="https://picsum.photos/seed/char2/400/520" alt="角色" />
+            <div class="char-overlay">
+              <span class="element" style="background: rgba(230, 57, 70, 0.2); color: var(--red)">火元素</span>
+              <h3>炎舞</h3>
+              <span class="role">法师 · 烈焰公主</span>
+            </div>
+          </div>
+          <div class="char-card">
+            <img src="https://picsum.photos/seed/char3/400/520" alt="角色" />
+            <div class="char-overlay">
+              <span class="element" style="background: rgba(157, 78, 221, 0.2); color: var(--purple)">雷元素</span>
+              <h3>雷霆</h3>
+              <span class="role">枪手 · 流浪骑士</span>
+            </div>
+          </div>
+          <div class="char-card">
+            <img src="https://picsum.photos/seed/char4/400/520" alt="角色" />
+            <div class="char-overlay">
+              <span class="element" style="background: rgba(245, 185, 66, 0.2); color: var(--gold)">光元素</span>
+              <h3>晨曦</h3>
+              <span class="role">牧师 · 圣殿祭司</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gallery">
+      <div class="container">
+        <div class="section-head">
+          <span class="label">SCREENSHOTS</span>
+          <h2>游戏截图</h2>
+          <p>探索艾瑟尔大陆的壮丽风景</p>
+        </div>
+        <div class="gallery">
+          <div class="gallery-item">
+            <img src="https://picsum.photos/seed/ss1/600/400" alt="截图" />
+            <div class="cap">晨曦之城 · 主城</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://picsum.photos/seed/ss2/600/400" alt="截图" />
+            <div class="cap">冰封荒原 · 北境</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://picsum.photos/seed/ss3/600/400" alt="截图" />
+            <div class="cap">星陨遗迹 · 古战场</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://picsum.photos/seed/ss4/600/400" alt="截图" />
+            <div class="cap">深海秘境 · 海底城</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://picsum.photos/seed/ss5/600/400" alt="截图" />
+            <div class="cap">天空浮岛 · 圣域</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://picsum.photos/seed/ss6/600/400" alt="截图" />
+            <div class="cap">熔岩深渊 · 火山</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="background: var(--bg-soft)" id="sysreq">
+      <div class="container">
+        <div class="section-head">
+          <span class="label">SYSTEM REQUIREMENTS</span>
+          <h2>配置要求</h2>
+          <p>确保你的设备能流畅运行星陨纪元</p>
+        </div>
+        <div class="sysreq-wrap">
+          <div class="sysreq-card">
+            <h3>🖥️ 最低配置</h3>
+            <ul>
+              <li>
+                <span>操作系统</span>
+                <span>Windows 10 64位</span>
+              </li>
+              <li>
+                <span>处理器</span>
+                <span>Intel i5-8400 / Ryzen 5 2600</span>
+              </li>
+              <li>
+                <span>内存</span>
+                <span>8 GB RAM</span>
+              </li>
+              <li>
+                <span>显卡</span>
+                <span>GTX 1060 6GB / RX 580</span>
+              </li>
+              <li>
+                <span>DirectX</span>
+                <span>版本 12</span>
+              </li>
+              <li>
+                <span>存储空间</span>
+                <span>80 GB SSD</span>
+              </li>
+            </ul>
+          </div>
+          <div class="sysreq-card">
+            <h3>🚀 推荐配置</h3>
+            <ul>
+              <li>
+                <span>操作系统</span>
+                <span>Windows 11 64位</span>
+              </li>
+              <li>
+                <span>处理器</span>
+                <span>Intel i7-12700K / Ryzen 7 5800X</span>
+              </li>
+              <li>
+                <span>内存</span>
+                <span>16 GB RAM</span>
+              </li>
+              <li>
+                <span>显卡</span>
+                <span>RTX 3070 / RX 6700 XT</span>
+              </li>
+              <li>
+                <span>DirectX</span>
+                <span>版本 12</span>
+              </li>
+              <li>
+                <span>存储空间</span>
+                <span>80 GB NVMe SSD</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section" id="prereg">
+      <div class="container cta-content">
+        <span
+          class="label"
+          style="
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(245, 185, 66, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 12px;
+            letter-spacing: 2px;
+            border-radius: 3px;
+            margin-bottom: 16px;
+          "
+        >
+          PRE-REGISTER NOW
+        </span>
+        <h2>预约星陨纪元</h2>
+        <p>预约即送限定坐骑"星陨之翼"与专属称号</p>
+        <div class="countdown">
+          <div class="cd-item">
+            <strong>45</strong>
+            <span>天</span>
+          </div>
+          <div class="cd-item">
+            <strong>12</strong>
+            <span>时</span>
+          </div>
+          <div class="cd-item">
+            <strong>38</strong>
+            <span>分</span>
+          </div>
+          <div class="cd-item">
+            <strong>26</strong>
+            <span>秒</span>
+          </div>
+        </div>
+        <a href="#" class="btn btn-gold">▶ 立即免费预约</a>
+        <div class="platforms">
+          <span>🎮 PlayStation 5</span>
+          <span>💻 PC (Steam/Epic)</span>
+          <span>📱 移动端</span>
+          <span>Xbox Series X</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-links">
+          <a href="#">关于游戏</a>
+          <a href="#">开发者</a>
+          <a href="#">社区</a>
+          <a href="#">支持</a>
+          <a href="#">隐私政策</a>
+        </div>
+        <p>© 2026 星陨纪元工作室 · 本网站所有内容均为虚构演示用途</p>
+      </div>
+    </footer>
+
+    <script>
+      // Generate twinkling stars
+      const stars = document.getElementById('stars');
+      for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.animationDelay = Math.random() * 3 + 's';
+        s.style.width = s.style.height = Math.random() * 2 + 1 + 'px';
+        stars.appendChild(s);
+      }
+    </script>
+  </body>
+</html>

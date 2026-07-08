@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas 星空绘制</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+      canvas {
+        display: block;
+        cursor: crosshair;
+      }
+      .info {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        color: #cfe8ff;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        line-height: 1.8;
+        text-shadow: 0 0 8px rgba(100, 180, 255, 0.6);
+        pointer-events: none;
+        user-select: none;
+      }
+      .info b {
+        color: #ffe9a8;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="sky"></canvas>
+    <div class="info">
+      <b>宁静星空</b>
+      <br />
+      移动鼠标 — 群星追随
+      <br />
+      点击 — 流星划过
+    </div>
+    <script>
+      const canvas = document.getElementById('sky');
+      const ctx = canvas.getContext('2d');
+      let W,
+        H,
+        stars = [],
+        nebulae = [];
+      const shootingStars = [];
+      const mouse = { x: -9999, y: -9999, active: false };
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        initScene();
+      }
+      window.addEventListener('resize', resize);
+
+      function rand(a, b) {
+        return a + Math.random() * (b - a);
+      }
+
+      function initScene() {
+        stars = [];
+        const count = Math.floor((W * H) / 2200);
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: rand(0.3, 1.8),
+            baseAlpha: rand(0.3, 1),
+            twinkleSpeed: rand(0.005, 0.03),
+            twinklePhase: Math.random() * Math.PI * 2,
+            color: pickStarColor(),
+            ox: 0,
+            oy: 0,
+          });
+        }
+        nebulae = [
+          { x: W * 0.25, y: H * 0.35, r: Math.max(W, H) * 0.35, color: 'rgba(80,40,140,0.18)' },
+          { x: W * 0.75, y: H * 0.6, r: Math.max(W, H) * 0.4, color: 'rgba(30,80,160,0.16)' },
+          { x: W * 0.5, y: H * 0.2, r: Math.max(W, H) * 0.25, color: 'rgba(160,60,120,0.12)' },
+        ];
+      }
+
+      function pickStarColor() {
+        const r = Math.random();
+        if (r < 0.6) return '255,255,255';
+        if (r < 0.75) return '180,210,255';
+        if (r < 0.88) return '255,230,190';
+        if (r < 0.96) return '255,200,180';
+        return '200,220,255';
+      }
+
+      function drawBackground() {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#05060f');
+        g.addColorStop(0.5, '#0a0a1f');
+        g.addColorStop(1, '#101027');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+
+        for (const n of nebulae) {
+          const rg = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, Math.max(1, n.r));
+          rg.addColorStop(0, n.color);
+          rg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = rg;
+          ctx.fillRect(0, 0, W, H);
+        }
+      }
+
+      function drawMoon() {
+        const mx = W * 0.85,
+          my = H * 0.18,
+          mr = Math.min(W, H) * 0.06;
+        const glow = ctx.createRadialGradient(mx, my, mr * 0.5, mx, my, mr * 4);
+        glow.addColorStop(0, 'rgba(255,240,200,0.35)');
+        glow.addColorStop(1, 'rgba(255,240,200,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(mx, my, mr * 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        const mg = ctx.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, mr * 0.1, mx, my, mr);
+        mg.addColorStop(0, '#fffdf0');
+        mg.addColorStop(0.7, '#f0e6c8');
+        mg.addColorStop(1, '#c9b98a');
+        ctx.fillStyle = mg;
+        ctx.beginPath();
+        ctx.arc(mx, my, mr, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(180,160,120,0.3)';
+        ctx.beginPath();
+        ctx.arc(mx + mr * 0.3, my - mr * 0.2, mr * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(mx - mr * 0.2, my + mr * 0.3, mr * 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(mx + mr * 0.1, my + mr * 0.4, mr * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawStars(t) {
+        for (const s of stars) {
+          const tw = Math.sin(t * s.twinkleSpeed + s.twinklePhase) * 0.4 + 0.6;
+          let alpha = s.baseAlpha * tw;
+
+          let dx = 0,
+            dy = 0;
+          if (mouse.active) {
+            const ddx = s.x - mouse.x;
+            const ddy = s.y - mouse.y;
+            const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (dist < 140) {
+              const f = 1 - dist / 140;
+              dx = (ddx / (dist + 0.01)) * f * 18;
+              dy = (ddy / (dist + 0.01)) * f * 18;
+              alpha = Math.min(1, alpha + f * 0.6);
+            }
+          }
+          s.ox += (dx - s.ox) * 0.1;
+          s.oy += (dy - s.oy) * 0.1;
+
+          const x = s.x + s.ox,
+            y = s.y + s.oy;
+          ctx.fillStyle = `rgba(${s.color},${alpha})`;
+          ctx.beginPath();
+          ctx.arc(x, y, Math.max(0.1, s.r), 0, Math.PI * 2);
+          ctx.fill();
+
+          if (s.r > 1.2 && alpha > 0.7) {
+            ctx.strokeStyle = `rgba(${s.color},${alpha * 0.4})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(x - s.r * 3, y);
+            ctx.lineTo(x + s.r * 3, y);
+            ctx.moveTo(x, y - s.r * 3);
+            ctx.lineTo(x, y + s.r * 3);
+            ctx.stroke();
+          }
+        }
+      }
+
+      function spawnShootingStar(x, y) {
+        const angle = rand(Math.PI * 0.15, Math.PI * 0.35);
+        const speed = rand(8, 14);
+        shootingStars.push({
+          x: x ?? rand(0, W * 0.5),
+          y: y ?? rand(0, H * 0.3),
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: rand(0.008, 0.016),
+          trail: [],
+        });
+      }
+
+      function drawShootingStars() {
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+          const s = shootingStars[i];
+          s.trail.push({ x: s.x, y: s.y });
+          if (s.trail.length > 20) s.trail.shift();
+          s.x += s.vx;
+          s.y += s.vy;
+          s.life -= s.decay;
+
+          for (let j = 0; j < s.trail.length; j++) {
+            const p = s.trail[j];
+            const a = (j / s.trail.length) * s.life;
+            ctx.fillStyle = `rgba(255,240,200,${a})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, (j / s.trail.length) * 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = `rgba(255,255,240,${s.life})`;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (s.life <= 0 || s.x > W + 50 || s.y > H + 50) shootingStars.splice(i, 1);
+        }
+      }
+
+      let lastShoot = 0;
+      function loop(t) {
+        drawBackground();
+        drawMoon();
+        drawStars(t);
+        drawShootingStars();
+
+        if (t - lastShoot > rand(3000, 7000)) {
+          spawnShootingStar();
+          lastShoot = t;
+        }
+        requestAnimationFrame(loop);
+      }
+
+      canvas.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        mouse.active = false;
+      });
+      canvas.addEventListener('click', (e) => {
+        spawnShootingStar(e.clientX - 100, e.clientY - 100);
+      });
+
+      resize();
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="王晓琳个人简历 - 资深产品经理" />
+    <title>王晓琳 · 个人简历</title>
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --accent: #0ea5e9;
+        --bg: #f1f5f9;
+        --paper: #ffffff;
+        --text: #1e293b;
+        --muted: #64748b;
+        --light: #e2e8f0;
+        --sidebar: #1e293b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+      }
+      .page {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: var(--paper);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+      /* Sidebar */
+      .sidebar {
+        background: var(--sidebar);
+        color: #cbd5e1;
+        padding: 40px 30px;
+      }
+      .photo {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        margin: 0 auto 24px;
+        border: 5px solid rgba(255, 255, 255, 0.15);
+        overflow: hidden;
+      }
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sidebar h3 {
+        color: #fff;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 8px;
+        margin: 28px 0 16px;
+      }
+      .contact-list {
+        list-style: none;
+        font-size: 14px;
+      }
+      .contact-list li {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .contact-list .ico {
+        color: var(--accent);
+        font-weight: bold;
+        width: 18px;
+      }
+      .skill-item {
+        margin-bottom: 14px;
+      }
+      .skill-item .name {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 5px;
+      }
+      .skill-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .skill-bar span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 3px;
+      }
+      .lang-list {
+        list-style: none;
+        font-size: 14px;
+      }
+      .lang-list li {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .lang-list .lvl {
+        color: var(--accent);
+        font-size: 12px;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .tags span {
+        font-size: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 4px 10px;
+        border-radius: 12px;
+        color: #cbd5e1;
+      }
+      /* Main */
+      .main {
+        padding: 50px 50px 40px;
+      }
+      .name-block {
+        margin-bottom: 30px;
+        border-bottom: 3px solid var(--primary);
+        padding-bottom: 20px;
+      }
+      .name-block h1 {
+        font-size: 38px;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+      .name-block .title {
+        font-size: 18px;
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .name-block .summary {
+        color: var(--muted);
+        margin-top: 14px;
+        font-size: 15px;
+      }
+      .section {
+        margin-bottom: 36px;
+      }
+      .section h2 {
+        font-size: 22px;
+        color: var(--primary);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section h2::before {
+        content: '';
+        width: 6px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 3px;
+        display: inline-block;
+      }
+      /* Timeline */
+      .timeline {
+        position: relative;
+        padding-left: 30px;
+        border-left: 2px solid var(--light);
+      }
+      .tl-item {
+        position: relative;
+        margin-bottom: 26px;
+      }
+      .tl-item::before {
+        content: '';
+        position: absolute;
+        left: -37px;
+        top: 6px;
+        width: 14px;
+        height: 14px;
+        background: var(--paper);
+        border: 3px solid var(--primary);
+        border-radius: 50%;
+      }
+      .tl-head {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .tl-head .role {
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .tl-head .org {
+        color: var(--primary);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .tl-head .date {
+        color: var(--muted);
+        font-size: 13px;
+        font-style: italic;
+      }
+      .tl-item ul {
+        margin-top: 8px;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .tl-item ul li {
+        margin-bottom: 4px;
+      }
+      /* Education simple */
+      .edu-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .edu-card {
+        background: var(--bg);
+        padding: 18px;
+        border-radius: 8px;
+        border-left: 4px solid var(--primary);
+      }
+      .edu-card .deg {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .edu-card .sch {
+        color: var(--primary);
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .edu-card .yr {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      /* Certs */
+      .cert-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .cert-list li {
+        background: var(--bg);
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .cert-list li::before {
+        content: '✔';
+        color: var(--primary);
+        font-weight: bold;
+      }
+      @media (max-width: 860px) {
+        .page {
+          grid-template-columns: 1fr;
+          margin: 0;
+          border-radius: 0;
+        }
+        .main {
+          padding: 30px 20px;
+        }
+        .edu-grid,
+        .cert-list {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <aside class="sidebar">
+        <div class="photo"><img src="https://picsum.photos/seed/wxl/300/300.jpg" alt="照片" /></div>
+        <p style="text-align: center; color: #fff; font-size: 18px; font-weight: 700">王晓琳</p>
+        <p style="text-align: center; color: var(--accent); font-size: 13px; margin-top: 4px">资深产品经理</p>
+
+        <h3>联系方式</h3>
+        <ul class="contact-list">
+          <li>
+            <span class="ico">✆</span>
+            <span>138-8888-8888</span>
+          </li>
+          <li>
+            <span class="ico">✉</span>
+            <span>wangxl@mail.com</span>
+          </li>
+          <li>
+            <span class="ico">⌂</span>
+            <span>北京市朝阳区建国路 88 号</span>
+          </li>
+          <li>
+            <span class="ico">🔗</span>
+            <span>linkedin.com/in/wangxl</span>
+          </li>
+          <li>
+            <span class="ico">★</span>
+            <span>wangxl.design</span>
+          </li>
+        </ul>
+
+        <h3>专业技能</h3>
+        <div class="skill-item">
+          <div class="name">
+            <span>产品规划</span>
+            <span>95%</span>
+          </div>
+          <div class="skill-bar"><span style="width: 95%"></span></div>
+        </div>
+        <div class="skill-item">
+          <div class="name">
+            <span>用户研究</span>
+            <span>88%</span>
+          </div>
+          <div class="skill-bar"><span style="width: 88%"></span></div>
+        </div>
+        <div class="skill-item">
+          <div class="name">
+            <span>数据分析</span>
+            <span>82%</span>
+          </div>
+          <div class="skill-bar"><span style="width: 82%"></span></div>
+        </div>
+        <div class="skill-item">
+          <div class="name">
+            <span>原型设计</span>
+            <span>90%</span>
+          </div>
+          <div class="skill-bar"><span style="width: 90%"></span></div>
+        </div>
+        <div class="skill-item">
+          <div class="name">
+            <span>团队管理</span>
+            <span>85%</span>
+          </div>
+          <div class="skill-bar"><span style="width: 85%"></span></div>
+        </div>
+
+        <h3>工具</h3>
+        <div class="tags">
+          <span>Figma</span>
+          <span>Axure</span>
+          <span>Sketch</span>
+          <span>SQL</span>
+          <span>Tableau</span>
+          <span>Jira</span>
+          <span>Protobuf</span>
+          <span>Miro</span>
+        </div>
+
+        <h3>语言能力</h3>
+        <ul class="lang-list">
+          <li>
+            <span>普通话</span>
+            <span class="lvl">母语</span>
+          </li>
+          <li>
+            <span>英语</span>
+            <span class="lvl">流利 (CET-6)</span>
+          </li>
+          <li>
+            <span>日语</span>
+            <span class="lvl">日常交流</span>
+          </li>
+        </ul>
+      </aside>
+
+      <main class="main">
+        <div class="name-block">
+          <h1>王晓琳</h1>
+          <div class="title">资深产品经理 · 8 年互联网产品经验</div>
+          <p class="summary">
+            拥有 8 年互联网产品从业经验，主导过千万级用户产品从 0 到 1
+            的搭建与商业化落地。擅长以用户价值为核心驱动产品迭代，熟悉电商、SaaS
+            与在线教育领域，具备跨部门协作与团队管理能力。
+          </p>
+        </div>
+
+        <section class="section">
+          <h2>工作经历</h2>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-head">
+                <span class="role">高级产品经理</span>
+                <span class="org">云图科技</span>
+                <span class="date">2022.06 — 至今</span>
+              </div>
+              <ul>
+                <li>负责 B 端 SaaS 平台整体规划，带领 6 人产品团队完成核心模块重构</li>
+                <li>推动付费转化率提升 37%，年经常性收入增长 1200 万元</li>
+                <li>建立数据驱动的迭代机制，月活跃留存提升 22%</li>
+              </ul>
+            </div>
+            <div class="tl-item">
+              <div class="tl-head">
+                <span class="role">产品经理</span>
+                <span class="org">字节律动</span>
+                <span class="date">2019.03 — 2022.05</span>
+              </div>
+              <ul>
+                <li>主导社区电商产品线，月 GMV 突破 3000 万元</li>
+                <li>设计会员体系与积分商城，付费会员数达 80 万</li>
+                <li>协调研发、设计、运营 30+ 人团队完成双 11 大促保障</li>
+              </ul>
+            </div>
+            <div class="tl-item">
+              <div class="tl-head">
+                <span class="role">产品助理</span>
+                <span class="org">知行教育</span>
+                <span class="date">2017.07 — 2019.02</span>
+              </div>
+              <ul>
+                <li>参与 K12 在线学习平台需求调研与原型设计</li>
+                <li>完成竞品分析报告 20+ 份，为产品方向提供决策依据</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>教育背景</h2>
+          <div class="edu-grid">
+            <div class="edu-card">
+              <div class="deg">管理学硕士 · 产品创新方向</div>
+              <div class="sch">北京大学</div>
+              <div class="yr">2015 — 2017</div>
+            </div>
+            <div class="edu-card">
+              <div class="deg">工学学士 · 工业设计</div>
+              <div class="sch">浙江大学</div>
+              <div class="yr">2011 — 2015</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>证书与荣誉</h2>
+          <ul class="cert-list">
+            <li>PMP 项目管理认证</li>
+            <li>NPDP 产品经理认证</li>
+            <li>2023 年度公司最佳产品奖</li>
+            <li>2021 公司优秀员工</li>
+            <li>Google Analytics 认证</li>
+            <li>Lean Six Sigma 绿带</li>
+          </ul>
+        </section>
+
+        <section class="section" style="margin-bottom: 0">
+          <h2>自我评价</h2>
+          <p style="color: var(--muted)">
+            逻辑清晰，善于把复杂问题拆解为可执行方案；具备强烈的用户同理心与商业敏感度，能在体验与收益之间找到平衡。乐于分享与带人，相信优秀的产品源于团队协作与持续学习。
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

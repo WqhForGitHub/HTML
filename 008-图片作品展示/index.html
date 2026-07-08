@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Studio Lumen · 精选设计、Web 与摄影作品集" />
+    <title>Studio Lumen · 作品集</title>
+    <style>
+      :root {
+        --bg: #fafafa;
+        --paper: #fff;
+        --ink: #111;
+        --muted: #888;
+        --line: #eee;
+        --accent: #ff5a5f;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        color: var(--ink);
+        line-height: 1.6;
+        background: var(--bg);
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      /* Header */
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 1px;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 32px;
+      }
+      nav a {
+        font-size: 14px;
+        color: var(--ink);
+        transition: 0.2s;
+        font-weight: 500;
+      }
+      nav a:hover {
+        color: var(--accent);
+      }
+      /* Hero */
+      .hero {
+        padding: 140px 32px 60px;
+        text-align: center;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .hero .kicker {
+        font-size: 13px;
+        letter-spacing: 4px;
+        color: var(--accent);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .hero h1 {
+        font-size: 64px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin: 16px 0 20px;
+      }
+      .hero p {
+        font-size: 18px;
+        color: var(--muted);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      /* Filter */
+      .filters {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 40px 0 50px;
+        padding: 0 32px;
+      }
+      .filter-btn {
+        padding: 10px 24px;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s;
+        color: var(--ink);
+      }
+      .filter-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .filter-btn.active {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      /* Gallery - masonry using columns */
+      .gallery {
+        column-count: 3;
+        column-gap: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 32px 80px;
+      }
+      .item {
+        break-inside: avoid;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        cursor: pointer;
+        background: var(--paper);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        transition: 0.3s;
+      }
+      .item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+      }
+      .item img {
+        width: 100%;
+        display: block;
+        transition: 0.5s;
+      }
+      .item:hover img {
+        transform: scale(1.06);
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+        opacity: 0;
+        transition: 0.35s;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 24px;
+        color: #fff;
+      }
+      .item:hover .overlay {
+        opacity: 1;
+      }
+      .overlay .cat {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--accent);
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .overlay h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .overlay p {
+        font-size: 13px;
+        opacity: 0.85;
+      }
+      .overlay .view {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+      /* hide filtered */
+      .item.hide {
+        display: none;
+      }
+      /* Lightbox */
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.92);
+        z-index: 200;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        flex-direction: column;
+      }
+      .lightbox.open {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+      .lightbox .lb-cap {
+        color: #fff;
+        margin-top: 20px;
+        text-align: center;
+      }
+      .lightbox .lb-cap h3 {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      .lightbox .lb-cap p {
+        color: #aaa;
+        font-size: 14px;
+      }
+      .lb-close {
+        position: absolute;
+        top: 24px;
+        right: 32px;
+        color: #fff;
+        font-size: 36px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        line-height: 1;
+      }
+      .lb-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        transition: 0.2s;
+      }
+      .lb-nav:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .lb-prev {
+        left: 30px;
+      }
+      .lb-next {
+        right: 30px;
+      }
+      /* Footer */
+      footer {
+        background: #111;
+        color: #888;
+        padding: 50px 32px;
+        text-align: center;
+        font-size: 14px;
+      }
+      footer .logo {
+        color: #fff;
+        margin-bottom: 10px;
+      }
+      footer p {
+        margin-bottom: 6px;
+      }
+      @media (max-width: 900px) {
+        .gallery {
+          column-count: 2;
+        }
+        .hero h1 {
+          font-size: 40px;
+        }
+        nav ul {
+          display: none;
+        }
+      }
+      @media (max-width: 560px) {
+        .gallery {
+          column-count: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav-inner">
+        <div class="logo">
+          Studio
+          <span>Lumen</span>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#works">作品</a></li>
+            <li><a href="#">关于</a></li>
+            <li><a href="#">服务</a></li>
+            <li><a href="#">博客</a></li>
+            <li><a href="#">联系</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="kicker">PORTFOLIO · 2026</div>
+      <h1>
+        用设计讲述故事，
+        <br />
+        用作品传递灵感
+      </h1>
+      <p>我们是 Studio Lumen，一支专注于 Web 设计、品牌视觉与摄影的创意工作室。以下是近年精选作品。</p>
+    </section>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="web">Web 设计</button>
+      <button class="filter-btn" data-filter="design">视觉设计</button>
+      <button class="filter-btn" data-filter="photo">摄影</button>
+    </div>
+
+    <div class="gallery" id="gallery">
+      <div class="item" data-cat="web" data-img="https://picsum.photos/seed/w1/800/1000.jpg">
+        <img src="https://picsum.photos/seed/w1/600/750.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">Web 设计</div>
+          <h3>云端协作平台</h3>
+          <p>SaaS 产品 · 2026</p>
+        </div>
+      </div>
+      <div class="item" data-cat="photo" data-img="https://picsum.photos/seed/p1/800/600.jpg">
+        <img src="https://picsum.photos/seed/p1/600/450.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">摄影</div>
+          <h3>城市夜色</h3>
+          <p>街拍系列 · 上海</p>
+        </div>
+      </div>
+      <div class="item" data-cat="design" data-img="https://picsum.photos/seed/d1/800/800.jpg">
+        <img src="https://picsum.photos/seed/d1/600/600.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">视觉设计</div>
+          <h3>茶语品牌视觉</h3>
+          <p>品牌识别系统</p>
+        </div>
+      </div>
+      <div class="item" data-cat="web" data-img="https://picsum.photos/seed/w2/800/600.jpg">
+        <img src="https://picsum.photos/seed/w2/600/450.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">Web 设计</div>
+          <h3>电商品牌官网</h3>
+          <p>响应式网站 · 2025</p>
+        </div>
+      </div>
+      <div class="item" data-cat="photo" data-img="https://picsum.photos/seed/p2/800/1000.jpg">
+        <img src="https://picsum.photos/seed/p2/600/750.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">摄影</div>
+          <h3>山野之间</h3>
+          <p>自然风光 · 川西</p>
+        </div>
+      </div>
+      <div class="item" data-cat="design" data-img="https://picsum.photos/seed/d2/800/600.jpg">
+        <img src="https://picsum.photos/seed/d2/600/450.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">视觉设计</div>
+          <h3>文化节海报</h3>
+          <p>海报设计 · 2026</p>
+        </div>
+      </div>
+      <div class="item" data-cat="web" data-img="https://picsum.photos/seed/w3/800/900.jpg">
+        <img src="https://picsum.photos/seed/w3/600/675.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">Web 设计</div>
+          <h3>金融数据后台</h3>
+          <p>管理后台 · 2025</p>
+        </div>
+      </div>
+      <div class="item" data-cat="photo" data-img="https://picsum.photos/seed/p3/800/700.jpg">
+        <img src="https://picsum.photos/seed/p3/600/525.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">摄影</div>
+          <h3>人像光影</h3>
+          <p>人像摄影 · 工作室</p>
+        </div>
+      </div>
+      <div class="item" data-cat="design" data-img="https://picsum.photos/seed/d3/800/900.jpg">
+        <img src="https://picsum.photos/seed/d3/600/675.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">视觉设计</div>
+          <h3>咖啡包装设计</h3>
+          <p>产品包装 · 2026</p>
+        </div>
+      </div>
+      <div class="item" data-cat="web" data-img="https://picsum.photos/seed/w4/800/700.jpg">
+        <img src="https://picsum.photos/seed/w4/600/525.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">Web 设计</div>
+          <h3>旅行 App 落地页</h3>
+          <p>营销页面 · 2026</p>
+        </div>
+      </div>
+      <div class="item" data-cat="photo" data-img="https://picsum.photos/seed/p4/800/800.jpg">
+        <img src="https://picsum.photos/seed/p4/600/600.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">摄影</div>
+          <h3>建筑几何</h3>
+          <p>建筑摄影 · 北京</p>
+        </div>
+      </div>
+      <div class="item" data-cat="design" data-img="https://picsum.photos/seed/d4/800/700.jpg">
+        <img src="https://picsum.photos/seed/d4/600/525.jpg" alt="" />
+        <div class="overlay">
+          <div class="view">⊕</div>
+          <div class="cat">视觉设计</div>
+          <h3>音乐节主视觉</h3>
+          <p>活动视觉 · 2025</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+      <button class="lb-close" id="lbClose">×</button>
+      <button class="lb-nav lb-prev" id="lbPrev">‹</button>
+      <button class="lb-nav lb-next" id="lbNext">›</button>
+      <img src="" id="lbImg" alt="" />
+      <div class="lb-cap">
+        <h3 id="lbTitle"></h3>
+        <p id="lbDesc"></p>
+      </div>
+    </div>
+
+    <footer>
+      <div class="logo">
+        Studio
+        <span style="color: var(--accent)">Lumen</span>
+      </div>
+      <p>用设计讲述故事，用作品传递灵感</p>
+      <p>© 2026 Studio Lumen · hello@studiolumen.com</p>
+    </footer>
+
+    <script>
+      // Filtering
+      const btns = document.querySelectorAll('.filter-btn');
+      const items = document.querySelectorAll('.item');
+      let visibleItems = [];
+      btns.forEach((b) =>
+        b.addEventListener('click', () => {
+          btns.forEach((x) => x.classList.remove('active'));
+          b.classList.add('active');
+          const f = b.dataset.filter;
+          visibleItems = [];
+          items.forEach((it) => {
+            const match = f === 'all' || it.dataset.cat === f;
+            it.classList.toggle('hide', !match);
+            if (match) visibleItems.push(it);
+          });
+        }),
+      );
+      // Initialize visibleItems
+      visibleItems = Array.from(items);
+
+      // Lightbox
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      const lbTitle = document.getElementById('lbTitle');
+      const lbDesc = document.getElementById('lbDesc');
+      let current = 0;
+
+      function openLb(item) {
+        // find index in visible items
+        current = visibleItems.indexOf(item);
+        showLb();
+        lb.classList.add('open');
+      }
+      function showLb() {
+        const it = visibleItems[current];
+        if (!it) return;
+        lbImg.src = it.dataset.img;
+        const cap = it.querySelector('.overlay h3').textContent;
+        const desc = it.querySelector('.overlay p').textContent;
+        lbTitle.textContent = cap;
+        lbDesc.textContent = desc;
+      }
+      items.forEach((it) => it.addEventListener('click', () => openLb(it)));
+      document.getElementById('lbClose').addEventListener('click', () => lb.classList.remove('open'));
+      document.getElementById('lbPrev').addEventListener('click', () => {
+        current = (current - 1 + visibleItems.length) % visibleItems.length;
+        showLb();
+      });
+      document.getElementById('lbNext').addEventListener('click', () => {
+        current = (current + 1) % visibleItems.length;
+        showLb();
+      });
+      lb.addEventListener('click', (e) => {
+        if (e.target === lb) lb.classList.remove('open');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (!lb.classList.contains('open')) return;
+        if (e.key === 'Escape') lb.classList.remove('open');
+        if (e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+        if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
+      });
+    </script>
+  </body>
+</html>

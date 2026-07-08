@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="语义化博客模板 - 完整使用 HTML5 语义元素的博客页面" />
+    <title>语义化博客模板 | 前端手记</title>
+    <style>
+      :root {
+        --pri: #4a6cf7;
+        --ink: #1a202c;
+        --muted: #718096;
+        --bg: #f7fafc;
+        --line: #e2e8f0;
+        --card: #fff;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', Georgia, serif;
+        color: var(--ink);
+        background: var(--bg);
+        line-height: 1.8;
+      }
+      a {
+        color: var(--pri);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* Header */
+      .site-header {
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+      }
+      .header-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      }
+      .logo span {
+        color: var(--pri);
+      }
+      .site-nav ul {
+        list-style: none;
+        display: flex;
+        gap: 22px;
+      }
+      .site-nav a {
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .site-nav a:hover {
+        color: var(--pri);
+        text-decoration: none;
+      }
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      /* Layout */
+      .layout {
+        max-width: 1080px;
+        margin: 32px auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 36px;
+      }
+
+      /* Article */
+      article.post {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 38px 40px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      }
+      .post-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .post-meta .cat {
+        background: #ebf0ff;
+        color: var(--pri);
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+      .post-title {
+        font-size: 34px;
+        line-height: 1.3;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .post-subtitle {
+        font-size: 17px;
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+      .author-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 28px;
+      }
+      .author-bar img {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .author-bar .name {
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .author-bar .date {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .post-body p {
+        margin-bottom: 18px;
+        font-size: 17px;
+      }
+      .post-body h2 {
+        font-size: 24px;
+        margin: 32px 0 14px;
+        font-weight: 700;
+        border-left: 4px solid var(--pri);
+        padding-left: 12px;
+      }
+      .post-body h3 {
+        font-size: 19px;
+        margin: 24px 0 10px;
+        font-weight: 700;
+      }
+      .post-body ul {
+        margin: 0 0 18px 22px;
+      }
+      .post-body li {
+        margin-bottom: 6px;
+      }
+
+      figure.figure {
+        margin: 26px 0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      figure.figure img {
+        width: 100%;
+        display: block;
+      }
+      figure.figure figcaption {
+        font-size: 13px;
+        color: var(--muted);
+        padding: 10px 14px;
+        background: #f7fafc;
+        text-align: center;
+      }
+
+      blockquote.quote {
+        margin: 28px 0;
+        padding: 18px 24px;
+        border-left: 4px solid var(--pri);
+        background: #f7faff;
+        border-radius: 0 8px 8px 0;
+        font-size: 17px;
+        font-style: italic;
+        color: #2d3748;
+      }
+      blockquote.quote cite {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        font-style: normal;
+        color: var(--muted);
+      }
+
+      pre.code {
+        background: #1a202c;
+        color: #e2e8f0;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 14px;
+        margin: 20px 0;
+      }
+      code {
+        font-family: 'Fira Code', Consolas, monospace;
+      }
+
+      .tags {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .tags a {
+        background: #edf2f7;
+        color: #4a5568;
+        padding: 5px 12px;
+        border-radius: 14px;
+        font-size: 13px;
+      }
+      .tags a:hover {
+        background: var(--pri);
+        color: #fff;
+        text-decoration: none;
+      }
+
+      /* Aside */
+      aside.sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .widget {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      }
+      .widget h3 {
+        font-size: 17px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--pri);
+        font-weight: 700;
+      }
+      .widget ul {
+        list-style: none;
+      }
+      .widget li {
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--line);
+        font-size: 14px;
+      }
+      .widget li:last-child {
+        border-bottom: none;
+      }
+      .widget li a {
+        color: var(--ink);
+      }
+      .about-widget {
+        text-align: center;
+      }
+      .about-widget img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+      }
+      .about-widget p {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .tag-cloud a {
+        display: inline-block;
+        margin: 3px;
+        padding: 4px 10px;
+        background: #edf2f7;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #4a5568;
+      }
+
+      /* Footer */
+      footer.site-footer {
+        background: #1a202c;
+        color: #cbd5e0;
+        margin-top: 50px;
+        padding: 40px 24px 20px;
+      }
+      .footer-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 30px;
+      }
+      .footer-inner h4 {
+        color: #fff;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+      .footer-inner ul {
+        list-style: none;
+      }
+      .footer-inner li {
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+      .footer-inner a {
+        color: #a0aec0;
+      }
+      .footer-bottom {
+        max-width: 1080px;
+        margin: 30px auto 0;
+        padding-top: 18px;
+        border-top: 1px solid #2d3748;
+        text-align: center;
+        font-size: 13px;
+        color: #718096;
+      }
+
+      @media (max-width: 860px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .menu-toggle {
+          display: block;
+        }
+        .site-nav {
+          display: none;
+        }
+        .site-nav.open {
+          display: block;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: #fff;
+          padding: 14px 24px;
+          border-bottom: 1px solid var(--line);
+        }
+        .footer-inner {
+          grid-template-columns: 1fr;
+        }
+        article.post {
+          padding: 24px;
+        }
+        .post-title {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="logo">
+          前端
+          <span>手记</span>
+        </div>
+        <button class="menu-toggle" aria-label="菜单">&#9776;</button>
+        <nav class="site-nav" aria-label="主导航">
+          <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">技术</a></li>
+            <li><a href="#">设计</a></li>
+            <li><a href="#">随笔</a></li>
+            <li><a href="#">关于</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="layout">
+      <main>
+        <article class="post">
+          <div class="post-meta">
+            <span class="cat">HTML5</span>
+            <time datetime="2026-07-08">2026年7月8日</time>
+            <span>· 阅读约 8 分钟</span>
+          </div>
+          <h1 class="post-title">深入理解 HTML5 语义化标签</h1>
+          <p class="post-subtitle">为什么我们应当告别 div 海洋，拥抱有意义的结构元素</p>
+
+          <div class="author-bar">
+            <img src="https://picsum.photos/seed/author1/80/80" alt="作者头像" />
+            <div>
+              <div class="name">林晓东</div>
+              <div class="date">前端工程师 · 发表于 2026-07-08</div>
+            </div>
+          </div>
+
+          <div class="post-body">
+            <p>
+              语义化标签是 HTML5
+              规范中最具代表性的改进之一。它让开发者能够用具有明确含义的元素来描述页面结构，而非仅仅依赖没有语义的 div
+              与 span。这不仅关乎代码可读性，更影响搜索引擎优化与无障碍体验。
+            </p>
+
+            <section>
+              <h2>什么是语义化</h2>
+              <p>
+                语义化指的是用恰当的标签传达内容的含义。例如，一段导航链接应当使用
+                <code>&lt;nav&gt;</code>
+                ，一篇文章应当使用
+                <code>&lt;article&gt;</code>
+                ，而一个独立的、可复用的内容单元不应再被包裹在无意义的 div 中。
+              </p>
+              <blockquote class="quote">
+                语义化的本质，是让机器也能像人一样理解页面的结构。
+                <cite>—— 某位前端布道者</cite>
+              </blockquote>
+            </section>
+
+            <section>
+              <h2>常用的语义元素</h2>
+              <p>在日常开发中，以下元素使用频率最高：</p>
+              <ul>
+                <li>
+                  <code>&lt;header&gt;</code>
+                  ：页眉或区块头部
+                </li>
+                <li>
+                  <code>&lt;nav&gt;</code>
+                  ：导航链接组
+                </li>
+                <li>
+                  <code>&lt;main&gt;</code>
+                  ：页面主内容（每页唯一）
+                </li>
+                <li>
+                  <code>&lt;article&gt;</code>
+                  ：独立完整的内容单元
+                </li>
+                <li>
+                  <code>&lt;section&gt;</code>
+                  ：按主题分组的内容
+                </li>
+                <li>
+                  <code>&lt;aside&gt;</code>
+                  ：与主内容相关的辅助内容
+                </li>
+                <li>
+                  <code>&lt;footer&gt;</code>
+                  ：页脚或区块尾部
+                </li>
+              </ul>
+
+              <figure class="figure">
+                <img src="https://picsum.photos/seed/blog-sem/680/300" alt="语义化结构示意图" />
+                <figcaption>图 1：一个典型的语义化博客页面结构</figcaption>
+              </figure>
+            </section>
+
+            <section>
+              <h2>一个简单示例</h2>
+              <p>下面是一段使用语义标签的代码片段：</p>
+              <pre class="code"><code>&lt;article&gt;
+  &lt;header&gt;
+    &lt;h1&gt;文章标题&lt;/h1&gt;
+    &lt;time datetime="2026-07-08"&gt;2026-07-08&lt;/time&gt;
+  &lt;/header&gt;
+  &lt;section&gt;
+    &lt;p&gt;正文内容...&lt;/p&gt;
+  &lt;/section&gt;
+&lt;/article&gt;</code></pre>
+            </section>
+
+            <section>
+              <h2>小结</h2>
+              <p>
+                语义化并不复杂，它只是一种"用对标签"的意识。当你下次写下
+                <code>&lt;div class="header"&gt;</code>
+                时，不妨停下来想一想：是不是可以直接用
+                <code>&lt;header&gt;</code>
+                ？
+              </p>
+            </section>
+          </div>
+
+          <div class="tags">
+            <span style="font-size: 13px; color: var(--muted); align-self: center">标签：</span>
+            <a href="#">HTML5</a>
+            <a href="#">语义化</a>
+            <a href="#">前端基础</a>
+            <a href="#">无障碍</a>
+          </div>
+        </article>
+      </main>
+
+      <aside class="sidebar">
+        <section class="widget about-widget">
+          <img src="https://picsum.photos/seed/author1/80/80" alt="作者" />
+          <h3 style="border: none; text-align: center; padding: 0">林晓东</h3>
+          <p>前端工程师，热爱分享 Web 技术与开发经验，专注于语义化、性能与可访问性。</p>
+        </section>
+
+        <section class="widget">
+          <h3>热门文章</h3>
+          <ul>
+            <li><a href="#">CSS Grid 布局完全指南</a></li>
+            <li><a href="#">JavaScript 异步编程演进</a></li>
+            <li><a href="#">从零搭建组件库</a></li>
+            <li><a href="#">Web 性能优化清单</a></li>
+            <li><a href="#">TypeScript 进阶技巧</a></li>
+          </ul>
+        </section>
+
+        <section class="widget">
+          <h3>标签云</h3>
+          <nav class="tag-cloud" aria-label="标签云">
+            <a href="#">HTML5</a>
+            <a href="#">CSS3</a>
+            <a href="#">JavaScript</a>
+            <a href="#">Vue</a>
+            <a href="#">React</a>
+            <a href="#">Node.js</a>
+            <a href="#">性能</a>
+            <a href="#">工程化</a>
+            <a href="#">无障碍</a>
+          </nav>
+        </section>
+
+        <section class="widget">
+          <h3>订阅</h3>
+          <p style="font-size: 13px; color: var(--muted); margin-bottom: 10px">输入邮箱，第一时间获取更新。</p>
+          <form onsubmit="return false;">
+            <input
+              type="email"
+              placeholder="你的邮箱"
+              style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 8px"
+              required
+            />
+            <button
+              style="
+                width: 100%;
+                padding: 9px;
+                background: var(--pri);
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+              "
+            >
+              订阅
+            </button>
+          </form>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div>
+          <h4>前端手记</h4>
+          <p style="font-size: 14px; color: #a0aec0; max-width: 320px">
+            记录前端开发中的点点滴滴，分享有温度的技术文章。
+          </p>
+        </div>
+        <div>
+          <h4>导航</h4>
+          <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">归档</a></li>
+            <li><a href="#">关于</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>关注</h4>
+          <ul>
+            <li><a href="#">GitHub</a></li>
+            <li><a href="#">微博</a></li>
+            <li><a href="#">RSS</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 前端手记 · 由 HTML5 语义化标签构建</div>
+    </footer>
+
+    <script>
+      document.querySelector('.menu-toggle').addEventListener('click', function () {
+        document.querySelector('.site-nav').classList.toggle('open');
+      });
+    </script>
+  </body>
+</html>

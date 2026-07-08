@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS日落动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Microsoft YaHei', sans-serif;
+        color: #fff;
+      }
+      body {
+        position: relative;
+      }
+
+      /* 天空背景：通过多段渐变 + 动画实现昼夜循环 */
+      .sky {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 75%;
+        z-index: 1;
+        background: linear-gradient(to bottom, #87ceeb 0%, #ffb88c 50%, #ff7e5f 100%);
+        animation: skyCycle 30s ease-in-out infinite;
+      }
+      @keyframes skyCycle {
+        0% {
+          background: linear-gradient(to bottom, #87ceeb 0%, #b8e0f5 50%, #d8eaf5 100%);
+        } /* 正午 */
+        20% {
+          background: linear-gradient(to bottom, #f6a96b 0%, #f8c474 40%, #fde2b0 100%);
+        } /* 下午 */
+        40% {
+          background: linear-gradient(to bottom, #ff7e5f 0%, #ff5e3a 35%, #ffb88c 80%, #ffd194 100%);
+        } /* 日落 */
+        55% {
+          background: linear-gradient(to bottom, #4a1a5a 0%, #8e2d6b 40%, #d4517a 75%, #ff7e5f 100%);
+        } /* 黄昏 */
+        70% {
+          background: linear-gradient(to bottom, #0a0a2e 0%, #1a1a4e 40%, #3a2a5e 80%, #5e3a6e 100%);
+        } /* 夜晚 */
+        85% {
+          background: linear-gradient(to bottom, #2a3a5e 0%, #6e5a7e 50%, #d4889e 100%);
+        } /* 黎明 */
+        100% {
+          background: linear-gradient(to bottom, #87ceeb 0%, #b8e0f5 50%, #d8eaf5 100%);
+        } /* 回到正午 */
+      }
+
+      h1 {
+        position: absolute;
+        top: 25px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 28px;
+        letter-spacing: 8px;
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+        z-index: 20;
+        animation: titlePulse 30s ease-in-out infinite;
+      }
+      @keyframes titlePulse {
+        0%,
+        100% {
+          text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        }
+        70% {
+          text-shadow: 0 2px 20px rgba(255, 255, 255, 0.6);
+        }
+      }
+      .hint {
+        position: absolute;
+        bottom: 15px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 13px;
+        letter-spacing: 3px;
+        z-index: 20;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+      }
+
+      /* 太阳：从天空高处下落到地平线后消失，再升起 */
+      .sun {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        width: 110px;
+        height: 110px;
+        margin-left: -55px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #fffacd 0%, #ffe066 40%, #ffaa33 80%, #ff7733 100%);
+        box-shadow:
+          0 0 60px rgba(255, 200, 80, 0.7),
+          0 0 120px rgba(255, 150, 60, 0.4);
+        z-index: 3;
+        animation: sunPath 30s ease-in-out infinite;
+      }
+      @keyframes sunPath {
+        0% {
+          top: 8%;
+          filter: brightness(1.1);
+          opacity: 1;
+        } /* 正午高 */
+        40% {
+          top: 55%;
+          filter: brightness(1) saturate(1.3);
+          opacity: 1;
+        } /* 日落低 */
+        55% {
+          top: 68%;
+          filter: brightness(0.7) saturate(1.5);
+          opacity: 0.8;
+        } /* 沉入 */
+        70% {
+          top: 75%;
+          opacity: 0;
+        } /* 夜晚 */
+        85% {
+          top: 30%;
+          opacity: 0;
+        } /* 黎明前 */
+        90% {
+          top: 20%;
+          opacity: 0.6;
+          filter: brightness(0.9);
+        }
+        100% {
+          top: 8%;
+          filter: brightness(1.1);
+          opacity: 1;
+        } /* 回到正午 */
+      }
+
+      /* 月亮：夜晚出现 */
+      .moon {
+        position: absolute;
+        top: 15%;
+        right: 18%;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #fff8e0, #ffe9a8 60%, #e8d090);
+        box-shadow: 0 0 50px rgba(255, 240, 180, 0.5);
+        z-index: 3;
+        opacity: 0;
+        animation: moonPath 30s ease-in-out infinite;
+      }
+      @keyframes moonPath {
+        0%,
+        55% {
+          opacity: 0;
+        }
+        70% {
+          opacity: 0.95;
+          top: 18%;
+        }
+        85% {
+          opacity: 0.8;
+          top: 25%;
+        }
+        92% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      /* 星星 */
+      .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 4px #fff;
+        opacity: 0;
+        animation: starShow 30s ease-in-out infinite;
+      }
+      @keyframes starShow {
+        0%,
+        55% {
+          opacity: 0;
+        }
+        70% {
+          opacity: 1;
+        }
+        85% {
+          opacity: 0.8;
+        }
+        92% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      /* 云朵 */
+      .clouds {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        z-index: 4;
+        pointer-events: none;
+      }
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 100px;
+        opacity: 0.8;
+        box-shadow:
+          20px 0 0 -4px #fff,
+          -20px 4px 0 -4px #fff,
+          40px 6px 0 -8px #fff,
+          -40px 6px 0 -8px #fff,
+          12px -14px 0 -6px #fff,
+          -12px -14px 0 -6px #fff;
+        animation:
+          cloudDrift 60s linear infinite,
+          cloudColor 30s ease-in-out infinite;
+      }
+      @keyframes cloudDrift {
+        from {
+          left: -150px;
+        }
+        to {
+          left: 110%;
+        }
+      }
+      @keyframes cloudColor {
+        0%,
+        100% {
+          background: #ffffff;
+          box-shadow:
+            20px 0 0 -4px #fff,
+            -20px 4px 0 -4px #fff,
+            40px 6px 0 -8px #fff,
+            -40px 6px 0 -8px #fff,
+            12px -14px 0 -6px #fff,
+            -12px -14px 0 -6px #fff;
+        }
+        40% {
+          background: #ffd9a0;
+          box-shadow:
+            20px 0 0 -4px #ffd9a0,
+            -20px 4px 0 -4px #ffd9a0,
+            40px 6px 0 -8px #ffd9a0,
+            -40px 6px 0 -8px #ffd9a0,
+            12px -14px 0 -6px #ffd9a0,
+            -12px -14px 0 -6px #ffd9a0;
+        }
+        55% {
+          background: #c89aa0;
+          box-shadow:
+            20px 0 0 -4px #c89aa0,
+            -20px 4px 0 -4px #c89aa0,
+            40px 6px 0 -8px #c89aa0,
+            -40px 6px 0 -8px #c89aa0,
+            12px -14px 0 -6px #c89aa0,
+            -12px -14px 0 -6px #c89aa0;
+        }
+        70% {
+          background: #5a5a7a;
+          box-shadow:
+            20px 0 0 -4px #5a5a7a,
+            -20px 4px 0 -4px #5a5a7a,
+            40px 6px 0 -8px #5a5a7a,
+            -40px 6px 0 -8px #5a5a7a,
+            12px -14px 0 -6px #5a5a7a,
+            -12px -14px 0 -6px #5a5a7a;
+        }
+      }
+
+      /* 远山剪影 */
+      .mountains {
+        position: absolute;
+        bottom: 25%;
+        left: 0;
+        right: 0;
+        height: 30%;
+        z-index: 5;
+      }
+      .mt {
+        position: absolute;
+        bottom: 0;
+        background: #2a3a4a;
+      }
+      .mt1 {
+        left: -5%;
+        width: 50%;
+        height: 70%;
+        clip-path: polygon(0 100%, 30% 20%, 60% 60%, 100% 100%);
+        animation: mtColor 30s ease-in-out infinite;
+      }
+      .mt2 {
+        left: 30%;
+        width: 50%;
+        height: 90%;
+        clip-path: polygon(0 100%, 25% 10%, 55% 50%, 85% 30%, 100% 100%);
+        animation: mtColor 30s ease-in-out infinite;
+        animation-delay: -1s;
+      }
+      .mt3 {
+        right: -5%;
+        width: 45%;
+        height: 65%;
+        clip-path: polygon(0 100%, 40% 40%, 70% 15%, 100% 100%);
+        animation: mtColor 30s ease-in-out infinite;
+        animation-delay: -2s;
+      }
+      @keyframes mtColor {
+        0%,
+        100% {
+          background: #4a6a7a;
+        }
+        40% {
+          background: #3a2a4a;
+        }
+        55% {
+          background: #2a1a3a;
+        }
+        70% {
+          background: #0a0a1e;
+        }
+        85% {
+          background: #2a2a4a;
+        }
+      }
+
+      /* 树木剪影 */
+      .trees {
+        position: absolute;
+        bottom: 23%;
+        left: 0;
+        right: 0;
+        height: 15%;
+        z-index: 6;
+        animation: mtColor 30s ease-in-out infinite;
+      }
+      .tree {
+        position: absolute;
+        bottom: 0;
+        width: 0;
+        height: 0;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-bottom: 60px solid currentColor;
+        color: #1a2a1a;
+      }
+      .tree::after {
+        content: '';
+        position: absolute;
+        top: 35px;
+        left: -10px;
+        width: 0;
+        height: 0;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-bottom: 50px solid currentColor;
+      }
+
+      /* 水面 */
+      .water {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 25%;
+        z-index: 7;
+        overflow: hidden;
+        background: linear-gradient(to bottom, rgba(20, 40, 70, 0.7), rgba(5, 15, 35, 0.95));
+        animation: waterColor 30s ease-in-out infinite;
+      }
+      @keyframes waterColor {
+        0%,
+        100% {
+          background: linear-gradient(to bottom, rgba(70, 130, 180, 0.7), rgba(20, 50, 90, 0.95));
+        }
+        40% {
+          background: linear-gradient(to bottom, rgba(255, 120, 80, 0.5), rgba(80, 30, 40, 0.9));
+        }
+        55% {
+          background: linear-gradient(to bottom, rgba(120, 40, 80, 0.6), rgba(40, 15, 40, 0.95));
+        }
+        70% {
+          background: linear-gradient(to bottom, rgba(20, 20, 50, 0.8), rgba(5, 5, 20, 0.98));
+        }
+        85% {
+          background: linear-gradient(to bottom, rgba(60, 50, 90, 0.7), rgba(20, 15, 40, 0.95));
+        }
+      }
+
+      /* 太阳水面倒影 */
+      .reflection {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 100px;
+        height: 100%;
+        margin-left: -50px;
+        background: linear-gradient(to bottom, rgba(255, 200, 80, 0.6), rgba(255, 150, 60, 0.1));
+        filter: blur(10px);
+        animation:
+          reflectShimmer 3s ease-in-out infinite,
+          reflectPath 30s ease-in-out infinite;
+      }
+      @keyframes reflectShimmer {
+        0%,
+        100% {
+          transform: scaleX(1);
+          opacity: 0.6;
+        }
+        50% {
+          transform: scaleX(1.15);
+          opacity: 0.85;
+        }
+      }
+      @keyframes reflectPath {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        40% {
+          opacity: 0.9;
+        }
+        70% {
+          opacity: 0;
+        }
+        85% {
+          opacity: 0;
+        }
+      }
+
+      /* 水波 */
+      .wave {
+        position: absolute;
+        left: -50%;
+        width: 200%;
+        height: 60px;
+        background-repeat: repeat-x;
+      }
+      .wave1 {
+        top: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'><path d='M0,30 C150,50 300,10 600,30 C900,50 1050,10 1200,30 L1200,60 L0,60 Z' fill='rgba(255,255,255,0.15)'/></svg>");
+        background-size: 1200px 60px;
+        animation: waveMove 10s linear infinite;
+      }
+      .wave2 {
+        top: 15px;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'><path d='M0,30 C200,10 400,50 600,30 C800,10 1000,50 1200,30 L1200,60 L0,60 Z' fill='rgba(255,255,255,0.1)'/></svg>");
+        background-size: 1200px 60px;
+        animation: waveMove 14s linear infinite reverse;
+      }
+      @keyframes waveMove {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -1200px 0;
+        }
+      }
+
+      .phase-label {
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 14px;
+        letter-spacing: 4px;
+        color: rgba(255, 255, 255, 0.85);
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+        z-index: 20;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sky"></div>
+    <h1>日 落 · 昼 夜 循 环</h1>
+    <div class="phase-label" id="phase">正午时分</div>
+
+    <div class="sun"></div>
+    <div class="moon"></div>
+    <div class="clouds" id="clouds"></div>
+    <div class="stars" id="stars"></div>
+
+    <div class="mountains">
+      <div class="mt mt1"></div>
+      <div class="mt mt2"></div>
+      <div class="mt mt3"></div>
+    </div>
+    <div class="trees">
+      <div class="tree" style="left: 8%; bottom: 5%"></div>
+      <div class="tree" style="left: 20%; bottom: 0; transform: scale(0.7)"></div>
+      <div class="tree" style="left: 78%; bottom: 8%"></div>
+      <div class="tree" style="left: 90%; bottom: 2%; transform: scale(0.8)"></div>
+      <div class="tree" style="left: 60%; bottom: 0; transform: scale(0.6)"></div>
+    </div>
+
+    <div class="water">
+      <div class="reflection"></div>
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+    </div>
+
+    <div class="hint">天空 · 太阳 · 云朵 · 山影 · 水面倒影 · 同步昼夜循环</div>
+
+    <script>
+      // 生成云朵
+      const clouds = document.getElementById('clouds');
+      for (let i = 0; i < 5; i++) {
+        const c = document.createElement('div');
+        c.className = 'cloud';
+        const size = 50 + Math.random() * 40;
+        c.style.width = size + 'px';
+        c.style.height = size * 0.5 + 'px';
+        c.style.top = 5 + Math.random() * 35 + '%';
+        const dur = 50 + Math.random() * 40;
+        c.style.animationDuration = `${dur}s, 30s`;
+        c.style.animationDelay = `${-Math.random() * dur}s, 0s`;
+        clouds.appendChild(c);
+      }
+
+      // 生成星星
+      const starsContainer = document.getElementById('stars');
+      starsContainer.style.position = 'absolute';
+      starsContainer.style.top = '0';
+      starsContainer.style.left = '0';
+      starsContainer.style.width = '100%';
+      starsContainer.style.height = '60%';
+      starsContainer.style.zIndex = '2';
+      starsContainer.style.pointerEvents = 'none';
+      for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 60 + '%';
+        s.style.animationDelay = Math.random() * 0.5 + 's';
+        if (Math.random() > 0.7) {
+          s.style.width = '3px';
+          s.style.height = '3px';
+        }
+        starsContainer.appendChild(s);
+      }
+
+      // 阶段提示
+      const phaseEl = document.getElementById('phase');
+      const phases = [
+        [0, 15, '正午时分'],
+        [15, 30, '午后阳光'],
+        [30, 45, '日落黄昏'],
+        [45, 60, '夕阳西下'],
+        [60, 75, '夜幕降临'],
+        [75, 90, '黎明破晓'],
+        [90, 100, '清晨曙光'],
+      ];
+      const cycle = 30000;
+      const start = Date.now();
+      function updatePhase() {
+        const t = (((Date.now() - start) % cycle) / cycle) * 100;
+        for (const [a, b, label] of phases) {
+          if (t >= a && t < b) {
+            phaseEl.textContent = label;
+            break;
+          }
+        }
+        requestAnimationFrame(updatePhase);
+      }
+      updatePhase();
+    </script>
+  </body>
+</html>

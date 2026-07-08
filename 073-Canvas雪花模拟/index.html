@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas 雪花模拟</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0a1428;
+      }
+      canvas {
+        display: block;
+      }
+      .panel {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        color: #e8f4ff;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        background: rgba(20, 40, 70, 0.5);
+        padding: 14px 18px;
+        border-radius: 8px;
+        border: 1px solid rgba(180, 210, 255, 0.3);
+        backdrop-filter: blur(6px);
+        line-height: 1.9;
+      }
+      .panel b {
+        color: #b8e0ff;
+      }
+      .panel label {
+        display: block;
+        margin-top: 6px;
+      }
+      .panel input[type='range'] {
+        width: 200px;
+        vertical-align: middle;
+      }
+      .panel .val {
+        color: #ffd9a8;
+        display: inline-block;
+        width: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div class="panel">
+      <b>冬日雪景</b>
+      <label>
+        风力：
+        <input type="range" id="wind" min="-3" max="3" step="0.1" value="0.5" />
+        <span class="val" id="windVal">0.5</span>
+      </label>
+      <label>
+        雪量：
+        <input type="range" id="density" min="50" max="400" step="10" value="200" />
+        <span class="val" id="densityVal">200</span>
+      </label>
+    </div>
+    <script>
+      const canvas = document.getElementById('c');
+      const ctx = canvas.getContext('2d');
+      let W, H;
+      const snowflakes = [];
+      let accumulation = [];
+      let wind = 0.5;
+      let targetCount = 200;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        accumulation = new Array(Math.ceil(W / 4)).fill(0);
+      }
+      window.addEventListener('resize', resize);
+
+      function rand(a, b) {
+        return a + Math.random() * (b - a);
+      }
+
+      function createSnowflake(fromTop = true) {
+        const size = rand(1, 4.5);
+        return {
+          x: Math.random() * W,
+          y: fromTop ? rand(-20, -2) : Math.random() * H,
+          size: size,
+          speed: size * 0.4 + rand(0.3, 1.2),
+          swayAmp: rand(0.5, 2),
+          swaySpeed: rand(0.01, 0.04),
+          swayPhase: Math.random() * Math.PI * 2,
+          rot: Math.random() * Math.PI * 2,
+          rotSpeed: rand(-0.02, 0.02),
+          type: size > 3 ? 'detailed' : size > 2 ? 'simple' : 'dot',
+          opacity: rand(0.5, 1),
+        };
+      }
+
+      function drawBackground() {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#1a2a4a');
+        g.addColorStop(0.5, '#2a4068');
+        g.addColorStop(1, '#4a6890');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = 'rgba(220,235,255,0.08)';
+        for (let i = 0; i < 5; i++) {
+          const mx = (i * 0.23 + 0.1) * W;
+          const my = H * 0.7;
+          ctx.beginPath();
+          ctx.moveTo(mx, H);
+          ctx.lineTo(mx - 80, my + rand(20, 60));
+          ctx.lineTo(mx + 80, my + rand(20, 60));
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      function drawSnowflake(s) {
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rot);
+        ctx.globalAlpha = s.opacity;
+        ctx.strokeStyle = '#ffffff';
+        ctx.fillStyle = '#ffffff';
+        ctx.lineWidth = Math.max(0.4, s.size * 0.25);
+        ctx.lineCap = 'round';
+
+        if (s.type === 'dot') {
+          ctx.beginPath();
+          ctx.arc(0, 0, s.size * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (s.type === 'simple') {
+          for (let i = 0; i < 6; i++) {
+            ctx.rotate(Math.PI / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, s.size);
+            ctx.stroke();
+          }
+        } else {
+          for (let i = 0; i < 6; i++) {
+            ctx.rotate(Math.PI / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, s.size);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, s.size * 0.5);
+            ctx.lineTo(s.size * 0.25, s.size * 0.7);
+            ctx.moveTo(0, s.size * 0.5);
+            ctx.lineTo(-s.size * 0.25, s.size * 0.7);
+            ctx.moveTo(0, s.size * 0.75);
+            ctx.lineTo(s.size * 0.2, s.size * 0.9);
+            ctx.moveTo(0, s.size * 0.75);
+            ctx.lineTo(-s.size * 0.2, s.size * 0.9);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(0, 0, s.size * 0.15, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawAccumulation() {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        const step = 4;
+        for (let x = 0; x <= W; x += step) {
+          const idx = Math.floor(x / step);
+          const h = accumulation[idx] || 0;
+          ctx.lineTo(x, H - h);
+        }
+        ctx.lineTo(W, H);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(180,210,255,0.4)';
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        for (let x = 0; x <= W; x += step) {
+          const idx = Math.floor(x / step);
+          const h = accumulation[idx] || 0;
+          ctx.lineTo(x, H - h + 2);
+        }
+        ctx.lineTo(W, H);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function update() {
+        while (snowflakes.length < targetCount) snowflakes.push(createSnowflake());
+        while (snowflakes.length > targetCount) snowflakes.pop();
+
+        for (let i = snowflakes.length - 1; i >= 0; i--) {
+          const s = snowflakes[i];
+          s.swayPhase += s.swaySpeed;
+          s.x += wind + Math.sin(s.swayPhase) * s.swayAmp * 0.3;
+          s.y += s.speed;
+          s.rot += s.rotSpeed;
+
+          if (s.y > H - 5) {
+            const idx = Math.floor(s.x / 4);
+            if (idx >= 0 && idx < accumulation.length) {
+              accumulation[idx] = Math.min(accumulation[idx] + s.size * 0.3, 40);
+              if (idx > 0) accumulation[idx - 1] = Math.min(accumulation[idx - 1] + s.size * 0.1, 40);
+              if (idx < accumulation.length - 1)
+                accumulation[idx + 1] = Math.min(accumulation[idx + 1] + s.size * 0.1, 40);
+            }
+            snowflakes[i] = createSnowflake();
+            continue;
+          }
+          if (s.x < -20) s.x = W + 20;
+          if (s.x > W + 20) s.x = -20;
+        }
+
+        for (let i = 0; i < accumulation.length; i++) {
+          if (accumulation[i] > 0.1) {
+            const left = accumulation[i - 1] || 0;
+            const right = accumulation[i + 1] || 0;
+            accumulation[i] += ((left + right) / 2) * 0.01 - accumulation[i] * 0.02;
+          }
+        }
+      }
+
+      function loop() {
+        drawBackground();
+        for (const s of snowflakes) drawSnowflake(s);
+        drawAccumulation();
+        update();
+        requestAnimationFrame(loop);
+      }
+
+      document.getElementById('wind').oninput = function () {
+        wind = parseFloat(this.value);
+        document.getElementById('windVal').textContent = wind.toFixed(1);
+      };
+      document.getElementById('density').oninput = function () {
+        targetCount = parseInt(this.value);
+        document.getElementById('densityVal').textContent = targetCount;
+      };
+
+      resize();
+      for (let i = 0; i < 150; i++) snowflakes.push(createSnowflake(false));
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Logo 绘制展示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        min-height: 100vh;
+        color: #fff;
+        padding: 40px 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.4rem;
+        margin-bottom: 8px;
+        background: linear-gradient(90deg, #ee0979, #ff6a00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .subtitle {
+        text-align: center;
+        color: #a8b2d1;
+        margin-bottom: 40px;
+      }
+      .logo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 24px;
+      }
+      .logo-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .logo-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-4px);
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+      }
+      .logo-card .label {
+        position: absolute;
+        top: 12px;
+        left: 16px;
+        font-size: 0.7rem;
+        color: #a8b2d1;
+        letter-spacing: 1px;
+      }
+      .logo-card svg {
+        max-width: 100%;
+        height: auto;
+      }
+      .logo-card .desc {
+        margin-top: 14px;
+        font-size: 0.85rem;
+        color: #c8d0e8;
+      }
+      .section-title {
+        font-size: 1.4rem;
+        margin: 40px 0 20px;
+        padding-left: 14px;
+        border-left: 4px solid #ee0979;
+      }
+      .info-bar {
+        background: rgba(238, 9, 121, 0.1);
+        border: 1px solid rgba(238, 9, 121, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        color: #ffb8d2;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+      /* Hover animation for the abstract logo */
+      @keyframes spin-pulse {
+        0% {
+          transform: rotate(0deg) scale(1);
+        }
+        50% {
+          transform: rotate(180deg) scale(1.08);
+        }
+        100% {
+          transform: rotate(360deg) scale(1);
+        }
+      }
+      @keyframes orbit {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .logo-anim-target {
+        cursor: pointer;
+        transition: transform 0.5s;
+      }
+      .logo-anim-target:hover {
+        animation: spin-pulse 2s ease-in-out;
+      }
+      .orbit-group {
+        transform-origin: center;
+        animation: orbit 8s linear infinite;
+      }
+      .float-anim {
+        animation: floaty 3s ease-in-out infinite;
+      }
+      @keyframes floaty {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>SVG Logo 绘制展示</h1>
+      <p class="subtitle">六款手绘矢量标志 · 徽章 / 字标 / 抽象 / 吉祥物 · 鼠标悬停体验动画</p>
+
+      <div class="info-bar">
+        提示：所有 Logo 均使用纯 SVG 路径、渐变、文字绘制。悬停第五款「抽象旋翼」可看到旋转脉冲动画。
+      </div>
+
+      <h2 class="section-title">Logo 作品集</h2>
+      <div class="logo-grid">
+        <!-- Logo 1: 徽章风格 - 咖啡品牌 -->
+        <div class="logo-card">
+          <span class="label">徽章 / EMBLEM</span>
+          <svg width="220" height="180" viewBox="0 0 220 180">
+            <defs>
+              <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8B5A2B" />
+                <stop offset="100%" stop-color="#3D2817" />
+              </linearGradient>
+            </defs>
+            <!-- Outer circle -->
+            <circle cx="110" cy="90" r="70" fill="url(#g1)" stroke="#D4A574" stroke-width="3" />
+            <circle cx="110" cy="90" r="62" fill="none" stroke="#D4A574" stroke-width="1" />
+            <!-- Coffee cup -->
+            <path d="M88 78 L88 105 Q88 115 98 115 L120 115 Q130 115 130 105 L130 78 Z" fill="#F5E6D3" />
+            <path d="M130 85 Q140 85 140 95 Q140 105 130 105" fill="none" stroke="#F5E6D3" stroke-width="3" />
+            <!-- Steam -->
+            <path
+              d="M98 70 Q95 65 98 60 Q101 55 98 50"
+              fill="none"
+              stroke="#F5E6D3"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.8"
+            />
+            <path
+              d="M108 70 Q105 65 108 60 Q111 55 108 50"
+              fill="none"
+              stroke="#F5E6D3"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.8"
+            />
+            <path
+              d="M118 70 Q115 65 118 60 Q121 55 118 50"
+              fill="none"
+              stroke="#F5E6D3"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.8"
+            />
+            <!-- Text on circle -->
+            <text
+              x="110"
+              y="148"
+              text-anchor="middle"
+              fill="#F5E6D3"
+              font-size="11"
+              font-weight="bold"
+              font-family="Georgia, serif"
+            >
+              醇香咖啡
+            </text>
+            <!-- Decorative -->
+            <circle cx="40" cy="90" r="3" fill="#D4A574" />
+            <circle cx="180" cy="90" r="3" fill="#D4A574" />
+          </svg>
+          <div class="desc">醇香咖啡 · 圆形徽章设计</div>
+        </div>
+
+        <!-- Logo 2: 字标 - 科技公司 -->
+        <div class="logo-card">
+          <span class="label">字标 / WORDMARK</span>
+          <svg width="280" height="100" viewBox="0 0 280 100">
+            <defs>
+              <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00d2ff" />
+                <stop offset="100%" stop-color="#3a7bd5" />
+              </linearGradient>
+            </defs>
+            <!-- Geometric icon next to text -->
+            <polygon points="20,30 50,15 50,75 20,90" fill="url(#g2)" />
+            <polygon points="50,15 80,30 80,90 50,75" fill="#3a7bd5" opacity="0.6" />
+            <polygon points="50,15 80,30 50,45 20,30" fill="#00d2ff" opacity="0.9" />
+            <!-- Text -->
+            <text x="95" y="50" fill="url(#g2)" font-size="34" font-weight="900" font-family="Arial, sans-serif">
+              NEXUS
+            </text>
+            <text
+              x="97"
+              y="72"
+              fill="#a8b2d1"
+              font-size="11"
+              font-weight="400"
+              font-family="Arial, sans-serif"
+              letter-spacing="4"
+            >
+              TECHNOLOGY
+            </text>
+            <line x1="95" y1="58" x2="245" y2="58" stroke="#3a7bd5" stroke-width="1" opacity="0.4" />
+          </svg>
+          <div class="desc">NEXUS · 立体几何字标</div>
+        </div>
+
+        <!-- Logo 3: 抽象 - 流动波形 -->
+        <div class="logo-card">
+          <span class="label">抽象 / ABSTRACT</span>
+          <svg width="260" height="140" viewBox="0 0 260 140">
+            <defs>
+              <linearGradient id="g3a" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#7F00FF" />
+                <stop offset="100%" stop-color="#E100FF" />
+              </linearGradient>
+              <linearGradient id="g3b" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#E100FF" />
+                <stop offset="100%" stop-color="#FF6B9D" />
+              </linearGradient>
+            </defs>
+            <!-- Flowing waves -->
+            <path
+              d="M20 80 Q60 40 100 80 T180 80 T260 80"
+              fill="none"
+              stroke="url(#g3a)"
+              stroke-width="6"
+              stroke-linecap="round"
+            />
+            <path
+              d="M20 60 Q60 20 100 60 T180 60 T260 60"
+              fill="none"
+              stroke="url(#g3b)"
+              stroke-width="6"
+              stroke-linecap="round"
+              opacity="0.7"
+            />
+            <path
+              d="M20 100 Q60 60 100 100 T180 100 T260 100"
+              fill="none"
+              stroke="url(#g3a)"
+              stroke-width="6"
+              stroke-linecap="round"
+              opacity="0.5"
+            />
+            <!-- Text -->
+            <text
+              x="130"
+              y="130"
+              text-anchor="middle"
+              fill="#E100FF"
+              font-size="20"
+              font-weight="bold"
+              font-family="Arial, sans-serif"
+              letter-spacing="2"
+            >
+              FLUX 设计
+            </text>
+          </svg>
+          <div class="desc">FLUX · 流动波形抽象</div>
+        </div>
+
+        <!-- Logo 4: 吉祥物 - 狐狸 -->
+        <div class="logo-card">
+          <span class="label">吉祥物 / MASCOT</span>
+          <svg width="200" height="180" viewBox="0 0 200 180">
+            <defs>
+              <linearGradient id="g4" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FF8C42" />
+                <stop offset="100%" stop-color="#E55934" />
+              </linearGradient>
+            </defs>
+            <!-- Fox ears -->
+            <polygon points="55,55 70,15 90,50" fill="url(#g4)" />
+            <polygon points="145,55 130,15 110,50" fill="url(#g4)" />
+            <polygon points="62,50 72,28 82,48" fill="#FFD3B6" />
+            <polygon points="138,50 128,28 118,48" fill="#FFD3B6" />
+            <!-- Head -->
+            <ellipse cx="100" cy="85" rx="50" ry="45" fill="url(#g4)" />
+            <!-- White face -->
+            <path d="M70 90 Q100 130 130 90 Q100 105 70 90 Z" fill="#FFF5E6" />
+            <!-- Eyes -->
+            <ellipse cx="82" cy="78" rx="5" ry="6" fill="#2C1810" />
+            <ellipse cx="118" cy="78" rx="5" ry="6" fill="#2C1810" />
+            <circle cx="83" cy="76" r="1.5" fill="#fff" />
+            <circle cx="119" cy="76" r="1.5" fill="#fff" />
+            <!-- Nose -->
+            <ellipse cx="100" cy="95" rx="4" ry="3" fill="#2C1810" />
+            <!-- Mouth -->
+            <path
+              d="M100 98 Q95 105 90 102 M100 98 Q105 105 110 102"
+              fill="none"
+              stroke="#2C1810"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <!-- Body hint -->
+            <path d="M60 130 Q100 160 140 130 L140 175 L60 175 Z" fill="url(#g4)" />
+            <!-- Text -->
+            <text
+              x="100"
+              y="172"
+              text-anchor="middle"
+              fill="#fff"
+              font-size="13"
+              font-weight="bold"
+              font-family="Arial, sans-serif"
+            >
+              小狐科技
+            </text>
+          </svg>
+          <div class="desc">小狐科技 · 卡通吉祥物</div>
+        </div>
+
+        <!-- Logo 5: 抽象旋翼 - 悬停动画 -->
+        <div class="logo-card">
+          <span class="label">抽象 / 动画 (悬停)</span>
+          <svg width="200" height="180" viewBox="0 0 200 180" class="logo-anim-target">
+            <defs>
+              <linearGradient id="g5a" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00F5A0" />
+                <stop offset="100%" stop-color="#00D9F5" />
+              </linearGradient>
+              <linearGradient id="g5b" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00D9F5" />
+                <stop offset="100%" stop-color="#5B86E5" />
+              </linearGradient>
+            </defs>
+            <!-- Outer ring -->
+            <circle cx="100" cy="85" r="60" fill="none" stroke="url(#g5a)" stroke-width="2" opacity="0.4" />
+            <!-- Three blades -->
+            <g class="float-anim" style="transform-origin: 100px 85px">
+              <path d="M100 85 L100 35 Q120 40 115 60 Z" fill="url(#g5a)" />
+              <path d="M100 85 L143 110 Q130 125 115 110 Z" fill="url(#g5b)" />
+              <path d="M100 85 L57 110 Q70 125 85 110 Z" fill="url(#g5a)" />
+              <circle cx="100" cy="85" r="10" fill="#fff" />
+              <circle cx="100" cy="85" r="5" fill="#5B86E5" />
+            </g>
+            <text
+              x="100"
+              y="168"
+              text-anchor="middle"
+              fill="#00F5A0"
+              font-size="16"
+              font-weight="bold"
+              font-family="Arial, sans-serif"
+              letter-spacing="3"
+            >
+              AERO
+            </text>
+          </svg>
+          <div class="desc">AERO · 旋翼抽象 (悬停旋转)</div>
+        </div>
+
+        <!-- Logo 6: 字母组合 - 优雅 -->
+        <div class="logo-card">
+          <span class="label">字母 / MONOGRAM</span>
+          <svg width="220" height="180" viewBox="0 0 220 180">
+            <defs>
+              <linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F8B500" />
+                <stop offset="100%" stop-color="#FCEABB" />
+              </linearGradient>
+              <linearGradient id="g6b" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#1A1A2E" />
+                <stop offset="100%" stop-color="#16213E" />
+              </linearGradient>
+            </defs>
+            <!-- Hexagon background -->
+            <polygon
+              points="110,15 185,55 185,135 110,175 35,135 35,55"
+              fill="url(#g6b)"
+              stroke="url(#g6)"
+              stroke-width="3"
+            />
+            <polygon
+              points="110,25 175,60 175,130 110,165 45,130 45,60"
+              fill="none"
+              stroke="url(#g6)"
+              stroke-width="1"
+              opacity="0.5"
+            />
+            <!-- Monogram letters LB -->
+            <text
+              x="110"
+              y="105"
+              text-anchor="middle"
+              fill="url(#g6)"
+              font-size="58"
+              font-weight="900"
+              font-family="Georgia, serif"
+              font-style="italic"
+            >
+              LB
+            </text>
+            <line x1="60" y1="125" x2="160" y2="125" stroke="url(#g6)" stroke-width="1" />
+            <text
+              x="110"
+              y="145"
+              text-anchor="middle"
+              fill="#F8B500"
+              font-size="9"
+              letter-spacing="3"
+              font-family="Arial, sans-serif"
+            >
+              LUXURY BRAND
+            </text>
+          </svg>
+          <div class="desc">LB · 奢华字母组合</div>
+        </div>
+
+        <!-- Logo 7: 几何 - 房地产 -->
+        <div class="logo-card">
+          <span class="label">几何 / GEOMETRIC</span>
+          <svg width="240" height="160" viewBox="0 0 240 160">
+            <defs>
+              <linearGradient id="g7" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#11998e" />
+                <stop offset="100%" stop-color="#38ef7d" />
+              </linearGradient>
+            </defs>
+            <!-- Building blocks -->
+            <rect x="60" y="60" width="30" height="70" fill="url(#g7)" opacity="0.6" />
+            <rect x="92" y="40" width="36" height="90" fill="url(#g7)" />
+            <rect x="130" y="55" width="30" height="75" fill="url(#g7)" opacity="0.8" />
+            <!-- Windows pattern -->
+            <g fill="#fff" opacity="0.9">
+              <rect x="97" y="50" width="6" height="6" />
+              <rect x="108" y="50" width="6" height="6" />
+              <rect x="119" y="50" width="6" height="6" />
+              <rect x="97" y="62" width="6" height="6" />
+              <rect x="108" y="62" width="6" height="6" />
+              <rect x="119" y="62" width="6" height="6" />
+              <rect x="97" y="74" width="6" height="6" />
+              <rect x="108" y="74" width="6" height="6" />
+              <rect x="119" y="74" width="6" height="6" />
+            </g>
+            <!-- Sun/roof circle -->
+            <circle cx="155" cy="40" r="14" fill="#FFD700" opacity="0.85" />
+            <!-- Ground line -->
+            <line x1="40" y1="132" x2="200" y2="132" stroke="url(#g7)" stroke-width="2" />
+            <!-- Text -->
+            <text
+              x="120"
+              y="152"
+              text-anchor="middle"
+              fill="#11998e"
+              font-size="14"
+              font-weight="bold"
+              font-family="Arial, sans-serif"
+            >
+              绿洲地产
+            </text>
+          </svg>
+          <div class="desc">绿洲地产 · 建筑几何</div>
+        </div>
+
+        <!-- Logo 8: 圆形印章 -->
+        <div class="logo-card">
+          <span class="label">印章 / STAMP</span>
+          <svg width="180" height="180" viewBox="0 0 180 180">
+            <defs>
+              <radialGradient id="g8">
+                <stop offset="0%" stop-color="#ff416c" />
+                <stop offset="100%" stop-color="#ff4b2b" />
+              </radialGradient>
+            </defs>
+            <!-- Outer double ring -->
+            <circle cx="90" cy="90" r="78" fill="none" stroke="url(#g8)" stroke-width="3" />
+            <circle cx="90" cy="90" r="72" fill="none" stroke="url(#g8)" stroke-width="1" />
+            <!-- Inner star -->
+            <polygon points="90,40 100,72 132,72 106,92 116,124 90,104 64,124 74,92 48,72 80,72" fill="url(#g8)" />
+            <!-- Banner -->
+            <path d="M30 130 L150 130 L140 150 L40 150 Z" fill="url(#g8)" />
+            <text
+              x="90"
+              y="145"
+              text-anchor="middle"
+              fill="#fff"
+              font-size="11"
+              font-weight="bold"
+              font-family="Arial, sans-serif"
+            >
+              优质认证
+            </text>
+            <!-- Surrounding text marks -->
+            <circle cx="90" cy="20" r="3" fill="url(#g8)" />
+            <circle cx="90" cy="160" r="3" fill="url(#g8)" />
+            <circle cx="20" cy="90" r="3" fill="url(#g8)" />
+            <circle cx="160" cy="90" r="3" fill="url(#g8)" />
+          </svg>
+          <div class="desc">优质认证 · 圆形印章</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

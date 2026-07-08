@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas 火焰效果</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0a0604;
+      }
+      canvas {
+        display: block;
+        cursor: pointer;
+      }
+      .ui {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        color: #ffb070;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        line-height: 1.9;
+        text-shadow: 0 0 8px rgba(255, 100, 30, 0.7);
+        pointer-events: none;
+      }
+      .ui b {
+        color: #ffe080;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div class="ui">
+      <b>烈焰熊熊</b>
+      <br />
+      移动鼠标 — 移动火源
+      <br />
+      点击 — 引爆火球
+    </div>
+    <script>
+      const canvas = document.getElementById('c');
+      const ctx = canvas.getContext('2d');
+      let W, H;
+      const particles = [];
+      const embers = [];
+      const mouse = { x: 0, y: 0, active: false };
+      let fireX, fireY;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        fireX = W / 2;
+        fireY = H * 0.75;
+        mouse.x = fireX;
+        mouse.y = fireY;
+      }
+      window.addEventListener('resize', resize);
+
+      function rand(a, b) {
+        return a + Math.random() * (b - a);
+      }
+
+      function spawnParticle() {
+        const spread = 80;
+        const x = fireX + rand(-spread, spread);
+        const y = fireY + rand(-5, 5);
+        const size = rand(15, 35);
+        particles.push({
+          x,
+          y,
+          vx: rand(-0.5, 0.5) + (fireX - W / 2) * 0.001,
+          vy: rand(-2.5, -1.5),
+          size: size,
+          life: 1,
+          decay: rand(0.008, 0.016),
+          hue: rand(10, 50),
+          flicker: Math.random() * Math.PI * 2,
+        });
+      }
+
+      function spawnEmber() {
+        if (Math.random() < 0.3) {
+          embers.push({
+            x: fireX + rand(-60, 60),
+            y: fireY,
+            vx: rand(-0.8, 0.8),
+            vy: rand(-4, -2),
+            size: rand(0.8, 2),
+            life: 1,
+            decay: rand(0.004, 0.009),
+          });
+        }
+      }
+
+      function update() {
+        const spawnRate = 8;
+        for (let i = 0; i < spawnRate; i++) spawnParticle();
+        spawnEmber();
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.flicker += 0.3;
+          p.x += p.vx + Math.sin(p.flicker) * 0.3;
+          p.y += p.vy;
+          p.vy *= 0.99;
+          p.size *= 0.98;
+          p.life -= p.decay;
+          p.hue = Math.max(0, p.hue - 0.3);
+          if (p.life <= 0 || p.size < 0.5) particles.splice(i, 1);
+        }
+
+        for (let i = embers.length - 1; i >= 0; i--) {
+          const e = embers[i];
+          e.x += e.vx;
+          e.y += e.vy;
+          e.vy += 0.02;
+          e.life -= e.decay;
+          if (e.life <= 0) embers.splice(i, 1);
+        }
+      }
+
+      function drawBackground() {
+        const g = ctx.createRadialGradient(fireX, fireY, 0, fireX, fireY, Math.max(W, H) * 0.6);
+        g.addColorStop(0, '#1a0a04');
+        g.addColorStop(0.4, '#0d0604');
+        g.addColorStop(1, '#000000');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = '#1a0e06';
+        ctx.fillRect(0, fireY + 10, W, H);
+
+        const groundGlow = ctx.createRadialGradient(fireX, fireY, 0, fireX, fireY, 250);
+        groundGlow.addColorStop(0, 'rgba(255,120,30,0.25)');
+        groundGlow.addColorStop(1, 'rgba(255,120,30,0)');
+        ctx.fillStyle = groundGlow;
+        ctx.beginPath();
+        ctx.ellipse(fireX, fireY + 5, 200, 40, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        const logs = [
+          { x: fireX - 50, y: fireY + 8, w: 100, h: 8, rot: 0.1 },
+          { x: fireX - 40, y: fireY + 2, w: 80, h: 7, rot: -0.08 },
+          { x: fireX - 30, y: fireY - 3, w: 60, h: 6, rot: 0.05 },
+        ];
+        for (const log of logs) {
+          ctx.save();
+          ctx.translate(log.x + log.w / 2, log.y);
+          ctx.rotate(log.rot);
+          const lg = ctx.createLinearGradient(0, 0, 0, log.h);
+          lg.addColorStop(0, '#3a2410');
+          lg.addColorStop(0.5, '#5a3820');
+          lg.addColorStop(1, '#2a1808');
+          ctx.fillStyle = lg;
+          ctx.fillRect(-log.w / 2, 0, log.w, log.h);
+          ctx.fillStyle = 'rgba(255,100,20,0.4)';
+          ctx.fillRect(-log.w / 2, 0, log.w, 2);
+          ctx.restore();
+        }
+      }
+
+      function draw() {
+        ctx.globalCompositeOperation = 'source-over';
+        drawBackground();
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (const p of particles) {
+          const r = Math.max(1, p.size);
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+          if (p.life > 0.7) {
+            g.addColorStop(0, `rgba(255,255,220,${p.life * 0.8})`);
+            g.addColorStop(0.3, `rgba(255,220,120,${p.life * 0.6})`);
+            g.addColorStop(0.6, `rgba(255,140,30,${p.life * 0.4})`);
+            g.addColorStop(1, 'rgba(120,20,0,0)');
+          } else if (p.life > 0.4) {
+            g.addColorStop(0, `rgba(255,200,80,${p.life * 0.7})`);
+            g.addColorStop(0.4, `rgba(255,120,30,${p.life * 0.5})`);
+            g.addColorStop(1, 'rgba(120,20,0,0)');
+          } else {
+            g.addColorStop(0, `rgba(255,80,20,${p.life * 0.6})`);
+            g.addColorStop(0.5, `rgba(180,40,10,${p.life * 0.4})`);
+            g.addColorStop(1, 'rgba(60,10,0,0)');
+          }
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        for (const e of embers) {
+          const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, Math.max(1, e.size * 3));
+          g.addColorStop(0, `rgba(255,220,120,${e.life})`);
+          g.addColorStop(1, 'rgba(255,100,20,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.size * 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = `rgba(255,240,180,${e.life})`;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      function loop() {
+        if (mouse.active) {
+          fireX += (mouse.x - fireX) * 0.1;
+          fireY += (mouse.y - fireY) * 0.1;
+        }
+        update();
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      canvas.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = Math.min(e.clientY, H - 100);
+        mouse.active = true;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        mouse.active = false;
+      });
+      canvas.addEventListener('click', (e) => {
+        for (let i = 0; i < 40; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const sp = rand(2, 6);
+          embers.push({
+            x: e.clientX,
+            y: e.clientY,
+            vx: Math.cos(a) * sp,
+            vy: Math.sin(a) * sp - 2,
+            size: rand(1, 3),
+            life: 1,
+            decay: rand(0.008, 0.015),
+          });
+        }
+      });
+
+      resize();
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+</html>

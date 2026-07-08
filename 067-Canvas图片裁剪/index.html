@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas图片裁剪</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #1e1e2e;
+        color: #eee;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+        color: #00d4ff;
+        margin-bottom: 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .toolbar {
+        background: #2a2a3e;
+        border: 1px solid #3a3a5e;
+        border-radius: 10px;
+        padding: 14px 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      button {
+        background: #3a3a5e;
+        color: #fff;
+        border: none;
+        padding: 9px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      button:hover {
+        background: #4a4a7e;
+        transform: translateY(-1px);
+      }
+      button.primary {
+        background: linear-gradient(135deg, #00d4ff, #0099cc);
+      }
+      button.primary:hover {
+        background: linear-gradient(135deg, #00e4ff, #00aacc);
+      }
+      button.success {
+        background: #2ecc71;
+      }
+      button.danger {
+        background: #e74c3c;
+      }
+      .info {
+        color: #aaa;
+        font-size: 13px;
+        margin-left: auto;
+      }
+      .panels {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .panel {
+        flex: 1;
+        min-width: 320px;
+        background: #2a2a3e;
+        border: 1px solid #3a3a5e;
+        border-radius: 10px;
+        padding: 14px;
+      }
+      .panel-title {
+        color: #00d4ff;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .canvas-wrapper {
+        position: relative;
+        background: #000;
+        border-radius: 6px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+      }
+      canvas {
+        display: block;
+        cursor: crosshair;
+        max-width: 100%;
+      }
+      .crop-info {
+        color: #888;
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      .empty-result {
+        color: #666;
+        text-align: center;
+        padding: 60px 20px;
+        font-size: 14px;
+      }
+      .instructions {
+        background: #2a2a3e;
+        border: 1px solid #3a3a5e;
+        border-radius: 8px;
+        padding: 12px 18px;
+        margin-bottom: 14px;
+        color: #aaa;
+        font-size: 13px;
+      }
+      .instructions strong {
+        color: #00d4ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Canvas图片裁剪工具</h1>
+      <div class="instructions">
+        <strong>使用说明:</strong>
+        在左侧图片上按住鼠标拖动选择裁剪区域，可拖动选框调整位置，拖动边角调整大小。点击"裁剪"按钮查看结果。
+      </div>
+      <div class="toolbar">
+        <button class="primary" id="loadBtn">加载新图片</button>
+        <button class="success" id="cropBtn">裁剪选区</button>
+        <button id="resetSelBtn">重置选区</button>
+        <button class="danger" id="clearSelBtn">清除选区</button>
+        <span class="info" id="info">提示: 拖动鼠标创建选区</span>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-title">
+            <span>原始图片</span>
+            <span id="origSize"></span>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="srcCanvas" width="560" height="380"></canvas>
+          </div>
+          <div class="crop-info" id="selInfo">未选择区域</div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>裁剪结果</span>
+            <span id="resultSize"></span>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="resultCanvas" width="560" height="380"></canvas>
+          </div>
+          <div class="crop-info" id="resultInfo">点击"裁剪选区"按钮查看结果</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const srcCanvas = document.getElementById('srcCanvas');
+        const srcCtx = srcCanvas.getContext('2d');
+        const resultCanvas = document.getElementById('resultCanvas');
+        const resultCtx = resultCanvas.getContext('2d');
+        const info = document.getElementById('info');
+        const selInfo = document.getElementById('selInfo');
+        const resultInfo = document.getElementById('resultInfo');
+        const origSize = document.getElementById('origSize');
+        const resultSize = document.getElementById('resultSize');
+        const loadBtn = document.getElementById('loadBtn');
+        const cropBtn = document.getElementById('cropBtn');
+        const resetSelBtn = document.getElementById('resetSelBtn');
+        const clearSelBtn = document.getElementById('clearSelBtn');
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        let imgLoaded = false;
+        // 选区 {x, y, w, h}
+        let sel = null;
+        let mode = null; // 'create', 'move', 'resize'
+        let dragStart = null;
+        let resizeHandle = null;
+        let selStart = null;
+
+        function loadImage(seed) {
+          const s = seed || Math.floor(Math.random() * 1000);
+          img.onload = function () {
+            imgLoaded = true;
+            // 居中绘制
+            drawSource();
+            origSize.textContent = img.width + ' x ' + img.height;
+            info.textContent = '图片已加载，拖动鼠标创建选区';
+          };
+          img.onerror = function () {
+            info.textContent = '图片加载失败，请重试';
+          };
+          info.textContent = '正在加载图片...';
+          img.src = 'https://picsum.photos/seed/' + s + '/800/600.jpg';
+        }
+
+        function drawSource() {
+          srcCtx.clearRect(0, 0, srcCanvas.width, srcCanvas.height);
+          if (!imgLoaded) return;
+          const ratio = Math.min(srcCanvas.width / img.width, srcCanvas.height / img.height);
+          const w = img.width * ratio;
+          const h = img.height * ratio;
+          const x = (srcCanvas.width - w) / 2;
+          const y = (srcCanvas.height - h) / 2;
+          srcCtx.drawImage(img, x, y, w, h);
+
+          // 绘制选区
+          if (sel) {
+            // 遮罩
+            srcCtx.fillStyle = 'rgba(0,0,0,0.5)';
+            srcCtx.fillRect(0, 0, srcCanvas.width, srcCanvas.height);
+            // 清除选区内
+            srcCtx.clearRect(sel.x, sel.y, sel.w, sel.h);
+            srcCtx.drawImage(img, x, y, w, h, sel.x, sel.y, sel.w, sel.h);
+            // 但需要只显示选区内的图，重画遮罩外
+            // 上面的做法有问题，重新来
+          }
+        }
+
+        // 改进的绘制方法
+        function redraw() {
+          srcCtx.clearRect(0, 0, srcCanvas.width, srcCanvas.height);
+          if (!imgLoaded) return;
+          const ratio = Math.min(srcCanvas.width / img.width, srcCanvas.height / img.height);
+          const w = img.width * ratio;
+          const h = img.height * ratio;
+          const x = (srcCanvas.width - w) / 2;
+          const y = (srcCanvas.height - h) / 2;
+          srcCtx.drawImage(img, x, y, w, h);
+
+          if (sel && sel.w > 0 && sel.h > 0) {
+            // 暗化非选区
+            srcCtx.fillStyle = 'rgba(0,0,0,0.55)';
+            // 上
+            srcCtx.fillRect(0, 0, srcCanvas.width, sel.y);
+            // 下
+            srcCtx.fillRect(0, sel.y + sel.h, srcCanvas.width, srcCanvas.height - sel.y - sel.h);
+            // 左
+            srcCtx.fillRect(0, sel.y, sel.x, sel.h);
+            // 右
+            srcCtx.fillRect(sel.x + sel.w, sel.y, srcCanvas.width - sel.x - sel.w, sel.h);
+
+            // 选区边框
+            srcCtx.strokeStyle = '#00d4ff';
+            srcCtx.lineWidth = 2;
+            srcCtx.strokeRect(sel.x, sel.y, sel.w, sel.h);
+
+            // 九宫格线
+            srcCtx.strokeStyle = 'rgba(255,255,255,0.4)';
+            srcCtx.lineWidth = 1;
+            for (let i = 1; i < 3; i++) {
+              srcCtx.beginPath();
+              srcCtx.moveTo(sel.x + (sel.w * i) / 3, sel.y);
+              srcCtx.lineTo(sel.x + (sel.w * i) / 3, sel.y + sel.h);
+              srcCtx.stroke();
+              srcCtx.beginPath();
+              srcCtx.moveTo(sel.x, sel.y + (sel.h * i) / 3);
+              srcCtx.lineTo(sel.x + sel.w, sel.y + (sel.h * i) / 3);
+              srcCtx.stroke();
+            }
+
+            // 8个调整手柄
+            const handles = getHandles();
+            srcCtx.fillStyle = '#00d4ff';
+            handles.forEach(function (hd) {
+              srcCtx.fillRect(hd.x - 5, hd.y - 5, 10, 10);
+            });
+          }
+        }
+
+        function getHandles() {
+          if (!sel) return [];
+          return [
+            { name: 'nw', x: sel.x, y: sel.y },
+            { name: 'n', x: sel.x + sel.w / 2, y: sel.y },
+            { name: 'ne', x: sel.x + sel.w, y: sel.y },
+            { name: 'e', x: sel.x + sel.w, y: sel.y + sel.h / 2 },
+            { name: 'se', x: sel.x + sel.w, y: sel.y + sel.h },
+            { name: 's', x: sel.x + sel.w / 2, y: sel.y + sel.h },
+            { name: 'sw', x: sel.x, y: sel.y + sel.h },
+            { name: 'w', x: sel.x, y: sel.y + sel.h / 2 },
+          ];
+        }
+
+        function getPos(e) {
+          const rect = srcCanvas.getBoundingClientRect();
+          const scaleX = srcCanvas.width / rect.width;
+          const scaleY = srcCanvas.height / rect.height;
+          return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY,
+          };
+        }
+
+        function hitHandle(p) {
+          if (!sel) return null;
+          const handles = getHandles();
+          for (let i = 0; i < handles.length; i++) {
+            const hd = handles[i];
+            if (Math.abs(p.x - hd.x) <= 8 && Math.abs(p.y - hd.y) <= 8) {
+              return hd.name;
+            }
+          }
+          return null;
+        }
+
+        function inSel(p) {
+          if (!sel) return false;
+          return p.x >= sel.x && p.x <= sel.x + sel.w && p.y >= sel.y && p.y <= sel.y + sel.h;
+        }
+
+        function normalizeSel() {
+          if (sel.w < 0) {
+            sel.x += sel.w;
+            sel.w = -sel.w;
+          }
+          if (sel.h < 0) {
+            sel.y += sel.h;
+            sel.h = -sel.h;
+          }
+        }
+
+        srcCanvas.addEventListener('mousedown', function (e) {
+          const p = getPos(e);
+          const hd = hitHandle(p);
+          if (hd) {
+            mode = 'resize';
+            resizeHandle = hd;
+            selStart = { x: sel.x, y: sel.y, w: sel.w, h: sel.h };
+            dragStart = p;
+          } else if (inSel(p)) {
+            mode = 'move';
+            dragStart = p;
+            selStart = { x: sel.x, y: sel.y };
+          } else {
+            mode = 'create';
+            sel = { x: p.x, y: p.y, w: 0, h: 0 };
+            dragStart = p;
+          }
+        });
+
+        srcCanvas.addEventListener('mousemove', function (e) {
+          const p = getPos(e);
+          // 更新光标
+          if (!mode) {
+            const hd = hitHandle(p);
+            if (hd) {
+              const cursors = {
+                nw: 'nwse-resize',
+                se: 'nwse-resize',
+                ne: 'nesw-resize',
+                sw: 'nesw-resize',
+                n: 'ns-resize',
+                s: 'ns-resize',
+                e: 'ew-resize',
+                w: 'ew-resize',
+              };
+              srcCanvas.style.cursor = cursors[hd];
+            } else if (inSel(p)) {
+              srcCanvas.style.cursor = 'move';
+            } else {
+              srcCanvas.style.cursor = 'crosshair';
+            }
+            return;
+          }
+
+          if (mode === 'create') {
+            sel.w = p.x - dragStart.x;
+            sel.h = p.y - dragStart.y;
+            // 实时归一化显示
+            const tmp = { x: sel.x, y: sel.y, w: sel.w, h: sel.h };
+            if (tmp.w < 0) {
+              tmp.x += tmp.w;
+              tmp.w = -tmp.w;
+            }
+            if (tmp.h < 0) {
+              tmp.y += tmp.h;
+              tmp.h = -tmp.h;
+            }
+            selInfo.textContent =
+              '选区: x=' +
+              Math.round(tmp.x) +
+              ', y=' +
+              Math.round(tmp.y) +
+              ', 宽=' +
+              Math.round(tmp.w) +
+              ', 高=' +
+              Math.round(tmp.h);
+          } else if (mode === 'move') {
+            const dx = p.x - dragStart.x;
+            const dy = p.y - dragStart.y;
+            sel.x = selStart.x + dx;
+            sel.y = selStart.y + dy;
+            // 限制在画布内
+            sel.x = Math.max(0, Math.min(srcCanvas.width - sel.w, sel.x));
+            sel.y = Math.max(0, Math.min(srcCanvas.height - sel.h, sel.y));
+            selInfo.textContent =
+              '选区: x=' +
+              Math.round(sel.x) +
+              ', y=' +
+              Math.round(sel.y) +
+              ', 宽=' +
+              Math.round(sel.w) +
+              ', 高=' +
+              Math.round(sel.h);
+          } else if (mode === 'resize') {
+            const dx = p.x - dragStart.x;
+            const dy = p.y - dragStart.y;
+            const s = selStart;
+            if (resizeHandle.indexOf('w') >= 0) {
+              sel.x = s.x + dx;
+              sel.w = s.w - dx;
+            }
+            if (resizeHandle.indexOf('e') >= 0) {
+              sel.w = s.w + dx;
+            }
+            if (resizeHandle.indexOf('n') >= 0) {
+              sel.y = s.y + dy;
+              sel.h = s.h - dy;
+            }
+            if (resizeHandle.indexOf('s') >= 0) {
+              sel.h = s.h + dy;
+            }
+            normalizeSel();
+            selInfo.textContent =
+              '选区: x=' +
+              Math.round(sel.x) +
+              ', y=' +
+              Math.round(sel.y) +
+              ', 宽=' +
+              Math.round(sel.w) +
+              ', 高=' +
+              Math.round(sel.h);
+          }
+          redraw();
+        });
+
+        srcCanvas.addEventListener('mouseup', function () {
+          if (mode === 'create') {
+            normalizeSel();
+            if (sel.w < 10 || sel.h < 10) {
+              sel = null;
+              selInfo.textContent = '选区太小，已清除';
+            }
+          }
+          mode = null;
+          resizeHandle = null;
+          redraw();
+        });
+
+        srcCanvas.addEventListener('mouseleave', function () {
+          if (mode === 'create') {
+            normalizeSel();
+            if (sel.w < 10 || sel.h < 10) {
+              sel = null;
+            }
+          }
+          mode = null;
+          redraw();
+        });
+
+        loadBtn.addEventListener('click', function () {
+          sel = null;
+          selInfo.textContent = '未选择区域';
+          resultCtx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+          resultInfo.textContent = '点击"裁剪选区"按钮查看结果';
+          loadImage();
+        });
+
+        cropBtn.addEventListener('click', function () {
+          if (!sel) {
+            info.textContent = '请先在图片上拖动创建选区';
+            return;
+          }
+          if (!imgLoaded) {
+            info.textContent = '图片尚未加载';
+            return;
+          }
+          // 从原始画布中提取选区像素
+          const imgData = srcCtx.getImageData(sel.x, sel.y, sel.w, sel.h);
+          // 结果画布
+          resultCanvas.width = sel.w;
+          resultCanvas.height = sel.h;
+          resultCtx.putImageData(imgData, 0, 0);
+          resultSize.textContent = sel.w + ' x ' + sel.h;
+          resultInfo.textContent = '裁剪成功！尺寸: ' + Math.round(sel.w) + ' x ' + Math.round(sel.h);
+          info.textContent = '裁剪完成';
+        });
+
+        resetSelBtn.addEventListener('click', function () {
+          if (imgLoaded) {
+            sel = { x: 20, y: 20, w: srcCanvas.width - 40, h: srcCanvas.height - 40 };
+            redraw();
+            selInfo.textContent = '选区: x=20, y=20, 宽=' + (srcCanvas.width - 40) + ', 高=' + (srcCanvas.height - 40);
+          }
+        });
+
+        clearSelBtn.addEventListener('click', function () {
+          sel = null;
+          selInfo.textContent = '未选择区域';
+          redraw();
+        });
+
+        // 初始加载
+        loadImage(42);
+      })();
+    </script>
+  </body>
+</html>

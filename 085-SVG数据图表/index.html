@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 数据图表仪表盘</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        min-height: 100vh;
+        color: #e2e8f0;
+        padding: 30px 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      h1 {
+        font-size: 2rem;
+        background: linear-gradient(90deg, #06b6d4, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .header .meta {
+        color: #94a3b8;
+        font-size: 0.9rem;
+      }
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 18px;
+      }
+      .stat-card .label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+      .stat-card .value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .stat-card .change {
+        font-size: 0.8rem;
+        margin-top: 4px;
+      }
+      .up {
+        color: #10b981;
+      }
+      .down {
+        color: #ef4444;
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .chart-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 24px;
+      }
+      .chart-card.full {
+        grid-column: 1 / -1;
+      }
+      .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #fff;
+      }
+      .chart-subtitle {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-bottom: 18px;
+      }
+      .chart-card svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .legend {
+        display: flex;
+        gap: 18px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        color: #cbd5e0;
+      }
+      .legend-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+      }
+
+      .donut-center {
+        fill: #fff;
+        font-weight: 700;
+        text-anchor: middle;
+      }
+      .donut-slice {
+        transition: transform 0.3s;
+        cursor: pointer;
+        transform-origin: center;
+      }
+      .donut-slice:hover {
+        transform: scale(1.05);
+      }
+
+      .bar {
+        transition: opacity 0.3s;
+        cursor: pointer;
+      }
+      .bar:hover {
+        opacity: 0.8;
+      }
+      .bar-label {
+        fill: #94a3b8;
+        font-size: 11px;
+        text-anchor: middle;
+      }
+      .bar-value {
+        fill: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .grid-line {
+        stroke: rgba(255, 255, 255, 0.08);
+        stroke-width: 1;
+      }
+      .axis-label {
+        fill: #94a3b8;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div>
+          <h1>2024 年度销售数据仪表盘</h1>
+          <div class="meta">数据周期：2024年1月 - 12月 · 单位：万元</div>
+        </div>
+        <div class="meta">更新时间：2025-01-15</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="label">总销售额</div>
+          <div class="value">¥8,456</div>
+          <div class="change up">↑ 23.5% 同比去年</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">订单数量</div>
+          <div class="value">12,847</div>
+          <div class="change up">↑ 15.2% 同比去年</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">平均客单价</div>
+          <div class="value">¥658</div>
+          <div class="change up">↑ 7.1% 同比去年</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">退货率</div>
+          <div class="value">3.2%</div>
+          <div class="change down">↓ 1.4% 同比去年</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Donut chart -->
+        <div class="chart-card">
+          <div class="chart-title">品类销售占比</div>
+          <div class="chart-subtitle">各类商品销售额分布</div>
+          <svg viewBox="0 0 320 260" id="donutSvg">
+            <g id="donutGroup" transform="translate(110 130)"></g>
+            <text x="110" y="125" class="donut-center" font-size="22" id="donutTotal">8456</text>
+            <text x="110" y="145" class="donut-center" font-size="11" fill="#94a3b8">总销售额</text>
+          </svg>
+          <div class="legend" id="donutLegend"></div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="chart-card">
+          <div class="chart-title">月度销售趋势</div>
+          <div class="chart-subtitle">2024 年每月销售额（万元）</div>
+          <svg viewBox="0 0 400 260" id="barSvg"></svg>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-swatch" style="background: #06b6d4"></div>
+              销售额
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Line chart full width -->
+      <div class="chart-card full">
+        <div class="chart-title">季度业绩对比</div>
+        <div class="chart-subtitle">2023 vs 2024 各季度营收对比（万元）</div>
+        <svg viewBox="0 0 700 280" id="lineSvg"></svg>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #06b6d4"></div>
+            2024年
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #f59e0b"></div>
+            2023年
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ============ Donut Chart ============
+      const donutData = [
+        { name: '电子产品', value: 3200, color: '#06b6d4' },
+        { name: '服装鞋帽', value: 2400, color: '#3b82f6' },
+        { name: '食品生鲜', value: 1500, color: '#10b981' },
+        { name: '家居用品', value: 900, color: '#f59e0b' },
+        { name: '其他', value: 456, color: '#ef4444' },
+      ];
+      const donutTotal = donutData.reduce((s, d) => s + d.value, 0);
+      let donutAngle = -90;
+      const donutGroup = document.getElementById('donutGroup');
+      const donutLegend = document.getElementById('donutLegend');
+      const r1 = 70,
+        r2 = 95;
+
+      donutData.forEach((d, i) => {
+        const pct = d.value / donutTotal;
+        const angleSpan = pct * 360;
+        const startA = donutAngle;
+        const endA = donutAngle + angleSpan;
+        donutAngle = endA;
+
+        const startRad = (startA * Math.PI) / 180;
+        const endRad = (endA * Math.PI) / 180;
+        const x1 = r2 * Math.cos(startRad),
+          y1 = r2 * Math.sin(startRad);
+        const x2 = r2 * Math.cos(endRad),
+          y2 = r2 * Math.sin(endRad);
+        const x3 = r1 * Math.cos(endRad),
+          y3 = r1 * Math.sin(endRad);
+        const x4 = r1 * Math.cos(startRad),
+          y4 = r1 * Math.sin(startRad);
+        const large = angleSpan > 180 ? 1 : 0;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute(
+          'd',
+          `M ${x1} ${y1} A ${r2} ${r2} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${r1} ${r1} 0 ${large} 0 ${x4} ${y4} Z`,
+        );
+        path.setAttribute('fill', d.color);
+        path.classList.add('donut-slice');
+        path.style.opacity = 0;
+        path.style.transition = `opacity 0.6s ease ${i * 0.15}s`;
+        donutGroup.appendChild(path);
+        setTimeout(() => (path.style.opacity = 1), 100);
+
+        // Legend
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="legend-swatch" style="background:${d.color};"></div>${d.name} ${(pct * 100).toFixed(1)}%`;
+        donutLegend.appendChild(item);
+      });
+
+      // ============ Bar Chart ============
+      const barData = [
+        { m: '1月', v: 580 },
+        { m: '2月', v: 520 },
+        { m: '3月', v: 680 },
+        { m: '4月', v: 720 },
+        { m: '5月', v: 650 },
+        { m: '6月', v: 820 },
+        { m: '7月', v: 760 },
+        { m: '8月', v: 890 },
+        { m: '9月', v: 950 },
+        { m: '10月', v: 1020 },
+        { m: '11月', v: 1180 },
+        { m: '12月', v: 686 },
+      ];
+      const barSvg = document.getElementById('barSvg');
+      const bw = 400,
+        bh = 260;
+      const padL = 40,
+        padR = 10,
+        padT = 20,
+        padB = 30;
+      const chartW = bw - padL - padR,
+        chartH = bh - padT - padB;
+      const maxBar = Math.max(...barData.map((d) => d.v));
+
+      // Grid lines
+      for (let i = 0; i <= 4; i++) {
+        const y = padT + chartH * (1 - i / 4);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', padL);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', bw - padR);
+        line.setAttribute('y2', y);
+        line.classList.add('grid-line');
+        barSvg.appendChild(line);
+        const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lbl.setAttribute('x', padL - 6);
+        lbl.setAttribute('y', y + 4);
+        lbl.setAttribute('text-anchor', 'end');
+        lbl.classList.add('axis-label');
+        lbl.textContent = Math.round((maxBar * i) / 4);
+        barSvg.appendChild(lbl);
+      }
+
+      const barW = (chartW / barData.length) * 0.6;
+      const barGap = (chartW / barData.length) * 0.4;
+      barData.forEach((d, i) => {
+        const x = padL + i * (chartW / barData.length) + barGap / 2;
+        const h = (d.v / maxBar) * chartH;
+        const y = padT + chartH - h;
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', padT + chartH);
+        rect.setAttribute('width', barW);
+        rect.setAttribute('height', 0);
+        rect.setAttribute('fill', 'url(#barGrad)');
+        rect.classList.add('bar');
+        barSvg.appendChild(rect);
+
+        // gradient
+        const defs =
+          barSvg.querySelector('defs') ||
+          barSvg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'defs'));
+        if (!document.getElementById('barGrad')) {
+          const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+          grad.setAttribute('id', 'barGrad');
+          grad.setAttribute('x1', '0%');
+          grad.setAttribute('y1', '0%');
+          grad.setAttribute('x2', '0%');
+          grad.setAttribute('y2', '100%');
+          grad.innerHTML = '<stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0891b2"/>';
+          defs.appendChild(grad);
+        }
+
+        // Animate
+        setTimeout(() => {
+          rect.style.transition = `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.05}s`;
+          rect.setAttribute('y', y);
+          rect.setAttribute('height', h);
+        }, 100);
+
+        // Label
+        const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lbl.setAttribute('x', x + barW / 2);
+        lbl.setAttribute('y', bh - 10);
+        lbl.classList.add('bar-label');
+        lbl.textContent = d.m;
+        barSvg.appendChild(lbl);
+
+        // Value
+        const val = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        val.setAttribute('x', x + barW / 2);
+        val.setAttribute('y', y - 4);
+        val.classList.add('bar-value');
+        val.textContent = d.v;
+        val.style.opacity = 0;
+        val.style.transition = `opacity 0.4s ease ${i * 0.05 + 0.6}s`;
+        barSvg.appendChild(val);
+        setTimeout(() => (val.style.opacity = 1), 100);
+      });
+
+      // ============ Line Chart ============
+      const lineData2024 = [
+        { q: 'Q1', v: 1780 },
+        { q: 'Q2', v: 2190 },
+        { q: 'Q3', v: 2600 },
+        { q: 'Q4', v: 1886 },
+      ];
+      const lineData2023 = [
+        { q: 'Q1', v: 1450 },
+        { q: 'Q2', v: 1720 },
+        { q: 'Q3', v: 2010 },
+        { q: 'Q4', v: 1670 },
+      ];
+      const lineSvg = document.getElementById('lineSvg');
+      const lw = 700,
+        lh = 280;
+      const lpadL = 50,
+        lpadR = 30,
+        lpadT = 20,
+        lpadB = 40;
+      const lchartW = lw - lpadL - lpadR,
+        lchartH = lh - lpadT - lpadB;
+      const maxLine = 3000;
+
+      // Defs / gradient
+      const ldefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      ldefs.innerHTML = `
+  <linearGradient id="lineGradArea" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.4"/>
+    <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+  </linearGradient>`;
+      lineSvg.appendChild(ldefs);
+
+      // Grid
+      for (let i = 0; i <= 5; i++) {
+        const y = lpadT + lchartH * (1 - i / 5);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', lpadL);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', lw - lpadR);
+        line.setAttribute('y2', y);
+        line.classList.add('grid-line');
+        lineSvg.appendChild(line);
+        const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lbl.setAttribute('x', lpadL - 6);
+        lbl.setAttribute('y', y + 4);
+        lbl.setAttribute('text-anchor', 'end');
+        lbl.classList.add('axis-label');
+        lbl.textContent = Math.round((maxLine * i) / 5);
+        lineSvg.appendChild(lbl);
+      }
+
+      function makePath(data, color, fillArea) {
+        const pts = data.map((d, i) => {
+          const x = lpadL + (i + 0.5) * (lchartW / data.length);
+          const y = lpadT + lchartH * (1 - d.v / maxLine);
+          return { x, y };
+        });
+
+        // Smooth curve
+        let path = `M ${pts[0].x} ${pts[0].y}`;
+        for (let i = 0; i < pts.length - 1; i++) {
+          const cp1x = pts[i].x + (pts[i + 1].x - pts[i].x) / 2;
+          const cp1y = pts[i].y;
+          const cp2x = pts[i].x + (pts[i + 1].x - pts[i].x) / 2;
+          const cp2y = pts[i + 1].y;
+          path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${pts[i + 1].x} ${pts[i + 1].y}`;
+        }
+
+        if (fillArea) {
+          const areaPath = path + ` L ${pts[pts.length - 1].x} ${lpadT + lchartH} L ${pts[0].x} ${lpadT + lchartH} Z`;
+          const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          area.setAttribute('d', areaPath);
+          area.setAttribute('fill', 'url(#lineGradArea)');
+          area.style.opacity = 0;
+          area.style.transition = 'opacity 0.8s ease 0.5s';
+          lineSvg.appendChild(area);
+          setTimeout(() => (area.style.opacity = 1), 100);
+        }
+
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', path);
+        p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', color);
+        p.setAttribute('stroke-width', '3');
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        p.style.strokeDasharray = 2000;
+        p.style.strokeDashoffset = 2000;
+        p.style.transition = 'stroke-dashoffset 1.5s ease';
+        lineSvg.appendChild(p);
+        setTimeout(() => (p.style.strokeDashoffset = 0), 100);
+
+        // Points
+        pts.forEach((pt, i) => {
+          const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          c.setAttribute('cx', pt.x);
+          c.setAttribute('cy', pt.y);
+          c.setAttribute('r', 5);
+          c.setAttribute('fill', color);
+          c.setAttribute('stroke', '#0f172a');
+          c.setAttribute('stroke-width', 2);
+          c.style.opacity = 0;
+          c.style.transition = `opacity 0.4s ease ${1 + i * 0.1}s`;
+          lineSvg.appendChild(c);
+          setTimeout(() => (c.style.opacity = 1), 100);
+
+          // Value label
+          const vl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          vl.setAttribute('x', pt.x);
+          vl.setAttribute('y', pt.y - 12);
+          vl.setAttribute('text-anchor', 'middle');
+          vl.setAttribute('fill', '#fff');
+          vl.setAttribute('font-size', '11');
+          vl.setAttribute('font-weight', '600');
+          vl.textContent = data[i].v;
+          vl.style.opacity = 0;
+          vl.style.transition = `opacity 0.4s ease ${1.2 + i * 0.1}s`;
+          lineSvg.appendChild(vl);
+          setTimeout(() => (vl.style.opacity = 1), 100);
+        });
+
+        // X labels
+        pts.forEach((pt, i) => {
+          const xl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          xl.setAttribute('x', pt.x);
+          xl.setAttribute('y', lh - 12);
+          xl.setAttribute('text-anchor', 'middle');
+          xl.classList.add('axis-label');
+          xl.textContent = data[i].q;
+          lineSvg.appendChild(xl);
+        });
+      }
+
+      makePath(lineData2023, '#f59e0b', false);
+      makePath(lineData2024, '#06b6d4', true);
+    </script>
+  </body>
+</html>

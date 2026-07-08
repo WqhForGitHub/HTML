@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 动态背景 - 流动几何背景</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #0a0a1f;
+        color: #fff;
+        position: relative;
+      }
+      .bg-svg {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      .content {
+        position: relative;
+        z-index: 2;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+      }
+      .hero-title {
+        font-size: 64px;
+        font-weight: 900;
+        margin-bottom: 16px;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #fff, #a78bfa, #f0abfc, #fff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 4s linear infinite;
+      }
+      @keyframes shimmer {
+        to {
+          background-position: 200% center;
+        }
+      }
+      .hero-sub {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 32px;
+        letter-spacing: 6px;
+      }
+      .hero-desc {
+        max-width: 600px;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.8;
+        font-size: 15px;
+        margin-bottom: 36px;
+      }
+      .cta {
+        display: inline-block;
+        padding: 14px 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        border-radius: 40px;
+        text-decoration: none;
+        font-size: 16px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .cta:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(167, 139, 250, 0.4);
+      }
+      .controls {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        display: flex;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 10px 16px;
+        border-radius: 30px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .ctrl-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+        transition: all 0.2s;
+      }
+      .ctrl-btn:hover,
+      .ctrl-btn.active {
+        background: rgba(167, 139, 250, 0.4);
+        border-color: #a78bfa;
+      }
+      .scroll-hint {
+        position: absolute;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        letter-spacing: 2px;
+        animation: bounce 2s infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(8px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SVG 动态背景 -->
+    <svg
+      class="bg-svg"
+      id="bgSvg"
+      viewBox="0 0 1920 1080"
+      preserveAspectRatio="xMidYMid slice"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <!-- 渐变定义 -->
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0a0a1f" />
+          <stop offset="0.5" stop-color="#1a0a2e" />
+          <stop offset="1" stop-color="#0a0a1f" />
+        </linearGradient>
+        <radialGradient id="blob1" cx="0.5" cy="0.5">
+          <stop offset="0" stop-color="#a78bfa" stop-opacity="0.6" />
+          <stop offset="1" stop-color="#a78bfa" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="blob2" cx="0.5" cy="0.5">
+          <stop offset="0" stop-color="#f0abfc" stop-opacity="0.5" />
+          <stop offset="1" stop-color="#f0abfc" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="blob3" cx="0.5" cy="0.5">
+          <stop offset="0" stop-color="#60a5fa" stop-opacity="0.5" />
+          <stop offset="1" stop-color="#60a5fa" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="blob4" cx="0.5" cy="0.5">
+          <stop offset="0" stop-color="#34d399" stop-opacity="0.4" />
+          <stop offset="1" stop-color="#34d399" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="meshGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#a78bfa" stop-opacity="0.3" />
+          <stop offset="0.5" stop-color="#f0abfc" stop-opacity="0.2" />
+          <stop offset="1" stop-color="#60a5fa" stop-opacity="0.3" />
+        </linearGradient>
+        <filter id="blurFilter">
+          <feGaussianBlur stdDeviation="40" />
+        </filter>
+        <pattern id="dotPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <circle cx="30" cy="30" r="1.5" fill="rgba(255,255,255,0.15)" />
+        </pattern>
+      </defs>
+
+      <!-- 底层渐变 -->
+      <rect width="1920" height="1080" fill="url(#bgGrad)" />
+
+      <!-- 网格点图案 -->
+      <rect width="1920" height="1080" fill="url(#dotPattern)" opacity="0.5" />
+
+      <!-- 渐变网格层 -->
+      <rect width="1920" height="1080" fill="url(#meshGrad)" opacity="0.4">
+        <animate attributeName="x" values="-200;0;-200" dur="20s" repeatCount="indefinite" />
+      </rect>
+
+      <!-- 模糊的色块 blobs -->
+      <g filter="url(#blurFilter)">
+        <circle cx="300" cy="300" r="200" fill="url(#blob1)">
+          <animate attributeName="cx" values="300;500;300" dur="18s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="300;200;300" dur="22s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="1500" cy="400" r="250" fill="url(#blob2)">
+          <animate attributeName="cx" values="1500;1300;1500" dur="20s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="400;600;400" dur="16s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="900" cy="800" r="220" fill="url(#blob3)">
+          <animate attributeName="cx" values="900;1100;900" dur="24s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="800;700;800" dur="19s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="400" cy="800" r="180" fill="url(#blob4)">
+          <animate attributeName="cx" values="400;600;400" dur="17s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="800;900;800" dur="21s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      <!-- 浮动几何形状层 -->
+      <g id="shapesLayer">
+        <!-- 旋转的六边形 -->
+        <g transform="translate(200,200)">
+          <polygon
+            points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15"
+            fill="none"
+            stroke="rgba(167,139,250,0.4)"
+            stroke-width="2"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0"
+              to="360"
+              dur="20s"
+              repeatCount="indefinite"
+            />
+          </polygon>
+          <polygon
+            points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10"
+            fill="none"
+            stroke="rgba(240,171,252,0.3)"
+            stroke-width="1.5"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="360"
+              to="0"
+              dur="15s"
+              repeatCount="indefinite"
+            />
+          </polygon>
+        </g>
+        <!-- 三角形 -->
+        <g transform="translate(1700,300)">
+          <polygon points="0,-40 35,20 -35,20" fill="none" stroke="rgba(96,165,250,0.4)" stroke-width="2">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0"
+              to="360"
+              dur="25s"
+              repeatCount="indefinite"
+            />
+          </polygon>
+        </g>
+        <!-- 圆环 -->
+        <g transform="translate(1600,800)">
+          <circle cx="0" cy="0" r="40" fill="none" stroke="rgba(52,211,153,0.4)" stroke-width="2" />
+          <circle
+            cx="0"
+            cy="0"
+            r="30"
+            fill="none"
+            stroke="rgba(52,211,153,0.3)"
+            stroke-width="1.5"
+            stroke-dasharray="5 5"
+          />
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            from="0 1600 800"
+            to="360 1600 800"
+            dur="30s"
+            repeatCount="indefinite"
+          />
+        </g>
+        <!-- 方形 -->
+        <g transform="translate(300,850)">
+          <rect
+            x="-30"
+            y="-30"
+            width="60"
+            height="60"
+            fill="none"
+            stroke="rgba(240,171,252,0.4)"
+            stroke-width="2"
+            transform="rotate(45)"
+          />
+          <rect
+            x="-20"
+            y="-20"
+            width="40"
+            height="40"
+            fill="none"
+            stroke="rgba(240,171,252,0.3)"
+            stroke-width="1.5"
+            transform="rotate(30)"
+          />
+        </g>
+        <!-- 星形 -->
+        <g transform="translate(1000,200)">
+          <polygon
+            points="0,-25 7,-8 25,-8 11,3 16,20 0,10 -16,20 -11,3 -25,-8 -7,-8"
+            fill="none"
+            stroke="rgba(251,191,36,0.5)"
+            stroke-width="2"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0"
+              to="360"
+              dur="18s"
+              repeatCount="indefinite"
+            />
+          </polygon>
+        </g>
+      </g>
+
+      <!-- 飘动的小粒子 -->
+      <g id="particlesLayer">
+        <!-- 由 JS 生成 -->
+      </g>
+
+      <!-- 波浪线条 -->
+      <g opacity="0.3">
+        <path d="M0,540 Q480,490 960,540 T1920,540" fill="none" stroke="#a78bfa" stroke-width="2">
+          <animate
+            attributeName="d"
+            values="M0,540 Q480,490 960,540 T1920,540;
+                  M0,540 Q480,590 960,540 T1920,540;
+                  M0,540 Q480,490 960,540 T1920,540"
+            dur="10s"
+            repeatCount="indefinite"
+          />
+        </path>
+        <path d="M0,560 Q480,520 960,560 T1920,560" fill="none" stroke="#f0abfc" stroke-width="1.5">
+          <animate
+            attributeName="d"
+            values="M0,560 Q480,520 960,560 T1920,560;
+                  M0,560 Q480,600 960,560 T1920,560;
+                  M0,560 Q480,520 960,560 T1920,560"
+            dur="12s"
+            repeatCount="indefinite"
+          />
+        </path>
+        <path d="M0,580 Q480,540 960,580 T1920,580" fill="none" stroke="#60a5fa" stroke-width="1">
+          <animate
+            attributeName="d"
+            values="M0,580 Q480,540 960,580 T1920,580;
+                  M0,580 Q480,620 960,580 T1920,580;
+                  M0,580 Q480,540 960,580 T1920,580"
+            dur="14s"
+            repeatCount="indefinite"
+          />
+        </path>
+      </g>
+
+      <!-- 顶部光晕 -->
+      <ellipse cx="960" cy="0" rx="800" ry="200" fill="rgba(167,139,250,0.15)" filter="url(#blurFilter)" />
+    </svg>
+
+    <div class="content">
+      <h1 class="hero-title">SVG 动态背景</h1>
+      <p class="hero-sub">DYNAMIC · ANIMATED · MESMERIZING</p>
+      <p class="hero-desc">
+        使用纯 SVG 构建的多层动态背景，包含流动的色块、旋转的几何形状、漂浮的粒子与起伏的波浪线条。完美适用于网站 Hero
+        区域、登陆页面与展示背景。
+      </p>
+      <a class="cta" onclick="switchTheme()">切换主题</a>
+    </div>
+
+    <div class="scroll-hint">▼ 探索更多</div>
+
+    <div class="controls">
+      <button class="ctrl-btn active" data-theme="purple">紫罗兰</button>
+      <button class="ctrl-btn" data-theme="ocean">海洋</button>
+      <button class="ctrl-btn" data-theme="sunset">日落</button>
+      <button class="ctrl-btn" data-theme="forest">森林</button>
+      <button class="ctrl-btn" data-toggle="particles">粒子开关</button>
+    </div>
+
+    <script>
+      /* exported switchTheme */
+      // 生成漂浮粒子
+      const particlesLayer = document.getElementById('particlesLayer');
+      const svgNS = 'http://www.w3.org/2000/svg';
+      let particles = [];
+      let particleColors = ['#a78bfa', '#f0abfc', '#60a5fa', '#34d399', '#fbbf24'];
+
+      function createParticles(count) {
+        particlesLayer.innerHTML = '';
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          const c = document.createElementNS(svgNS, 'circle');
+          const x = Math.random() * 1920;
+          const y = Math.random() * 1080;
+          const r = Math.random() * 3 + 1;
+          const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+          c.setAttribute('cx', x);
+          c.setAttribute('cy', y);
+          c.setAttribute('r', r);
+          c.setAttribute('fill', color);
+          c.setAttribute('opacity', Math.random() * 0.6 + 0.2);
+          particlesLayer.appendChild(c);
+
+          // 漂浮动画
+          const dur = Math.random() * 10 + 8;
+          const dx = (Math.random() - 0.5) * 200;
+          const dy = (Math.random() - 0.5) * 200;
+          const animateX = document.createElementNS(svgNS, 'animate');
+          animateX.setAttribute('attributeName', 'cx');
+          animateX.setAttribute('values', x + ';' + (x + dx) + ';' + x);
+          animateX.setAttribute('dur', dur + 's');
+          animateX.setAttribute('repeatCount', 'indefinite');
+          c.appendChild(animateX);
+          const animateY = document.createElementNS(svgNS, 'animate');
+          animateY.setAttribute('attributeName', 'cy');
+          animateY.setAttribute('values', y + ';' + (y + dy) + ';' + y);
+          animateY.setAttribute('dur', dur + 2 + 's');
+          animateY.setAttribute('repeatCount', 'indefinite');
+          c.appendChild(animateY);
+          const animateO = document.createElementNS(svgNS, 'animate');
+          animateO.setAttribute('attributeName', 'opacity');
+          animateO.setAttribute('values', '0.2;0.8;0.2');
+          animateO.setAttribute('dur', Math.random() * 4 + 3 + 's');
+          animateO.setAttribute('repeatCount', 'indefinite');
+          c.appendChild(animateO);
+
+          particles.push(c);
+        }
+      }
+      createParticles(60);
+
+      // 主题切换
+      const themes = {
+        purple: { bg: ['#0a0a1f', '#1a0a2e', '#0a0a1f'], blobs: ['#a78bfa', '#f0abfc', '#60a5fa', '#34d399'] },
+        ocean: { bg: ['#001220', '#003049', '#001220'], blobs: ['#00b4d8', '#90e0ef', '#0077b6', '#48cae4'] },
+        sunset: { bg: ['#1a0a0a', '#2d1b0a', '#1a0a0a'], blobs: ['#f72585', '#ff6b6b', '#ff9e00', '#ffba08'] },
+        forest: { bg: ['#0a1a0a', '#1a2d1a', '#0a1a0a'], blobs: ['#52b788', '#95d5b2', '#2d6a4f', '#74c69d'] },
+      };
+
+      function applyTheme(name) {
+        const t = themes[name];
+        const stops = document.querySelectorAll('#bgGrad stop');
+        stops[0].setAttribute('stop-color', t.bg[0]);
+        stops[1].setAttribute('stop-color', t.bg[1]);
+        stops[2].setAttribute('stop-color', t.bg[2]);
+        const blobStops = document.querySelectorAll('[id^="blob"] stop:first-child');
+        t.blobs.forEach(function (col, i) {
+          if (blobStops[i]) blobStops[i].setAttribute('stop-color', col);
+        });
+        particleColors = t.blobs.slice();
+        // 更新粒子颜色
+        particles.forEach(function (p) {
+          p.setAttribute('fill', particleColors[Math.floor(Math.random() * particleColors.length)]);
+        });
+      }
+
+      document.querySelectorAll('.ctrl-btn[data-theme]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('.ctrl-btn[data-theme]').forEach(function (x) {
+            x.classList.remove('active');
+          });
+          b.classList.add('active');
+          applyTheme(b.dataset.theme);
+        });
+      });
+
+      let particlesOn = true;
+      document.querySelector('[data-toggle="particles"]').addEventListener('click', function () {
+        particlesOn = !particlesOn;
+        particlesLayer.style.display = particlesOn ? '' : 'none';
+        this.classList.toggle('active', particlesOn);
+      });
+
+      function switchTheme() {
+        const btns = document.querySelectorAll('.ctrl-btn[data-theme]');
+        const active = document.querySelector('.ctrl-btn[data-theme].active');
+        let idx = 0;
+        btns.forEach(function (b, i) {
+          if (b === active) idx = i;
+        });
+        const next = (idx + 1) % btns.length;
+        btns[next].click();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS云朵动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Microsoft YaHei', sans-serif;
+        color: #fff;
+      }
+      body {
+        background: linear-gradient(to bottom, #4a90d9 0%, #7ab8e8 40%, #a8d4f0 70%, #d8eaf5 100%);
+        position: relative;
+      }
+      h1 {
+        position: absolute;
+        top: 35px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 30px;
+        letter-spacing: 10px;
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 2px 15px rgba(60, 120, 180, 0.4);
+        z-index: 10;
+      }
+      .hint {
+        position: absolute;
+        bottom: 25px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 13px;
+        letter-spacing: 3px;
+        z-index: 10;
+        text-shadow: 0 1px 4px rgba(60, 120, 180, 0.3);
+      }
+
+      /* 太阳 */
+      .sun {
+        position: absolute;
+        top: 12%;
+        right: 15%;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #fff8d0 0%, #ffe88a 50%, #ffd060 100%);
+        box-shadow:
+          0 0 60px rgba(255, 230, 150, 0.7),
+          0 0 120px rgba(255, 220, 120, 0.4);
+        z-index: 2;
+        animation: sunGlow 4s ease-in-out infinite;
+      }
+      @keyframes sunGlow {
+        0%,
+        100% {
+          box-shadow:
+            0 0 60px rgba(255, 230, 150, 0.7),
+            0 0 120px rgba(255, 220, 120, 0.4);
+        }
+        50% {
+          box-shadow:
+            0 0 90px rgba(255, 240, 170, 0.95),
+            0 0 170px rgba(255, 230, 140, 0.6);
+        }
+      }
+
+      /* 远山 */
+      .hills {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30%;
+        z-index: 1;
+      }
+      .hill {
+        position: absolute;
+        bottom: 0;
+        border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      }
+      .hill1 {
+        left: -10%;
+        width: 80%;
+        height: 50%;
+        background: linear-gradient(to top, #6a9d5a, #88b878);
+        opacity: 0.6;
+      }
+      .hill2 {
+        right: -10%;
+        width: 70%;
+        height: 65%;
+        background: linear-gradient(to top, #5a8d4a, #78a868);
+        opacity: 0.7;
+      }
+      .hill3 {
+        left: 25%;
+        width: 60%;
+        height: 40%;
+        background: linear-gradient(to top, #4a7d3a, #68a058);
+        opacity: 0.8;
+      }
+
+      /* 草地 */
+      .grass {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 12%;
+        background: linear-gradient(to top, #3a6d2a, #5a8d4a);
+        z-index: 2;
+      }
+
+      /* 云朵容器 */
+      .sky {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70%;
+        z-index: 3;
+        overflow: hidden;
+      }
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 100px;
+        box-shadow:
+          25px 0 0 -5px #fff,
+          -25px 5px 0 -5px #fff,
+          50px 8px 0 -10px #fff,
+          -50px 8px 0 -10px #fff,
+          15px -18px 0 -8px #fff,
+          -15px -18px 0 -8px #fff,
+          38px -12px 0 -14px #fff,
+          -38px -12px 0 -14px #fff;
+        opacity: 0.95;
+        filter: drop-shadow(0 6px 18px rgba(100, 150, 200, 0.2));
+      }
+
+      /* 不同层级的云：远(慢小淡) -> 近(快大白) */
+      .layer-far .cloud {
+        background: rgba(255, 255, 255, 0.55);
+        transform: scale(0.5);
+        filter: blur(1px) drop-shadow(0 3px 8px rgba(100, 150, 200, 0.15));
+        animation: drift 90s linear infinite;
+      }
+      .layer-mid .cloud {
+        background: rgba(255, 255, 255, 0.8);
+        transform: scale(0.75);
+        animation: drift 55s linear infinite;
+      }
+      .layer-near .cloud {
+        background: #fff;
+        transform: scale(1.1);
+        animation: drift 35s linear infinite;
+        filter: drop-shadow(0 8px 22px rgba(100, 150, 200, 0.25));
+      }
+      @keyframes drift {
+        from {
+          left: -200px;
+        }
+        to {
+          left: 110%;
+        }
+      }
+
+      /* 飞鸟 */
+      .bird {
+        position: absolute;
+        top: 25%;
+        left: -50px;
+        font-size: 24px;
+        color: rgba(40, 60, 90, 0.6);
+        z-index: 4;
+        animation: fly 40s linear infinite;
+      }
+      @keyframes fly {
+        from {
+          left: -50px;
+          top: 25%;
+        }
+        50% {
+          top: 20%;
+        }
+        to {
+          left: 110%;
+          top: 28%;
+        }
+      }
+      .bird::before {
+        content: '';
+        display: inline-block;
+        animation: flap 0.4s ease-in-out infinite alternate;
+      }
+      @keyframes flap {
+        from {
+          transform: scaleY(1);
+        }
+        to {
+          transform: scaleY(0.5);
+        }
+      }
+
+      .controls {
+        position: absolute;
+        top: 85px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 10;
+      }
+      .controls button {
+        padding: 8px 20px;
+        margin: 0 6px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: #fff;
+        border-radius: 20px;
+        cursor: pointer;
+        letter-spacing: 2px;
+        font-size: 13px;
+        backdrop-filter: blur(8px);
+        transition: all 0.3s;
+        text-shadow: 0 1px 3px rgba(60, 120, 180, 0.3);
+      }
+      .controls button:hover {
+        background: rgba(255, 255, 255, 0.35);
+      }
+      .controls button.active {
+        background: rgba(255, 255, 255, 0.45);
+        border-color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>云 卷 云 舒</h1>
+    <div class="controls">
+      <button id="bSunny" class="active">晴朗</button>
+      <button id="bCloudy">多云</button>
+      <button id="bDreamy">梦幻</button>
+    </div>
+    <div class="sun"></div>
+    <div class="hills">
+      <div class="hill hill1"></div>
+      <div class="hill hill3"></div>
+      <div class="hill hill2"></div>
+    </div>
+    <div class="grass"></div>
+    <div class="sky" id="sky">
+      <div class="layer-far" id="far"></div>
+      <div class="layer-mid" id="mid"></div>
+      <div class="layer-near" id="near"></div>
+      <div class="bird">&#8986;</div>
+      <div class="bird" style="animation-delay: -15s; top: 18%; font-size: 18px">&#8986;</div>
+      <div class="bird" style="animation-delay: -28s; top: 30%; font-size: 20px">&#8986;</div>
+    </div>
+    <div class="hint">三层视差云朵 · 远近不同速度漂浮 · 草地山丘营造田园天空</div>
+
+    <script>
+      const far = document.getElementById('far');
+      const mid = document.getElementById('mid');
+      const near = document.getElementById('near');
+
+      const themes = {
+        sunny: {
+          far: 3,
+          mid: 4,
+          near: 3,
+          body: 'linear-gradient(to bottom, #4a90d9 0%, #7ab8e8 40%, #a8d4f0 70%, #d8eaf5 100%)',
+          sunShow: true,
+        },
+        cloudy: {
+          far: 6,
+          mid: 8,
+          near: 6,
+          body: 'linear-gradient(to bottom, #6a8db0 0%, #92acc8 40%, #b8cee0 70%, #d8e4ec 100%)',
+          sunShow: false,
+        },
+        dreamy: {
+          far: 5,
+          mid: 6,
+          near: 4,
+          body: 'linear-gradient(to bottom, #ff9a9e 0%, #fad0c4 40%, #fbc2eb 70%, #a6c1ee 100%)',
+          sunShow: true,
+        },
+      };
+
+      function makeClouds(layerEl, count) {
+        layerEl.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+          const c = document.createElement('div');
+          c.className = 'cloud';
+          const size = 40 + Math.random() * 40;
+          c.style.width = size + 'px';
+          c.style.height = size * 0.5 + 'px';
+          c.style.top = Math.random() * 80 + '%';
+          const dur = parseFloat(getComputedStyle(c).animationDuration);
+          c.style.animationDelay = -Math.random() * dur + 's';
+          layerEl.appendChild(c);
+        }
+      }
+
+      function applyTheme(name) {
+        const t = themes[name];
+        makeClouds(far, t.far);
+        makeClouds(mid, t.mid);
+        makeClouds(near, t.near);
+        document.body.style.background = t.body;
+        document.querySelector('.sun').style.display = t.sunShow ? 'block' : 'none';
+      }
+
+      document.getElementById('bSunny').addEventListener('click', (e) => {
+        document.querySelectorAll('.controls button').forEach((b) => b.classList.remove('active'));
+        e.target.classList.add('active');
+        applyTheme('sunny');
+      });
+      document.getElementById('bCloudy').addEventListener('click', (e) => {
+        document.querySelectorAll('.controls button').forEach((b) => b.classList.remove('active'));
+        e.target.classList.add('active');
+        applyTheme('cloudy');
+      });
+      document.getElementById('bDreamy').addEventListener('click', (e) => {
+        document.querySelectorAll('.controls button').forEach((b) => b.classList.remove('active'));
+        e.target.classList.add('active');
+        applyTheme('dreamy');
+      });
+
+      applyTheme('sunny');
+    </script>
+  </body>
+</html>

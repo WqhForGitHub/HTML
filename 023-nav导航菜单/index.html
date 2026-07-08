@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>023 - nav 导航菜单演示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #f0f4f8;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* 注解面板 */
+      .annotation {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 320px;
+        background: #fffbe6;
+        border: 2px solid #ffd666;
+        border-radius: 10px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        font-size: 13px;
+        z-index: 1000;
+      }
+      .annotation h3 {
+        color: #d48806;
+        margin-bottom: 8px;
+        font-size: 15px;
+      }
+      .annotation code {
+        background: #fff1b8;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: Consolas, monospace;
+        color: #ad6800;
+      }
+      .annotation p {
+        margin-bottom: 6px;
+      }
+      .annotation .close-btn {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        cursor: pointer;
+        color: #999;
+        border: none;
+        background: none;
+        font-size: 18px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .demo-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .demo-section h2 {
+        color: #2d3748;
+        font-size: 18px;
+        margin-bottom: 6px;
+        border-left: 4px solid #4299e1;
+        padding-left: 10px;
+      }
+      .demo-section .desc {
+        color: #718096;
+        font-size: 13px;
+        margin-bottom: 16px;
+        padding-left: 14px;
+      }
+
+      /* 1. 水平菜单 */
+      .nav-horizontal {
+        background: #2b6cb0;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .nav-horizontal ul {
+        list-style: none;
+        display: flex;
+      }
+      .nav-horizontal a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        padding: 14px 22px;
+        transition: background 0.3s;
+        font-size: 15px;
+      }
+      .nav-horizontal a:hover {
+        background: #2c5282;
+      }
+      .nav-horizontal a.active {
+        background: #1a365d;
+      }
+
+      /* 2. 下拉菜单 */
+      .nav-dropdown {
+        background: #38a169;
+        border-radius: 8px;
+      }
+      .nav-dropdown > ul {
+        list-style: none;
+        display: flex;
+      }
+      .nav-dropdown > ul > li {
+        position: relative;
+      }
+      .nav-dropdown > ul > li > a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        padding: 14px 22px;
+        font-size: 15px;
+      }
+      .nav-dropdown > ul > li:hover > a {
+        background: #2f855a;
+      }
+      .nav-dropdown .submenu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #276749;
+        list-style: none;
+        min-width: 160px;
+        border-radius: 0 0 8px 8px;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+      }
+      .nav-dropdown > ul > li:hover .submenu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .nav-dropdown .submenu a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 20px;
+        font-size: 14px;
+        transition: background 0.2s;
+      }
+      .nav-dropdown .submenu a:hover {
+        background: #22543d;
+      }
+      .has-dropdown::after {
+        content: ' ▾';
+        font-size: 12px;
+      }
+
+      /* 3. 面包屑 */
+      .nav-breadcrumb {
+        background: #edf2f7;
+        border-radius: 8px;
+        padding: 12px 18px;
+      }
+      .nav-breadcrumb ul {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .nav-breadcrumb li {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+      }
+      .nav-breadcrumb li:not(:last-child)::after {
+        content: '/';
+        margin: 0 10px;
+        color: #a0aec0;
+      }
+      .nav-breadcrumb a {
+        color: #4299e1;
+        text-decoration: none;
+      }
+      .nav-breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      .nav-breadcrumb li.current {
+        color: #718096;
+        font-weight: 500;
+      }
+
+      /* 4. 响应式汉堡菜单 */
+      .nav-responsive {
+        background: #805ad5;
+        border-radius: 8px;
+        position: relative;
+      }
+      .nav-responsive .toggle-btn {
+        display: none;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 22px;
+        padding: 12px 18px;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+      }
+      .nav-responsive ul {
+        list-style: none;
+        display: flex;
+      }
+      .nav-responsive a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        padding: 14px 22px;
+        font-size: 15px;
+        transition: background 0.3s;
+      }
+      .nav-responsive a:hover {
+        background: #6b46c1;
+      }
+
+      @media (max-width: 768px) {
+        .nav-responsive .toggle-btn {
+          display: block;
+        }
+        .nav-responsive ul {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+        }
+        .nav-responsive ul.open {
+          display: flex;
+        }
+        .nav-responsive a {
+          border-top: 1px solid #6b46c1;
+        }
+      }
+
+      /* 标签导航 tab */
+      .nav-tabs ul {
+        list-style: none;
+        display: flex;
+        border-bottom: 2px solid #e2e8f0;
+      }
+      .nav-tabs a {
+        display: block;
+        padding: 12px 24px;
+        text-decoration: none;
+        color: #718096;
+        font-size: 15px;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .nav-tabs a:hover {
+        color: #4299e1;
+      }
+      .nav-tabs a.active {
+        color: #4299e1;
+        border-bottom-color: #4299e1;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 注解面板 -->
+    <aside class="annotation" id="annotation">
+      <button class="close-btn" onclick="document.getElementById('annotation').style.display = 'none'">&times;</button>
+      <h3>
+        语义元素说明：
+        <code>&lt;nav&gt;</code>
+      </h3>
+      <p>
+        <code>&lt;nav&gt;</code>
+        元素代表页面中一组导航链接，用于在当前页面或其他页面之间跳转。
+      </p>
+      <p>适用于：主导航、面包屑、分页、目录、标签页。</p>
+      <p>
+        并非所有链接组都需用
+        <code>&lt;nav&gt;</code>
+        ，仅"主要导航块"才用，如页脚的零散链接可直接用普通列表。
+      </p>
+      <p>
+        本页面展示了五种
+        <code>&lt;nav&gt;</code>
+        用法。
+      </p>
+    </aside>
+
+    <div class="container">
+      <h1 style="text-align: center; color: #2d3748; margin: 20px 0">&lt;nav&gt; 导航菜单演示</h1>
+
+      <!-- 1. 水平菜单 -->
+      <section class="demo-section">
+        <h2>1. 水平导航菜单</h2>
+        <p class="desc">
+          最基本的水平导航条，使用
+          <code>&lt;nav&gt;</code>
+          包裹无序列表。
+        </p>
+        <nav class="nav-horizontal">
+          <ul>
+            <li><a href="#" class="active">首页</a></li>
+            <li><a href="#">产品</a></li>
+            <li><a href="#">服务</a></li>
+            <li><a href="#">案例</a></li>
+            <li><a href="#">关于</a></li>
+          </ul>
+        </nav>
+      </section>
+
+      <!-- 2. 下拉菜单 -->
+      <section class="demo-section">
+        <h2>2. 下拉菜单（CSS hover 实现）</h2>
+        <p class="desc">鼠标悬停时显示子菜单，纯 CSS 实现，无需 JavaScript。</p>
+        <nav class="nav-dropdown">
+          <ul>
+            <li><a href="#">首页</a></li>
+            <li>
+              <a href="#" class="has-dropdown">产品</a>
+              <ul class="submenu">
+                <li><a href="#">云服务器</a></li>
+                <li><a href="#">云数据库</a></li>
+                <li><a href="#">对象存储</a></li>
+                <li><a href="#">CDN 加速</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#" class="has-dropdown">解决方案</a>
+              <ul class="submenu">
+                <li><a href="#">电商行业</a></li>
+                <li><a href="#">金融行业</a></li>
+                <li><a href="#">教育行业</a></li>
+                <li><a href="#">医疗行业</a></li>
+              </ul>
+            </li>
+            <li><a href="#">关于我们</a></li>
+          </ul>
+        </nav>
+      </section>
+
+      <!-- 3. 面包屑导航 -->
+      <section class="demo-section">
+        <h2>3. 面包屑导航</h2>
+        <p class="desc">显示当前页面在站点层级中的位置，便于用户返回上级。</p>
+        <nav class="nav-breadcrumb" aria-label="面包屑导航">
+          <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">产品中心</a></li>
+            <li><a href="#">云服务器</a></li>
+            <li class="current">计算型 c6 实例</li>
+          </ul>
+        </nav>
+      </section>
+
+      <!-- 4. 响应式汉堡菜单 -->
+      <section class="demo-section">
+        <h2>4. 响应式汉堡菜单（JS 切换）</h2>
+        <p class="desc">缩小浏览器窗口至 768px 以下，将出现汉堡按钮，点击展开菜单。</p>
+        <nav class="nav-responsive">
+          <button class="toggle-btn" id="hamburgerBtn" aria-label="切换菜单">☰ 菜单</button>
+          <ul id="responsiveMenu">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">产品</a></li>
+            <li><a href="#">解决方案</a></li>
+            <li><a href="#">案例</a></li>
+            <li><a href="#">关于</a></li>
+            <li><a href="#">联系</a></li>
+          </ul>
+        </nav>
+      </section>
+
+      <!-- 5. 标签页导航 -->
+      <section class="demo-section">
+        <h2>5. 标签页导航</h2>
+        <p class="desc">用于在同一页面内切换不同内容区块，配合 JS 实现切换。</p>
+        <nav class="nav-tabs" id="tabNav">
+          <ul>
+            <li><a href="#" class="active" data-tab="tab1">热门文章</a></li>
+            <li><a href="#" data-tab="tab2">最新发布</a></li>
+            <li><a href="#" data-tab="tab3">推荐阅读</a></li>
+          </ul>
+        </nav>
+        <div style="padding: 20px 0">
+          <div id="tab1" class="tab-content" style="display: block">
+            <strong>热门文章：</strong>
+            《HTML5 语义化标签完全指南》—— 阅读量 12,580
+          </div>
+          <div id="tab2" class="tab-content" style="display: none">
+            <strong>最新发布：</strong>
+            《2026 年前端发展趋势预测》—— 发布于今天
+          </div>
+          <div id="tab3" class="tab-content" style="display: none">
+            <strong>推荐阅读：</strong>
+            《深入理解 CSS Grid 布局》—— 编辑精选
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // 汉堡菜单切换
+      document.getElementById('hamburgerBtn').addEventListener('click', function () {
+        const menu = document.getElementById('responsiveMenu');
+        menu.classList.toggle('open');
+      });
+
+      // 标签页切换
+      const tabLinks = document.querySelectorAll('#tabNav a');
+      tabLinks.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          tabLinks.forEach(function (l) {
+            l.classList.remove('active');
+          });
+          this.classList.add('active');
+          const target = this.getAttribute('data-tab');
+          document.querySelectorAll('.tab-content').forEach(function (c) {
+            c.style.display = 'none';
+          });
+          document.getElementById(target).style.display = 'block';
+        });
+      });
+    </script>
+  </body>
+</html>

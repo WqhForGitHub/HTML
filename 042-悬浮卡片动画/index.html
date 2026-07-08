@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>悬浮卡片动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: radial-gradient(ellipse at top, #2d2d44 0%, #161627 70%);
+        color: #fff;
+        padding: 50px 20px;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.4rem;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #a18cd1, #fbc2eb, #a18cd1);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3s linear infinite;
+      }
+      @keyframes shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #99a;
+        margin-bottom: 50px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* 通用卡片 */
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+          transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+          box-shadow 0.5s ease,
+          border-color 0.5s ease;
+      }
+
+      /* 1. 上浮卡片 */
+      .card-lift:hover {
+        transform: translateY(-14px);
+        box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
+        border-color: rgba(161, 140, 209, 0.5);
+      }
+      .card-img {
+        height: 150px;
+        background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+        position: relative;
+        overflow: hidden;
+      }
+      .card-img::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+        transform: translateX(-100%);
+        transition: transform 0.7s;
+      }
+      .card-lift:hover .card-img::after {
+        transform: translateX(100%);
+      }
+      .card-body {
+        padding: 20px;
+      }
+      .card-body h3 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+      }
+      .card-body p {
+        color: #aab;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      /* 2. 3D 倾斜卡片 */
+      .scene {
+        perspective: 1000px;
+      }
+      .card-tilt {
+        transition:
+          transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+          box-shadow 0.5s;
+        transform-style: preserve-3d;
+      }
+      .card-tilt:hover {
+        transform: rotateX(12deg) rotateY(-18deg) translateZ(20px);
+        box-shadow: -20px 30px 50px rgba(0, 0, 0, 0.5);
+      }
+      .card-tilt .card-img {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        transform: translateZ(30px);
+      }
+      .card-tilt .card-body {
+        transform: translateZ(20px);
+      }
+
+      /* 3. 内容揭示卡片 */
+      .card-reveal {
+        position: relative;
+      }
+      .card-reveal .reveal-content {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition:
+          max-height 0.5s ease,
+          opacity 0.4s ease,
+          padding 0.5s ease;
+        padding: 0 20px;
+      }
+      .card-reveal:hover .reveal-content {
+        max-height: 120px;
+        opacity: 1;
+        padding: 0 20px 20px;
+      }
+      .card-reveal .card-img {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+      }
+      .card-reveal .more {
+        display: inline-block;
+        margin-top: 10px;
+        color: #43e97b;
+        font-size: 0.85rem;
+        transition: transform 0.3s;
+      }
+      .card-reveal:hover .more {
+        transform: translateX(6px);
+      }
+
+      /* 4. 缩放发光卡片 */
+      .card-glow:hover {
+        transform: scale(1.05);
+        box-shadow:
+          0 0 40px rgba(67, 233, 123, 0.4),
+          0 20px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(67, 233, 123, 0.5);
+      }
+      .card-glow .card-img {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+      }
+
+      /* 5. 翻边框卡片 */
+      .card-flip-border {
+        position: relative;
+      }
+      .card-flip-border::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        padding: 2px;
+        background: linear-gradient(135deg, #fa709a, #fee140, #fa709a);
+        background-size: 200% auto;
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.4s;
+        animation: borderFlow 3s linear infinite;
+      }
+      @keyframes borderFlow {
+        to {
+          background-position: 200% 0;
+        }
+      }
+      .card-flip-border:hover::before {
+        opacity: 1;
+      }
+      .card-flip-border:hover {
+        transform: translateY(-10px);
+      }
+      .card-flip-border .card-img {
+        background: linear-gradient(135deg, #fa709a, #fee140);
+      }
+
+      /* 6. 旋转揭示卡片 */
+      .card-rotate .card-img {
+        background: linear-gradient(135deg, #30cfd0, #330867);
+      }
+      .card-rotate .card-img .badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        transform: scale(0);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .card-rotate:hover .card-img .badge {
+        transform: scale(1);
+      }
+      .card-rotate:hover {
+        transform: translateY(-10px) rotate(-1deg);
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 60px;
+        color: #667;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>悬浮卡片动画</h1>
+    <p class="subtitle">将鼠标悬停在卡片上，体验六种不同的悬浮交互效果</p>
+
+    <div class="grid">
+      <div class="card card-lift">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <h3>上浮卡片</h3>
+          <p>悬停时卡片向上浮起，阴影加深，图片上扫过一道光泽。</p>
+        </div>
+      </div>
+
+      <div class="scene">
+        <div class="card card-tilt">
+          <div class="card-img"></div>
+          <div class="card-body">
+            <h3>3D 倾斜</h3>
+            <p>悬停时卡片在三维空间倾斜，呈现立体层次感。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-reveal">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <h3>内容揭示</h3>
+          <p>悬停展开隐藏的详细描述。</p>
+          <div class="reveal-content">
+            <p style="color: #ddd; font-size: 0.85rem; line-height: 1.6">
+              这是悬停后才显示的额外内容，演示了平滑的内容展开动画效果，可以放置更多详细信息。
+            </p>
+            <span class="more">查看更多 →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-glow">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <h3>缩放发光</h3>
+          <p>悬停时卡片整体放大，并散发柔和的光晕。</p>
+        </div>
+      </div>
+
+      <div class="card card-flip-border">
+        <div class="card-img"></div>
+        <div class="card-body">
+          <h3>流光边框</h3>
+          <p>悬停时浮现彩色流动边框，卡片轻轻上浮。</p>
+        </div>
+      </div>
+
+      <div class="card card-rotate">
+        <div class="card-img">
+          <span class="badge">热门</span>
+        </div>
+        <div class="card-body">
+          <h3>旋转揭示</h3>
+          <p>悬停时卡片轻微旋转，徽章弹入显示。</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>纯 CSS3 过渡与 3D 变换 · 悬停触发</footer>
+  </body>
+</html>

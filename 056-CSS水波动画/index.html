@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS水波动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Microsoft YaHei', sans-serif;
+        color: #fff;
+      }
+      body {
+        background: linear-gradient(to bottom, #0a3d62 0%, #1e6091 35%, #3a8bbd 60%, #1a4a6e 100%);
+      }
+      h1 {
+        position: absolute;
+        top: 30px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 28px;
+        letter-spacing: 8px;
+        color: rgba(255, 255, 255, 0.92);
+        text-shadow: 0 2px 12px rgba(0, 40, 80, 0.6);
+        z-index: 20;
+      }
+      .hint {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        letter-spacing: 3px;
+        z-index: 20;
+      }
+
+      .scene {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* 月亮 */
+      .moon {
+        position: absolute;
+        top: 80px;
+        right: 12%;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #fff8e0, #ffe9a8 60%, #f5d680);
+        box-shadow:
+          0 0 60px rgba(255, 240, 180, 0.6),
+          0 0 120px rgba(255, 240, 180, 0.3);
+        z-index: 2;
+      }
+      .moon::after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: rgba(200, 180, 140, 0.3);
+        box-shadow:
+          -30px 25px 0 -2px rgba(200, 180, 140, 0.25),
+          20px 30px 0 -3px rgba(200, 180, 140, 0.2);
+      }
+
+      /* 远山剪影 */
+      .mountains {
+        position: absolute;
+        bottom: 45%;
+        left: 0;
+        right: 0;
+        height: 120px;
+        z-index: 2;
+      }
+      .mtn {
+        position: absolute;
+        bottom: 0;
+        background: linear-gradient(to top, #0a2a3a, #143a4a);
+        clip-path: polygon(0 100%, 15% 30%, 30% 60%, 45% 10%, 60% 50%, 75% 20%, 90% 55%, 100% 35%, 100% 100%);
+        width: 100%;
+        height: 100%;
+        opacity: 0.85;
+      }
+
+      /* 水面区域 */
+      .water {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 45%;
+        overflow: hidden;
+        z-index: 3;
+        background: linear-gradient(to bottom, rgba(20, 70, 110, 0.6) 0%, rgba(10, 40, 70, 0.95) 100%);
+      }
+
+      /* 月光倒影 */
+      .reflection {
+        position: absolute;
+        top: 0;
+        right: 12%;
+        width: 90px;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(255, 240, 180, 0.5), rgba(255, 240, 180, 0.05));
+        filter: blur(8px);
+        transform: scaleY(-1);
+        opacity: 0.6;
+        animation: reflectShimmer 4s ease-in-out infinite;
+      }
+      @keyframes reflectShimmer {
+        0%,
+        100% {
+          transform: scaleY(-1) scaleX(1) skewX(0);
+          opacity: 0.5;
+        }
+        50% {
+          transform: scaleY(-1) scaleX(1.1) skewX(2deg);
+          opacity: 0.7;
+        }
+      }
+
+      /* 水波层 (用SVG波形重复) */
+      .wave {
+        position: absolute;
+        left: -50%;
+        width: 200%;
+        height: 100px;
+        background-repeat: repeat-x;
+      }
+      .wave1 {
+        top: 0;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,50 C150,80 300,20 600,50 C900,80 1050,20 1200,50 L1200,100 L0,100 Z' fill='rgba(120,200,240,0.35)'/></svg>");
+        background-size: 1200px 100px;
+        animation: waveMove1 8s linear infinite;
+      }
+      .wave2 {
+        top: 10px;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,50 C200,20 400,80 600,50 C800,20 1000,80 1200,50 L1200,100 L0,100 Z' fill='rgba(80,160,210,0.4)'/></svg>");
+        background-size: 1200px 100px;
+        animation: waveMove2 12s linear infinite;
+      }
+      .wave3 {
+        top: 25px;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'><path d='M0,60 C300,30 500,80 700,50 C900,30 1100,80 1200,60 L1200,100 L0,100 Z' fill='rgba(40,100,150,0.5)'/></svg>");
+        background-size: 1200px 100px;
+        animation: waveMove3 16s linear infinite;
+      }
+      @keyframes waveMove1 {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -1200px 0;
+        }
+      }
+      @keyframes waveMove2 {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 1200px 0;
+        }
+      }
+      @keyframes waveMove3 {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -1200px 0;
+        }
+      }
+
+      /* 水面闪光 */
+      .shimmer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), transparent);
+        animation: shimmerFade 3s ease-in-out infinite;
+      }
+      @keyframes shimmerFade {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      /* 涟漪 */
+      .ripple {
+        position: absolute;
+        border: 2px solid rgba(180, 220, 255, 0.5);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        pointer-events: none;
+      }
+      @keyframes rippleExpand {
+        0% {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0.8;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0;
+        }
+      }
+
+      /* 漂浮光点 */
+      .firefly {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #fff5a0;
+        box-shadow: 0 0 8px #fff5a0;
+        opacity: 0;
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes float {
+        0% {
+          opacity: 0;
+          transform: translateY(0) translateX(0);
+        }
+        50% {
+          opacity: 0.9;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-80px) translateX(20px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>静 谧 湖 面 · 水 波 涟 漪</h1>
+    <div class="scene" id="scene">
+      <div class="moon"></div>
+      <div class="mountains"><div class="mtn"></div></div>
+      <div class="water" id="water">
+        <div class="reflection"></div>
+        <div class="shimmer"></div>
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
+        <div class="wave wave3"></div>
+      </div>
+    </div>
+    <div class="hint">点击水面产生涟漪 · 三层水波反向流动 · 月光倒影摇曳</div>
+
+    <script>
+      const water = document.getElementById('water');
+      const scene = document.getElementById('scene');
+
+      // 漂浮萤光
+      for (let i = 0; i < 12; i++) {
+        const f = document.createElement('div');
+        f.className = 'firefly';
+        f.style.left = Math.random() * 100 + '%';
+        f.style.bottom = Math.random() * 60 + '%';
+        f.style.animationDelay = Math.random() * 6 + 's';
+        f.style.animationDuration = 4 + Math.random() * 4 + 's';
+        scene.appendChild(f);
+      }
+
+      // 点击产生涟漪
+      water.addEventListener('click', (e) => {
+        const rect = water.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => {
+            const r = document.createElement('div');
+            r.className = 'ripple';
+            const size = 40 + i * 30;
+            r.style.left = x + 'px';
+            r.style.top = y + 'px';
+            r.style.width = size + 'px';
+            r.style.height = size * 0.3 + 'px';
+            r.style.animation = `rippleExpand ${1.2 + i * 0.3}s ease-out forwards`;
+            water.appendChild(r);
+            setTimeout(() => r.remove(), 2000);
+          }, i * 150);
+        }
+      });
+
+      // 周期性自动涟漪
+      setInterval(() => {
+        const x = Math.random() * water.offsetWidth;
+        const y = 20 + Math.random() * 60;
+        const r = document.createElement('div');
+        r.className = 'ripple';
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+        r.style.width = '50px';
+        r.style.height = '15px';
+        r.style.animation = 'rippleExpand 2s ease-out forwards';
+        water.appendChild(r);
+        setTimeout(() => r.remove(), 2200);
+      }, 1800);
+    </script>
+  </body>
+</html>

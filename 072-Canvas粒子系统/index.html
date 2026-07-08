@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas 粒子系统</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #050510;
+      }
+      canvas {
+        display: block;
+        cursor: crosshair;
+      }
+      .ui {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        color: #d0e8ff;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        line-height: 1.9;
+        text-shadow: 0 0 6px rgba(100, 200, 255, 0.5);
+        pointer-events: none;
+        user-select: none;
+      }
+      .ui b {
+        color: #8be9fd;
+      }
+      .controls {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        color: #c0d0e0;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 13px;
+        line-height: 1.8;
+        pointer-events: auto;
+      }
+      .controls button {
+        background: rgba(40, 60, 90, 0.6);
+        color: #cfe8ff;
+        border: 1px solid #4a7;
+        padding: 6px 14px;
+        margin-right: 8px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-family: inherit;
+        transition: all 0.2s;
+      }
+      .controls button:hover {
+        background: rgba(80, 120, 180, 0.7);
+      }
+      .controls button.active {
+        background: rgba(120, 180, 255, 0.5);
+        border-color: #8cf;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div class="ui">
+      <b>粒子系统</b>
+      <br />
+      移动鼠标交互
+      <br />
+      粒子间靠近自动连线
+    </div>
+    <div class="controls">
+      <button id="mode-attract" class="active">吸引模式</button>
+      <button id="mode-repel">排斥模式</button>
+      <button id="mode-vortex">漩涡模式</button>
+      <button id="reset">重置粒子</button>
+    </div>
+    <script>
+      const canvas = document.getElementById('c');
+      const ctx = canvas.getContext('2d');
+      let W, H;
+      const mouse = { x: -9999, y: -9999, down: false };
+      let mode = 'attract';
+      let particles = [];
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        initParticles();
+      }
+      window.addEventListener('resize', resize);
+
+      function rand(a, b) {
+        return a + Math.random() * (b - a);
+      }
+
+      function initParticles() {
+        particles = [];
+        const count = Math.min(180, Math.floor((W * H) / 12000));
+        for (let i = 0; i < count; i++) {
+          const hue = rand(180, 320);
+          particles.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            vx: rand(-0.5, 0.5),
+            vy: rand(-0.5, 0.5),
+            r: rand(1.5, 3.5),
+            hue: hue,
+            hueShift: rand(-0.3, 0.3),
+            trail: [],
+          });
+        }
+      }
+
+      function update() {
+        for (const p of particles) {
+          if (mouse.x > -1000) {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) + 0.01;
+            const force = Math.min(80, 800 / (dist + 20));
+            let fx = 0,
+              fy = 0;
+            if (mode === 'attract') {
+              fx = (dx / dist) * force * 0.04;
+              fy = (dy / dist) * force * 0.04;
+            } else if (mode === 'repel') {
+              fx = -(dx / dist) * force * 0.06;
+              fy = -(dy / dist) * force * 0.06;
+            } else if (mode === 'vortex') {
+              fx = (-dy / dist) * force * 0.05 + (dx / dist) * force * 0.01;
+              fy = (dx / dist) * force * 0.05 + (dy / dist) * force * 0.01;
+            }
+            p.vx += fx;
+            p.vy += fy;
+          }
+
+          p.vx *= 0.96;
+          p.vy *= 0.96;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) {
+            p.x = 0;
+            p.vx *= -0.7;
+          }
+          if (p.x > W) {
+            p.x = W;
+            p.vx *= -0.7;
+          }
+          if (p.y < 0) {
+            p.y = 0;
+            p.vy *= -0.7;
+          }
+          if (p.y > H) {
+            p.y = H;
+            p.vy *= -0.7;
+          }
+
+          p.hue = (p.hue + p.hueShift + 360) % 360;
+
+          p.trail.push({ x: p.x, y: p.y });
+          if (p.trail.length > 12) p.trail.shift();
+        }
+      }
+
+      function draw() {
+        ctx.fillStyle = 'rgba(5,5,16,0.25)';
+        ctx.fillRect(0, 0, W, H);
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          for (let j = i + 1; j < particles.length; j++) {
+            const q = particles[j];
+            const dx = p.x - q.x,
+              dy = p.y - q.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 120) {
+              const a = (1 - d / 120) * 0.4;
+              ctx.strokeStyle = `hsla(${(p.hue + q.hue) / 2},${70}%,65%,${a})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(q.x, q.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        for (const p of particles) {
+          for (let k = 0; k < p.trail.length; k++) {
+            const t = p.trail[k];
+            const a = (k / p.trail.length) * 0.3;
+            ctx.fillStyle = `hsla(${p.hue},80%,65%,${a})`;
+            ctx.beginPath();
+            ctx.arc(t.x, t.y, Math.max(0.1, p.r * (k / p.trail.length)), 0, Math.PI * 2);
+            ctx.fill();
+          }
+          const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, p.r * 4));
+          glow.addColorStop(0, `hsla(${p.hue},90%,70%,0.6)`);
+          glow.addColorStop(1, `hsla(${p.hue},90%,70%,0)`);
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = `hsl(${p.hue},85%,70%)`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (mouse.x > -1000) {
+          const r = mode === 'attract' ? 60 : mode === 'repel' ? 80 : 50;
+          const c = mode === 'attract' ? '120,220,255' : mode === 'repel' ? '255,120,120' : '255,200,120';
+          ctx.strokeStyle = `rgba(${c},0.5)`;
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, r, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      function loop() {
+        update();
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      canvas.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+      });
+
+      document.getElementById('mode-attract').onclick = function () {
+        setMode('attract', this);
+      };
+      document.getElementById('mode-repel').onclick = function () {
+        setMode('repel', this);
+      };
+      document.getElementById('mode-vortex').onclick = function () {
+        setMode('vortex', this);
+      };
+      document.getElementById('reset').onclick = initParticles;
+
+      function setMode(m, btn) {
+        mode = m;
+        document.querySelectorAll('.controls button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      resize();
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+</html>

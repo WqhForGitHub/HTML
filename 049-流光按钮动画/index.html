@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>流光按钮动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0a0a1a 0%, #15152e 50%, #0a0a1a 100%);
+        color: #fff;
+        padding: 50px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+        background-size: 300% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: titleFlow 4s linear infinite;
+      }
+      @keyframes titleFlow {
+        to {
+          background-position: 300% center;
+        }
+      }
+
+      .subtitle {
+        color: #889;
+        margin-bottom: 50px;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+        max-width: 1000px;
+        width: 100%;
+      }
+
+      .cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 160px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 30px;
+      }
+      .label {
+        font-size: 0.8rem;
+        color: #778;
+        letter-spacing: 1px;
+      }
+
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        color: #fff;
+        font-size: 1rem;
+      }
+
+      /* 1. 光泽扫过流光 */
+      .btn-shine-flow {
+        position: relative;
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        overflow: hidden;
+      }
+      .btn-shine-flow::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 80%;
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+        transform: skewX(-25deg);
+        animation: shineFlow 3s ease-in-out infinite;
+      }
+      @keyframes shineFlow {
+        0% {
+          left: -150%;
+        }
+        60%,
+        100% {
+          left: 150%;
+        }
+      }
+
+      /* 2. 渐变边框流动 */
+      .btn-border-flow {
+        position: relative;
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: #0a0a1a;
+        z-index: 1;
+      }
+      .btn-border-flow::before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 33px;
+        background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+        background-size: 300% auto;
+        animation: borderFlow 3s linear infinite;
+        z-index: -2;
+      }
+      .btn-border-flow::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        background: #0a0a1a;
+        z-index: -1;
+      }
+      @keyframes borderFlow {
+        to {
+          background-position: 300% 0;
+        }
+      }
+
+      /* 3. 液体填充 */
+      .btn-liquid {
+        position: relative;
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: #1a1a2e;
+        overflow: hidden;
+        z-index: 1;
+      }
+      .btn-liquid::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        border-radius: 40% 40% 0 0;
+        transition: bottom 0.5s ease;
+        z-index: -1;
+      }
+      .btn-liquid:hover::before {
+        bottom: 0;
+      }
+      .btn-liquid span {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* 4. 边框跑马灯光 */
+      .btn-marquee {
+        position: relative;
+        padding: 14px 44px;
+        border-radius: 8px;
+        background: #0a0a1a;
+        z-index: 1;
+      }
+      .btn-marquee::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 10px;
+        background: conic-gradient(from 0deg, #ff0080, #ff8c00, #ffe600, #40e0d0, #ff0080);
+        animation: spin 3s linear infinite;
+        z-index: -2;
+      }
+      .btn-marquee::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 8px;
+        background: #0a0a1a;
+        z-index: -1;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 5. 背景流光填充 */
+      .btn-bg-flow {
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: linear-gradient(90deg, #ff0080, #ff8c00, #ffe600, #40e0d0, #ff0080);
+        background-size: 300% auto;
+        animation: bgFlow 4s linear infinite;
+        box-shadow: 0 0 20px rgba(255, 0, 128, 0.4);
+      }
+      @keyframes bgFlow {
+        to {
+          background-position: 300% 0;
+        }
+      }
+
+      /* 6. 双向流光 */
+      .btn-dual-shine {
+        position: relative;
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #f5576c, #f093fb);
+        overflow: hidden;
+      }
+      .btn-dual-shine::before,
+      .btn-dual-shine::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        transform: skewX(-25deg);
+      }
+      .btn-dual-shine::before {
+        left: -150%;
+        animation: shineLeft 3s ease-in-out infinite;
+      }
+      .btn-dual-shine::after {
+        right: -150%;
+        animation: shineRight 3s ease-in-out infinite;
+      }
+      @keyframes shineLeft {
+        0% {
+          left: -150%;
+        }
+        50%,
+        100% {
+          left: 150%;
+        }
+      }
+      @keyframes shineRight {
+        0%,
+        50% {
+          right: -150%;
+        }
+        100% {
+          right: 150%;
+        }
+      }
+
+      /* 7. 脉冲流光 */
+      .btn-pulse-glow {
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        animation: pulseGlow 2s ease-in-out infinite;
+      }
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          box-shadow:
+            0 0 10px rgba(79, 172, 254, 0.5),
+            0 0 20px rgba(79, 172, 254, 0.3);
+        }
+        50% {
+          box-shadow:
+            0 0 25px rgba(79, 172, 254, 0.9),
+            0 0 50px rgba(79, 172, 254, 0.5),
+            0 0 80px rgba(0, 242, 254, 0.3);
+        }
+      }
+
+      /* 8. 文字流光 */
+      .btn-text-flow {
+        padding: 14px 44px;
+        border-radius: 30px;
+        background: #0a0a1a;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .btn-text-flow span {
+        background: linear-gradient(90deg, #ff0080, #ffe600, #40e0d0, #ff0080);
+        background-size: 300% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: textFlow 3s linear infinite;
+        font-weight: 700;
+      }
+      @keyframes textFlow {
+        to {
+          background-position: 300% 0;
+        }
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        color: #556;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>流光按钮动画</h1>
+    <p class="subtitle">八种流光溢彩的按钮效果 · 渐变与光泽的华丽舞蹈</p>
+
+    <div class="container">
+      <div class="cell">
+        <button class="btn-shine-flow">光泽循环</button>
+        <span class="label">循环光泽扫过</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-border-flow">边框流光</button>
+        <span class="label">彩色边框流动</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-liquid"><span>悬停液填</span></button>
+        <span class="label">悬停液体填充</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-marquee">旋转边光</button>
+        <span class="label">conic 旋转边框</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-bg-flow">背景流光</button>
+        <span class="label">渐变背景流动</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-dual-shine">双向流光</button>
+        <span class="label">双向光泽交替</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-pulse-glow">脉冲流光</button>
+        <span class="label">脉冲发光扩散</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-text-flow"><span>文字流光</span></button>
+        <span class="label">渐变文字流动</span>
+      </div>
+    </div>
+
+    <footer>纯 CSS3 渐变 · 光泽 · 流动动画</footer>
+  </body>
+</html>

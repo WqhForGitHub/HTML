@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>022 - footer 页脚设计演示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #f5f5f5;
+        color: #333;
+        line-height: 1.7;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 注解面板 */
+      .annotation {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 320px;
+        background: #fffbe6;
+        border: 2px solid #ffd666;
+        border-radius: 10px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        font-size: 13px;
+        z-index: 1000;
+      }
+      .annotation h3 {
+        color: #d48806;
+        margin-bottom: 8px;
+        font-size: 15px;
+      }
+      .annotation code {
+        background: #fff1b8;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: Consolas, monospace;
+        color: #ad6800;
+      }
+      .annotation p {
+        margin-bottom: 6px;
+      }
+      .annotation .close-btn {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        cursor: pointer;
+        color: #999;
+        border: none;
+        background: none;
+        font-size: 18px;
+      }
+
+      /* 顶部占位内容 */
+      .page-top {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        padding: 60px 20px;
+        text-align: center;
+      }
+      .page-top h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+      .page-top p {
+        opacity: 0.9;
+      }
+
+      .main-content {
+        flex: 1;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .main-content h2 {
+        color: #667eea;
+        margin-bottom: 12px;
+      }
+
+      /* footer 样式 */
+      .site-footer {
+        background: #1a1a2e;
+        color: #b8b8c8;
+        margin-top: auto;
+      }
+      .footer-top {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 50px 20px 30px;
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+        gap: 40px;
+      }
+      .footer-col h3 {
+        color: #fff;
+        font-size: 16px;
+        margin-bottom: 18px;
+        position: relative;
+        padding-bottom: 10px;
+      }
+      .footer-col h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background: #667eea;
+      }
+      .footer-about p {
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 16px;
+      }
+      .footer-logo .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .footer-col ul {
+        list-style: none;
+      }
+      .footer-col ul li {
+        margin-bottom: 10px;
+      }
+      .footer-col ul li a {
+        color: #b8b8c8;
+        text-decoration: none;
+        font-size: 14px;
+        transition:
+          color 0.3s,
+          padding-left 0.3s;
+        display: inline-block;
+      }
+      .footer-col ul li a:hover {
+        color: #667eea;
+        padding-left: 5px;
+      }
+      .footer-contact p {
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .footer-contact .icon {
+        color: #667eea;
+      }
+
+      /* 订阅 */
+      .newsletter p {
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+      .newsletter-form {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .newsletter-form input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #333;
+        background: #16162a;
+        color: #fff;
+        border-radius: 6px;
+        outline: none;
+        font-size: 14px;
+      }
+      .newsletter-form input:focus {
+        border-color: #667eea;
+      }
+      .newsletter-form button {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        transition: transform 0.2s;
+      }
+      .newsletter-form button:hover {
+        transform: translateY(-2px);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 10px;
+      }
+      .social-icons a {
+        width: 36px;
+        height: 36px;
+        background: #2a2a44;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #b8b8c8;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 16px;
+      }
+      .social-icons a:hover {
+        background: #667eea;
+        color: #fff;
+        transform: translateY(-3px);
+      }
+
+      .footer-divider {
+        max-width: 1200px;
+        margin: 0 auto;
+        border: none;
+        border-top: 1px solid #2a2a44;
+      }
+      .footer-bottom {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 13px;
+      }
+      .footer-bottom .legal a {
+        color: #b8b8c8;
+        text-decoration: none;
+        margin-left: 16px;
+        transition: color 0.3s;
+      }
+      .footer-bottom .legal a:hover {
+        color: #667eea;
+      }
+
+      @media (max-width: 768px) {
+        .footer-top {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 500px) {
+        .footer-top {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 注解面板 -->
+    <aside class="annotation" id="annotation">
+      <button class="close-btn" onclick="document.getElementById('annotation').style.display = 'none'">&times;</button>
+      <h3>
+        语义元素说明：
+        <code>&lt;footer&gt;</code>
+      </h3>
+      <p>
+        <code>&lt;footer&gt;</code>
+        元素代表一个区段的页脚，通常包含该区段的作者信息、版权、相关链接、法律声明等。
+      </p>
+      <p>常含内容：版权声明、友情链接、联系方式、订阅表单、社交图标。</p>
+      <p>
+        一个页面可有多个
+        <code>&lt;footer&gt;</code>
+        （如每篇文章底部）。不应放在
+        <code>&lt;header&gt;</code>
+        内。
+      </p>
+      <p>
+        本页面底部深色区域即为完整的
+        <code>&lt;footer&gt;</code>
+        实例。
+      </p>
+    </aside>
+
+    <!-- 顶部内容（仅占位） -->
+    <header class="page-top">
+      <h1>云栖科技 · 官方网站</h1>
+      <p>这里是页面的主要内容区域（仅作占位演示）</p>
+    </header>
+
+    <main class="main-content">
+      <h2>关于本页面</h2>
+      <p>
+        本演示重点展示页面底部的
+        <code>&lt;footer&gt;</code>
+        元素。请向下滚动查看完整页脚设计：包含四列布局（关于我们、快速链接、联系方式、邮件订阅）、社交媒体图标、版权信息及法律链接。
+      </p>
+    </main>
+
+    <!-- 演示的 footer 元素 -->
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-col footer-about">
+          <div class="footer-logo">
+            <div class="logo-icon">W</div>
+            <span>云栖科技</span>
+          </div>
+          <p>
+            云栖科技成立于 2015
+            年，专注于云计算与人工智能领域的技术创新，致力于为企业提供高效、安全、智能的数字化解决方案。
+          </p>
+          <div class="social-icons">
+            <a href="#" title="微信">微</a>
+            <a href="#" title="微博">博</a>
+            <a href="#" title="GitHub">G</a>
+            <a href="#" title="知乎">知</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>快速链接</h3>
+          <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">产品中心</a></li>
+            <li><a href="#">解决方案</a></li>
+            <li><a href="#">客户案例</a></li>
+            <li><a href="#">新闻动态</a></li>
+            <li><a href="#">加入我们</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col footer-contact">
+          <h3>联系方式</h3>
+          <p>
+            <span class="icon">[地址]</span>
+            北京市海淀区中关村软件园 12 号楼
+          </p>
+          <p>
+            <span class="icon">[电话]</span>
+            010-8888-6666
+          </p>
+          <p>
+            <span class="icon">[邮箱]</span>
+            contact@yunqi.tech
+          </p>
+          <p>
+            <span class="icon">[时间]</span>
+            周一至周五 9:00 - 18:00
+          </p>
+        </div>
+
+        <div class="footer-col newsletter">
+          <h3>邮件订阅</h3>
+          <p>订阅我们的新闻邮件，第一时间获取最新产品动态与技术文章。</p>
+          <form
+            class="newsletter-form"
+            onsubmit="
+              event.preventDefault();
+              alert('订阅成功！感谢您的关注。');
+              this.reset();
+            "
+          >
+            <input type="email" placeholder="输入您的邮箱地址" required />
+            <button type="submit">订阅</button>
+          </form>
+          <p style="font-size: 12px; opacity: 0.7">我们承诺不会向您发送垃圾邮件，您可以随时取消订阅。</p>
+        </div>
+      </div>
+
+      <hr class="footer-divider" />
+
+      <div class="footer-bottom">
+        <div class="copyright">&copy; 2015-2026 云栖科技有限公司. 保留所有权利. 京ICP备2026000000号</div>
+        <div class="legal">
+          <a href="#">隐私政策</a>
+          <a href="#">服务条款</a>
+          <a href="#">Cookie 设置</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

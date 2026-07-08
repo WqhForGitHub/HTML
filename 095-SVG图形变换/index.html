@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 图形变换 - 形态变换展示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0d1117, #161b22, #21262d);
+        min-height: 100vh;
+        color: #fff;
+        padding: 30px 20px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 36px;
+        margin-bottom: 8px;
+        background: linear-gradient(90deg, #00d4ff, #7b2ff7, #f72585);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .subtitle {
+        text-align: center;
+        color: #aaa;
+        margin-bottom: 30px;
+        font-size: 15px;
+      }
+      .main-stage {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 30px;
+      }
+      .morph-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .morph-svg-wrap {
+        background: radial-gradient(circle, rgba(123, 47, 247, 0.15), transparent);
+        border-radius: 50%;
+        width: 280px;
+        height: 280px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      .morph-svg-wrap svg {
+        width: 240px;
+        height: 240px;
+      }
+      .shape-label {
+        font-size: 22px;
+        color: #00d4ff;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+      .shape-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .shape-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .shape-btn:hover {
+        background: rgba(0, 212, 255, 0.2);
+        border-color: #00d4ff;
+      }
+      .shape-btn.active {
+        background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+        border-color: transparent;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .grid-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+      .grid-card:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+      }
+      .grid-card h4 {
+        color: #f72585;
+        margin-top: 8px;
+        font-size: 13px;
+      }
+      .grid-card svg {
+        width: 110px;
+        height: 110px;
+      }
+      .info {
+        text-align: center;
+        color: #888;
+        margin-top: 24px;
+        font-size: 13px;
+      }
+      .auto-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .auto-toggle label {
+        color: #aaa;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVG 图形变换</h1>
+    <p class="subtitle">形态变换 · 旋转缩放 · 倾斜变形 · 点击交互触发变换动画</p>
+
+    <div class="main-stage">
+      <div class="morph-display">
+        <div class="morph-svg-wrap">
+          <svg viewBox="-100 -100 200 200" id="mainMorph">
+            <defs>
+              <linearGradient id="morphGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#00d4ff">
+                  <animate
+                    attributeName="stop-color"
+                    values="#00d4ff;#7b2ff7;#f72585;#00d4ff"
+                    dur="8s"
+                    repeatCount="indefinite"
+                  />
+                </stop>
+                <stop offset="1" stop-color="#f72585">
+                  <animate
+                    attributeName="stop-color"
+                    values="#f72585;#00d4ff;#7b2ff7;#f72585"
+                    dur="8s"
+                    repeatCount="indefinite"
+                  />
+                </stop>
+              </linearGradient>
+            </defs>
+            <path
+              id="morphPath"
+              fill="url(#morphGrad)"
+              stroke="#fff"
+              stroke-width="2"
+              d="M 0,-80 A 80,80 0 1,0 0,80 A 80,80 0 1,0 0,-80 Z"
+            />
+          </svg>
+        </div>
+        <div class="shape-label" id="shapeLabel">圆形</div>
+        <div class="shape-controls">
+          <button class="shape-btn active" data-shape="circle">圆形</button>
+          <button class="shape-btn" data-shape="square">方形</button>
+          <button class="shape-btn" data-shape="star">星形</button>
+          <button class="shape-btn" data-shape="triangle">三角形</button>
+          <button class="shape-btn" data-shape="heart">心形</button>
+          <button class="shape-btn" data-shape="hexagon">六边形</button>
+          <button class="shape-btn" data-shape="flower">花朵</button>
+        </div>
+        <div class="auto-toggle">
+          <label>
+            <input type="checkbox" id="autoMode" checked />
+            自动循环变换
+          </label>
+          <label>
+            <input type="checkbox" id="rotateMode" />
+            旋转模式
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="grid-card" onclick="triggerCard(this, 0)">
+        <svg viewBox="-60 -60 120 120">
+          <path
+            class="gshape"
+            fill="none"
+            stroke="#00d4ff"
+            stroke-width="3"
+            d="M 0,-40 A 40,40 0 1,0 0,40 A 40,40 0 1,0 0,-40 Z"
+          />
+        </svg>
+        <h4>缩放旋转</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 1)">
+        <svg viewBox="-60 -60 120 120">
+          <rect class="gshape" x="-40" y="-40" width="80" height="80" fill="none" stroke="#7b2ff7" stroke-width="3" />
+        </svg>
+        <h4>倾斜变形</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 2)">
+        <svg viewBox="-60 -60 120 120">
+          <path
+            class="gshape"
+            fill="none"
+            stroke="#f72585"
+            stroke-width="3"
+            d="M 0,-40 L 12,-12 L 40,-12 L 18,8 L 26,38 L 0,20 L -26,38 L -18,8 L -40,-12 L -12,-12 Z"
+          />
+        </svg>
+        <h4>颜色变化</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 3)">
+        <svg viewBox="-60 -60 120 120">
+          <polygon class="gshape" points="0,-45 40,30 -40,30" fill="none" stroke="#fee440" stroke-width="3" />
+        </svg>
+        <h4>翻转动画</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 4)">
+        <svg viewBox="-60 -60 120 120">
+          <path
+            class="gshape"
+            fill="none"
+            stroke="#06ffa5"
+            stroke-width="3"
+            d="M 0,30 C -30,30 -50,0 -50,-15 C -50,-35 -25,-35 -25,-15 C -25,-35 0,-35 0,-15 C 0,-35 25,-35 25,-15 C 25,-35 50,-35 50,-15 C 50,0 30,30 0,30 Z"
+          />
+        </svg>
+        <h4>心跳脉冲</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 5)">
+        <svg viewBox="-60 -60 120 120">
+          <polygon
+            class="gshape"
+            points="0,-45 39,-23 39,23 0,45 -39,23 -39,-23"
+            fill="none"
+            stroke="#ff8c00"
+            stroke-width="3"
+          />
+        </svg>
+        <h4>自转效果</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 6)">
+        <svg viewBox="-60 -60 120 120">
+          <g class="gshape">
+            <circle cx="0" cy="-25" r="18" fill="none" stroke="#ff006e" stroke-width="3" />
+            <circle cx="24" cy="-8" r="18" fill="none" stroke="#ff006e" stroke-width="3" />
+            <circle cx="15" cy="22" r="18" fill="none" stroke="#ff006e" stroke-width="3" />
+            <circle cx="-15" cy="22" r="18" fill="none" stroke="#ff006e" stroke-width="3" />
+            <circle cx="-24" cy="-8" r="18" fill="none" stroke="#ff006e" stroke-width="3" />
+          </g>
+        </svg>
+        <h4>花瓣展开</h4>
+      </div>
+      <div class="grid-card" onclick="triggerCard(this, 7)">
+        <svg viewBox="-60 -60 120 120">
+          <g class="gshape">
+            <ellipse cx="0" cy="0" rx="45" ry="20" fill="none" stroke="#00d4ff" stroke-width="3" />
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="45"
+              ry="20"
+              fill="none"
+              stroke="#00d4ff"
+              stroke-width="3"
+              transform="rotate(60)"
+            />
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="45"
+              ry="20"
+              fill="none"
+              stroke="#00d4ff"
+              stroke-width="3"
+              transform="rotate(120)"
+            />
+          </g>
+        </svg>
+        <h4>原子轨道</h4>
+      </div>
+    </div>
+    <p class="info">点击下方卡片触发不同变换动画 · 顶部选择形状进行平滑形态变换</p>
+
+    <script>
+      /* exported triggerCard */
+      const shapes = {
+        circle: { d: 'M 0,-80 A 80,80 0 1,0 0,80 A 80,80 0 1,0 0,-80 Z', name: '圆形' },
+        square: { d: 'M -70,-70 L 70,-70 L 70,70 L -70,70 Z', name: '方形' },
+        star: {
+          d: 'M 0,-80 L 23,-25 L 80,-25 L 35,10 L 50,65 L 0,32 L -50,65 L -35,10 L -80,-25 L -23,-25 Z',
+          name: '星形',
+        },
+        triangle: { d: 'M 0,-80 L 70,55 L -70,55 Z', name: '三角形' },
+        heart: {
+          d: 'M 0,60 C -50,50 -80,10 -80,-25 C -80,-60 -45,-65 -45,-35 C -45,-65 0,-65 0,-35 C 0,-65 45,-65 45,-35 C 45,-65 80,-60 80,-25 C 80,10 50,50 0,60 Z',
+          name: '心形',
+        },
+        hexagon: { d: 'M 0,-80 L 69,-40 L 69,40 L 0,80 L -69,40 L -69,-40 Z', name: '六边形' },
+        flower: {
+          d: 'M 0,-80 C 20,-80 40,-50 40,-30 C 60,-30 80,0 60,20 C 80,40 60,70 40,60 C 20,80 -20,80 -40,60 C -60,70 -80,40 -60,20 C -80,0 -60,-30 -40,-30 C -40,-50 -20,-80 0,-80 Z',
+          name: '花朵',
+        },
+      };
+      const shapeKeys = Object.keys(shapes);
+      let currentIdx = 0;
+      let autoTimer = null;
+
+      const morphPath = document.getElementById('morphPath');
+      const shapeLabel = document.getElementById('shapeLabel');
+
+      function morphTo(key) {
+        const target = shapes[key].d;
+        // 使用 SMIL animate 实现路径变形
+        const anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        anim.setAttribute('attributeName', 'd');
+        anim.setAttribute('from', morphPath.getAttribute('d'));
+        anim.setAttribute('to', target);
+        anim.setAttribute('dur', '0.8s');
+        anim.setAttribute('fill', 'freeze');
+        morphPath.appendChild(anim);
+        anim.beginElement();
+        setTimeout(function () {
+          morphPath.setAttribute('d', target);
+          morphPath.removeChild(anim);
+        }, 800);
+        shapeLabel.textContent = shapes[key].name;
+        document.querySelectorAll('.shape-btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.shape === key);
+        });
+        currentIdx = shapeKeys.indexOf(key);
+      }
+
+      document.querySelectorAll('.shape-btn').forEach(function (b) {
+        b.addEventListener('click', function () {
+          morphTo(b.dataset.shape);
+          if (autoTimer) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+          }
+          if (document.getElementById('autoMode').checked) startAuto();
+        });
+      });
+
+      function startAuto() {
+        if (autoTimer) clearInterval(autoTimer);
+        autoTimer = setInterval(function () {
+          currentIdx = (currentIdx + 1) % shapeKeys.length;
+          morphTo(shapeKeys[currentIdx]);
+        }, 1800);
+      }
+      function stopAuto() {
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+        }
+      }
+
+      document.getElementById('autoMode').addEventListener('change', function () {
+        if (this.checked) startAuto();
+        else stopAuto();
+      });
+
+      document.getElementById('rotateMode').addEventListener('change', function () {
+        const wrap = document.querySelector('.morph-svg-wrap');
+        if (this.checked) {
+          wrap.style.animation = 'spinSlow 8s linear infinite';
+        } else {
+          wrap.style.animation = 'none';
+        }
+      });
+
+      // 注入旋转动画
+      const styleEl = document.createElement('style');
+      styleEl.textContent = '@keyframes spinSlow { from { transform: rotate(0); } to { transform: rotate(360deg); } }';
+      document.head.appendChild(styleEl);
+
+      // 卡片变换
+      const cardAnims = [
+        function (el) {
+          // 缩放旋转
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 1.2s cubic-bezier(0.68,-0.55,0.27,1.55)';
+          s.style.transformOrigin = 'center';
+          s.style.transform = 'scale(1.3) rotate(360deg)';
+          setTimeout(function () {
+            s.style.transform = '';
+          }, 1300);
+        },
+        function (el) {
+          // 倾斜
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 0.6s ease';
+          s.style.transformOrigin = 'center';
+          s.style.transform = 'skew(30deg,15deg)';
+          setTimeout(function () {
+            s.style.transform = 'skew(-30deg,-15deg)';
+          }, 600);
+          setTimeout(function () {
+            s.style.transform = '';
+          }, 1200);
+        },
+        function (el) {
+          // 颜色变化 + 缩放
+          const s = el.querySelector('.gshape');
+          const colors = ['#00d4ff', '#7b2ff7', '#f72585', '#fee440', '#06ffa5'];
+          let i = 0;
+          s.style.transition = 'all 0.3s';
+          const iv = setInterval(function () {
+            s.setAttribute('stroke', colors[i % colors.length]);
+            s.style.transform = 'scale(' + (1 + 0.1 * Math.sin(i)) + ')';
+            i++;
+            if (i > 8) {
+              clearInterval(iv);
+              s.style.transform = '';
+            }
+          }, 150);
+        },
+        function (el) {
+          // 翻转
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 1s ease';
+          s.style.transformOrigin = 'center';
+          s.style.transform = 'rotateY(180deg) scale(1.2)';
+          setTimeout(function () {
+            s.style.transform = 'rotateY(360deg)';
+          }, 1000);
+          setTimeout(function () {
+            s.style.transform = '';
+          }, 2000);
+        },
+        function (el) {
+          // 心跳
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 0.3s ease';
+          s.style.transformOrigin = 'center';
+          let i = 0;
+          const iv = setInterval(function () {
+            s.style.transform = 'scale(' + (i % 2 === 0 ? 1.25 : 1) + ')';
+            i++;
+            if (i > 5) {
+              clearInterval(iv);
+              s.style.transform = '';
+            }
+          }, 250);
+        },
+        function (el) {
+          // 自转
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 1.5s linear';
+          s.style.transformOrigin = 'center';
+          s.style.transform = 'rotate(720deg) scale(1.2)';
+          setTimeout(function () {
+            s.style.transform = '';
+          }, 1600);
+        },
+        function (el) {
+          // 花瓣展开
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 1s cubic-bezier(0.34,1.56,0.64,1)';
+          s.style.transformOrigin = 'center';
+          s.style.transform = 'scale(0) rotate(180deg)';
+          setTimeout(function () {
+            s.style.transform = 'scale(1) rotate(360deg)';
+          }, 50);
+          setTimeout(function () {
+            s.style.transform = '';
+          }, 1100);
+        },
+        function (el) {
+          // 原子轨道
+          const s = el.querySelector('.gshape');
+          s.style.transition = 'transform 1.5s linear';
+          s.style.transformOrigin = 'center';
+          s.style.transform = 'rotate(540deg) scale(1.3)';
+          setTimeout(function () {
+            s.style.transform = '';
+          }, 1600);
+        },
+      ];
+
+      function triggerCard(el, idx) {
+        if (cardAnims[idx]) {
+          cardAnims[idx](el);
+        }
+      }
+
+      window.addEventListener('load', function () {
+        startAuto();
+      });
+    </script>
+  </body>
+</html>

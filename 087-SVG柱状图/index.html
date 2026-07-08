@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 柱状图 - 动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0c4a6e, #075985);
+        min-height: 100vh;
+        color: #e2e8f0;
+        padding: 30px 20px;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, #38bdf8, #22d3ee);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .subtitle {
+        text-align: center;
+        color: #94a3b8;
+        margin-bottom: 30px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .controls button {
+        background: linear-gradient(135deg, #38bdf8, #22d3ee);
+        color: #0c4a6e;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .controls button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+      }
+
+      .chart-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 30px;
+      }
+      .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .chart-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .chart-subtitle {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-top: 4px;
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        color: #cbd5e0;
+        cursor: pointer;
+        user-select: none;
+      }
+      .legend-item.disabled {
+        opacity: 0.4;
+      }
+      .legend-swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+      }
+
+      #chartSvg {
+        width: 100%;
+        height: auto;
+      }
+
+      .tooltip {
+        position: absolute;
+        background: rgba(12, 74, 110, 0.95);
+        border: 1px solid rgba(56, 189, 248, 0.6);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        color: #fff;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s;
+        z-index: 10;
+        white-space: nowrap;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      }
+      .tooltip .tt-label {
+        color: #94a3b8;
+        font-size: 0.75rem;
+      }
+      .tooltip .tt-val {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-top: 2px;
+      }
+      .chart-wrap {
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>SVG 柱状图</h1>
+      <p class="subtitle">分组对比 · 加载递增动画 · 悬停数值提示 · 随机数据刷新</p>
+
+      <div class="controls">
+        <button id="randomBtn">随机数据</button>
+        <button id="redrawBtn">重新动画</button>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">各城市销售业绩对比</div>
+            <div class="chart-subtitle">2024 年 Q4 主要城市销售额（万元）</div>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="chart-wrap">
+          <svg id="chartSvg" viewBox="0 0 900 460"></svg>
+          <div class="tooltip" id="tooltip"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const cities = ['北京', '上海', '广州', '深圳', '杭州', '成都', '武汉'];
+      const series = [
+        { name: '电子产品', color: '#38bdf8', data: [] },
+        { name: '服装鞋帽', color: '#a78bfa', data: [] },
+        { name: '食品生鲜', color: '#34d399', data: [] },
+      ];
+      const activeSeries = [true, true, true];
+
+      function generateData() {
+        series.forEach((s) => {
+          s.data = cities.map(() => Math.round(200 + Math.random() * 800));
+        });
+      }
+      generateData();
+
+      const svg = document.getElementById('chartSvg');
+      const tooltip = document.getElementById('tooltip');
+      const legendEl = document.getElementById('legend');
+
+      const W = 900,
+        H = 460;
+      const padL = 60,
+        padR = 30,
+        padT = 30,
+        padB = 50;
+      const chartW = W - padL - padR,
+        chartH = H - padT - padB;
+
+      function renderChart() {
+        svg.innerHTML = '';
+        // Find max
+        let maxVal = 0;
+        series.forEach((s, i) => {
+          if (activeSeries[i])
+            s.data.forEach((v) => {
+              if (v > maxVal) maxVal = v;
+            });
+        });
+        maxVal = Math.ceil(maxVal / 200) * 200 * 1.1 || 1000;
+
+        // Defs
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        series.forEach((s, i) => {
+          defs.innerHTML += `
+      <linearGradient id="bar-grad-${i}" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="${s.color}" stop-opacity="1"/>
+        <stop offset="100%" stop-color="${s.color}" stop-opacity="0.5"/>
+      </linearGradient>`;
+        });
+        svg.appendChild(defs);
+
+        // Grid lines & Y labels
+        for (let i = 0; i <= 5; i++) {
+          const y = padT + chartH * (1 - i / 5);
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', padL);
+          line.setAttribute('y1', y);
+          line.setAttribute('x2', W - padR);
+          line.setAttribute('y2', y);
+          line.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+          if (i > 0) line.setAttribute('stroke-dasharray', '3 4');
+          svg.appendChild(line);
+
+          const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          lbl.setAttribute('x', padL - 10);
+          lbl.setAttribute('y', y + 4);
+          lbl.setAttribute('text-anchor', 'end');
+          lbl.setAttribute('fill', '#94a3b8');
+          lbl.setAttribute('font-size', '11');
+          lbl.textContent = Math.round((maxVal * i) / 5);
+          svg.appendChild(lbl);
+        }
+
+        // Y axis title
+        const yTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        yTitle.setAttribute('x', 16);
+        yTitle.setAttribute('y', padT + chartH / 2);
+        yTitle.setAttribute('text-anchor', 'middle');
+        yTitle.setAttribute('fill', '#94a3b8');
+        yTitle.setAttribute('font-size', '12');
+        yTitle.setAttribute('transform', `rotate(-90 16 ${padT + chartH / 2})`);
+        yTitle.textContent = '销售额 (万元)';
+        svg.appendChild(yTitle);
+
+        // Active series count
+        const activeCount = activeSeries.filter((a) => a).length;
+        if (activeCount === 0) return;
+
+        const groupW = chartW / cities.length;
+        const barW = (groupW * 0.7) / activeCount;
+        const innerPad = groupW * 0.15;
+
+        cities.forEach((city, ci) => {
+          let barIdx = 0;
+          series.forEach((s, si) => {
+            if (!activeSeries[si]) return;
+            const v = s.data[ci];
+            const h = (v / maxVal) * chartH;
+            const x = padL + ci * groupW + innerPad + barIdx * barW;
+            const y = padT + chartH - h;
+
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', x);
+            rect.setAttribute('y', padT + chartH);
+            rect.setAttribute('width', barW * 0.9);
+            rect.setAttribute('height', 0);
+            rect.setAttribute('fill', `url(#bar-grad-${si})`);
+            rect.setAttribute('rx', 3);
+            rect.style.cursor = 'pointer';
+
+            const delay = ci * 0.06 + barIdx * 0.04;
+            rect.style.transition = `all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}s`;
+
+            rect.addEventListener('mouseenter', (_e) => {
+              const rectBB = svg.getBoundingClientRect();
+              const scaleX = rectBB.width / W;
+              const scaleY = rectBB.height / H;
+              tooltip.style.left = (x + barW * 0.45) * scaleX + 'px';
+              tooltip.style.top = y * scaleY - 10 + 'px';
+              tooltip.style.transform = 'translate(-50%, -100%)';
+              tooltip.innerHTML = `<div class="tt-label">${city} · ${s.name}</div><div class="tt-val" style="color:${s.color};">${v} 万元</div>`;
+              tooltip.style.opacity = 1;
+              rect.setAttribute('fill', s.color);
+            });
+            rect.addEventListener('mouseleave', () => {
+              tooltip.style.opacity = 0;
+              rect.setAttribute('fill', `url(#bar-grad-${si})`);
+            });
+            svg.appendChild(rect);
+
+            setTimeout(() => {
+              rect.setAttribute('y', y);
+              rect.setAttribute('height', h);
+            }, 50);
+
+            // Value on top (small)
+            const valLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            valLbl.setAttribute('x', x + barW * 0.45);
+            valLbl.setAttribute('y', y - 6);
+            valLbl.setAttribute('text-anchor', 'middle');
+            valLbl.setAttribute('fill', '#cbd5e0');
+            valLbl.setAttribute('font-size', '10');
+            valLbl.setAttribute('font-weight', '600');
+            valLbl.textContent = v;
+            valLbl.style.opacity = 0;
+            valLbl.style.transition = `opacity 0.4s ease ${delay + 0.8}s`;
+            svg.appendChild(valLbl);
+            setTimeout(() => (valLbl.style.opacity = 1), 50);
+
+            barIdx++;
+          });
+
+          // City label
+          const cityLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          cityLbl.setAttribute('x', padL + ci * groupW + groupW / 2);
+          cityLbl.setAttribute('y', H - padB + 22);
+          cityLbl.setAttribute('text-anchor', 'middle');
+          cityLbl.setAttribute('fill', '#cbd5e0');
+          cityLbl.setAttribute('font-size', '12');
+          cityLbl.setAttribute('font-weight', '500');
+          cityLbl.textContent = city;
+          svg.appendChild(cityLbl);
+        });
+
+        // Legend
+        legendEl.innerHTML = '';
+        series.forEach((s, i) => {
+          const item = document.createElement('div');
+          item.className = 'legend-item' + (activeSeries[i] ? '' : ' disabled');
+          item.innerHTML = `<div class="legend-swatch" style="background:${s.color};"></div>${s.name}`;
+          item.addEventListener('click', () => {
+            activeSeries[i] = !activeSeries[i];
+            renderChart();
+          });
+          legendEl.appendChild(item);
+        });
+      }
+
+      document.getElementById('randomBtn').addEventListener('click', () => {
+        generateData();
+        renderChart();
+      });
+      document.getElementById('redrawBtn').addEventListener('click', renderChart);
+
+      renderChart();
+    </script>
+  </body>
+</html>

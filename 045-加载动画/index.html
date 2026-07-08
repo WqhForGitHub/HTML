@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>加载动画集合</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        color: #fff;
+        padding: 50px 20px;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.4rem;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #4facfe, #00f2fe, #4facfe);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3s linear infinite;
+      }
+      @keyframes shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #99a;
+        margin-bottom: 50px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 30px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .cell {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 40px 20px;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+      }
+      .label {
+        font-size: 0.85rem;
+        color: #889;
+        letter-spacing: 1px;
+      }
+
+      /* 1. 旋转圆环 */
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(255, 255, 255, 0.15);
+        border-top-color: #4facfe;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 2. 双环反向 */
+      .dual-spinner {
+        position: relative;
+        width: 60px;
+        height: 60px;
+      }
+      .dual-spinner::before,
+      .dual-spinner::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 4px solid transparent;
+      }
+      .dual-spinner::before {
+        border-top-color: #f5576c;
+        border-right-color: #f5576c;
+        animation: spin 1.2s linear infinite;
+      }
+      .dual-spinner::after {
+        inset: 10px;
+        border-bottom-color: #4facfe;
+        border-left-color: #4facfe;
+        animation: spin 0.8s linear infinite reverse;
+      }
+
+      /* 3. 弹跳点 */
+      .dots {
+        display: flex;
+        gap: 10px;
+      }
+      .dots span {
+        width: 14px;
+        height: 14px;
+        background: #43e97b;
+        border-radius: 50%;
+        animation: bounce 0.6s ease-in-out infinite;
+      }
+      .dots span:nth-child(2) {
+        animation-delay: 0.15s;
+        background: #38f9d7;
+      }
+      .dots span:nth-child(3) {
+        animation-delay: 0.3s;
+        background: #4facfe;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.6;
+        }
+        50% {
+          transform: translateY(-18px);
+          opacity: 1;
+        }
+      }
+
+      /* 4. 进度条 */
+      .progress {
+        width: 180px;
+        height: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        position: relative;
+      }
+      .progress::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -40%;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, #fa709a, #fee140);
+        border-radius: 5px;
+        animation: progress 1.4s ease-in-out infinite;
+      }
+      @keyframes progress {
+        0% {
+          left: -40%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      /* 5. 骨架屏 */
+      .skeleton {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .skeleton .line {
+        height: 12px;
+        border-radius: 6px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.06) 25%,
+          rgba(255, 255, 255, 0.18) 50%,
+          rgba(255, 255, 255, 0.06) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite;
+      }
+      .skeleton .line:nth-child(1) {
+        width: 60%;
+      }
+      .skeleton .line:nth-child(2) {
+        width: 100%;
+      }
+      .skeleton .line:nth-child(3) {
+        width: 85%;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* 6. 脉冲文字 */
+      .pulse-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        color: #4facfe;
+        animation: pulseText 1.5s ease-in-out infinite;
+      }
+      @keyframes pulseText {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(0.95);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.05);
+          text-shadow: 0 0 20px rgba(79, 172, 254, 0.7);
+        }
+      }
+
+      /* 7. 方波 */
+      .bars {
+        display: flex;
+        gap: 6px;
+        align-items: flex-end;
+        height: 50px;
+      }
+      .bars span {
+        width: 8px;
+        background: linear-gradient(180deg, #f093fb, #f5576c);
+        border-radius: 4px;
+        animation: bars 1s ease-in-out infinite;
+      }
+      .bars span:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .bars span:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .bars span:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .bars span:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+      .bars span:nth-child(5) {
+        animation-delay: 0.4s;
+      }
+      @keyframes bars {
+        0%,
+        100% {
+          height: 10px;
+        }
+        50% {
+          height: 50px;
+        }
+      }
+
+      /* 8. 旋转方块 */
+      .square-spin {
+        width: 40px;
+        height: 40px;
+        background: #43e97b;
+        animation: squareSpin 1.5s ease-in-out infinite;
+      }
+      @keyframes squareSpin {
+        0% {
+          transform: rotate(0deg) scale(1);
+          border-radius: 0;
+        }
+        25% {
+          transform: rotate(90deg) scale(0.7);
+          border-radius: 50%;
+        }
+        50% {
+          transform: rotate(180deg) scale(1);
+          border-radius: 0;
+          background: #38f9d7;
+        }
+        75% {
+          transform: rotate(270deg) scale(0.7);
+          border-radius: 50%;
+        }
+        100% {
+          transform: rotate(360deg) scale(1);
+          border-radius: 0;
+        }
+      }
+
+      /* 9. 圆点环绕 */
+      .orbit {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        animation: spin 2s linear infinite;
+      }
+      .orbit span {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #fa709a;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .orbit span:nth-child(2) {
+        background: #fee140;
+        top: auto;
+        bottom: 0;
+      }
+      .orbit span:nth-child(3) {
+        background: #4facfe;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .orbit span:nth-child(4) {
+        background: #43e97b;
+        left: auto;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        color: #667;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>加载动画集合</h1>
+    <p class="subtitle">九种纯 CSS 加载动画样式 · 页面加载即可见</p>
+
+    <div class="grid">
+      <div class="cell">
+        <div class="spinner"></div>
+        <span class="label">旋转圆环</span>
+      </div>
+
+      <div class="cell">
+        <div class="dual-spinner"></div>
+        <span class="label">双环反向旋转</span>
+      </div>
+
+      <div class="cell">
+        <div class="dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="label">弹跳圆点</span>
+      </div>
+
+      <div class="cell">
+        <div class="progress"></div>
+        <span class="label">无限进度条</span>
+      </div>
+
+      <div class="cell">
+        <div class="skeleton">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+        <span class="label">骨架屏加载</span>
+      </div>
+
+      <div class="cell">
+        <div class="pulse-text">加载中</div>
+        <span class="label">脉冲文字</span>
+      </div>
+
+      <div class="cell">
+        <div class="bars">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="label">方波音律</span>
+      </div>
+
+      <div class="cell">
+        <div class="square-spin"></div>
+        <span class="label">旋转变形方块</span>
+      </div>
+
+      <div class="cell">
+        <div class="orbit">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="label">环绕圆点</span>
+      </div>
+    </div>
+
+    <footer>全部基于 CSS3 keyframes 动画实现</footer>
+  </body>
+</html>

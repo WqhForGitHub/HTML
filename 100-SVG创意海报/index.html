@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 创意海报 - HTML5 创意设计展</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #0a0a0a;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 20px;
+        color: #fff;
+      }
+      .poster-frame {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.6),
+          0 0 0 1px rgba(255, 255, 255, 0.1);
+        max-width: 100%;
+      }
+      .poster {
+        width: 600px;
+        height: 850px;
+        max-width: 100%;
+        display: block;
+      }
+      .toolbar {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      button {
+        background: linear-gradient(135deg, #f72585, #7209b7);
+        color: #fff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 30px;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: inherit;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
+      }
+      button.alt {
+        background: linear-gradient(135deg, #4361ee, #4cc9f0);
+      }
+      .hint {
+        color: #666;
+        margin-top: 16px;
+        font-size: 13px;
+        text-align: center;
+      }
+      @media (max-width: 640px) {
+        .poster {
+          width: 100vw;
+          height: calc(100vw * 1.4167);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="poster-frame">
+      <svg class="poster" viewBox="0 0 600 850" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- 主背景渐变 -->
+          <linearGradient id="posterBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0f0524" />
+            <stop offset="0.5" stop-color="#1a0b3d" />
+            <stop offset="1" stop-color="#0f0524" />
+          </linearGradient>
+          <!-- 标题渐变 -->
+          <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#f72585">
+              <animate attributeName="stop-color" values="#f72585;#4cc9f0;#f72585" dur="6s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="0.5" stop-color="#b5179e">
+              <animate attributeName="stop-color" values="#b5179e;#7209b7;#b5179e" dur="6s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="1" stop-color="#4cc9f0">
+              <animate attributeName="stop-color" values="#4cc9f0;#f72585;#4cc9f0" dur="6s" repeatCount="indefinite" />
+            </stop>
+          </linearGradient>
+          <!-- 装饰圆渐变 -->
+          <radialGradient id="circleGlow" cx="0.5" cy="0.5">
+            <stop offset="0" stop-color="#f72585" stop-opacity="0.6" />
+            <stop offset="1" stop-color="#f72585" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="circleGlow2" cx="0.5" cy="0.5">
+            <stop offset="0" stop-color="#4cc9f0" stop-opacity="0.5" />
+            <stop offset="1" stop-color="#4cc9f0" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="circleGlow3" cx="0.5" cy="0.5">
+            <stop offset="0" stop-color="#fcca46" stop-opacity="0.5" />
+            <stop offset="1" stop-color="#fcca46" stop-opacity="0" />
+          </radialGradient>
+          <!-- 网格图案 -->
+          <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+          </pattern>
+          <!-- 滤镜 -->
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- 背景 -->
+        <rect width="600" height="850" fill="url(#posterBg)" />
+        <rect width="600" height="850" fill="url(#grid)" />
+
+        <!-- 光晕色块 -->
+        <circle cx="100" cy="150" r="150" fill="url(#circleGlow)">
+          <animate attributeName="cx" values="100;150;100" dur="12s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="500" cy="400" r="180" fill="url(#circleGlow2)">
+          <animate attributeName="cy" values="400;350;400" dur="10s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="300" cy="700" r="160" fill="url(#circleGlow3)">
+          <animate attributeName="cx" values="300;350;300" dur="14s" repeatCount="indefinite" />
+        </circle>
+
+        <!-- 顶部装饰条 -->
+        <g>
+          <rect x="40" y="40" width="6" height="40" fill="#f72585" />
+          <rect x="52" y="50" width="6" height="30" fill="#4cc9f0" />
+          <rect x="64" y="60" width="6" height="20" fill="#fcca46" />
+          <text x="40" y="105" fill="#fff" font-size="11" font-weight="bold" letter-spacing="3">
+            2025 · CREATIVE · EXHIBITION
+          </text>
+        </g>
+
+        <!-- 右上角编号 -->
+        <text x="560" y="60" text-anchor="end" fill="#4cc9f0" font-size="14" font-weight="bold" letter-spacing="2">
+          No. 100
+        </text>
+        <text x="560" y="78" text-anchor="end" fill="rgba(255,255,255,0.5)" font-size="10" letter-spacing="2">
+          SVG POSTER SERIES
+        </text>
+
+        <!-- 主标题 -->
+        <g>
+          <text
+            x="300"
+            y="220"
+            text-anchor="middle"
+            fill="rgba(255,255,255,0.4)"
+            font-size="18"
+            letter-spacing="8"
+            font-weight="300"
+          >
+            H T M L 5
+          </text>
+          <text
+            x="300"
+            y="290"
+            text-anchor="middle"
+            fill="url(#titleGrad)"
+            font-size="72"
+            font-weight="900"
+            letter-spacing="6"
+            filter="url(#glow)"
+          >
+            创意
+          </text>
+          <text
+            x="300"
+            y="360"
+            text-anchor="middle"
+            fill="url(#titleGrad)"
+            font-size="72"
+            font-weight="900"
+            letter-spacing="6"
+            filter="url(#glow)"
+          >
+            设计展
+          </text>
+        </g>
+
+        <!-- 分隔线 -->
+        <g>
+          <line x1="100" y1="400" x2="250" y2="400" stroke="#f72585" stroke-width="2" />
+          <circle cx="300" cy="400" r="4" fill="#f72585" />
+          <line x1="350" y1="400" x2="500" y2="400" stroke="#4cc9f0" stroke-width="2" />
+        </g>
+
+        <!-- 副标题 -->
+        <text x="300" y="435" text-anchor="middle" fill="#fff" font-size="16" letter-spacing="4" opacity="0.9">
+          探索 矢量 · 动画 · 交互 的无限可能
+        </text>
+        <text x="300" y="458" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" letter-spacing="3">
+          EXPLORE THE INFINITE POSSIBILITIES OF SVG
+        </text>
+
+        <!-- 中央装饰几何 -->
+        <g transform="translate(300,560)">
+          <!-- 旋转圆环 -->
+          <circle
+            cx="0"
+            cy="0"
+            r="80"
+            fill="none"
+            stroke="rgba(247,37,133,0.4)"
+            stroke-width="1.5"
+            stroke-dasharray="4 6"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0"
+              to="360"
+              dur="30s"
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle
+            cx="0"
+            cy="0"
+            r="65"
+            fill="none"
+            stroke="rgba(76,201,240,0.4)"
+            stroke-width="1.5"
+            stroke-dasharray="2 8"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="360"
+              to="0"
+              dur="25s"
+              repeatCount="indefinite"
+            />
+          </circle>
+          <!-- 六边形 -->
+          <polygon points="0,-50 43,-25 43,25 0,50 -43,25 -43,-25" fill="none" stroke="#fcca46" stroke-width="2">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0"
+              to="360"
+              dur="20s"
+              repeatCount="indefinite"
+            />
+          </polygon>
+          <!-- 三角形 -->
+          <polygon points="0,-30 26,15 -26,15" fill="none" stroke="#f72585" stroke-width="2">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="360"
+              to="0"
+              dur="15s"
+              repeatCount="indefinite"
+            />
+          </polygon>
+          <!-- 中心点 -->
+          <circle cx="0" cy="0" r="8" fill="#f72585">
+            <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="4" fill="#fff" />
+        </g>
+
+        <!-- 浮动小元素 -->
+        <g opacity="0.7">
+          <circle cx="120" cy="500" r="3" fill="#f72585">
+            <animate attributeName="cy" values="500;490;500" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="480" cy="520" r="2" fill="#4cc9f0">
+            <animate attributeName="cy" values="520;510;520" dur="4s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="150" cy="650" r="2" fill="#fcca46">
+            <animate attributeName="cy" values="650;640;650" dur="3.5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="460" cy="680" r="3" fill="#f72585">
+            <animate attributeName="cy" values="680;670;680" dur="2.8s" repeatCount="indefinite" />
+          </circle>
+          <rect x="100" y="600" width="6" height="6" fill="#4cc9f0" transform="rotate(45 103 603)">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 103 603"
+              to="360 103 603"
+              dur="10s"
+              repeatCount="indefinite"
+            />
+          </rect>
+          <rect x="490" y="560" width="6" height="6" fill="#fcca46" transform="rotate(45 493 563)">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="360 493 563"
+              to="0 493 563"
+              dur="12s"
+              repeatCount="indefinite"
+            />
+          </rect>
+        </g>
+
+        <!-- 信息卡片 -->
+        <g transform="translate(60,720)">
+          <rect
+            width="220"
+            height="80"
+            rx="8"
+            fill="rgba(255,255,255,0.05)"
+            stroke="rgba(247,37,133,0.3)"
+            stroke-width="1"
+          />
+          <text x="20" y="30" fill="#f72585" font-size="11" font-weight="bold" letter-spacing="2">展期 DATE</text>
+          <text x="20" y="55" fill="#fff" font-size="18" font-weight="bold">2025.07.15 - 08.15</text>
+          <text x="20" y="72" fill="rgba(255,255,255,0.5)" font-size="10">每日 10:00 - 22:00</text>
+        </g>
+        <g transform="translate(320,720)">
+          <rect
+            width="220"
+            height="80"
+            rx="8"
+            fill="rgba(255,255,255,0.05)"
+            stroke="rgba(76,201,240,0.3)"
+            stroke-width="1"
+          />
+          <text x="20" y="30" fill="#4cc9f0" font-size="11" font-weight="bold" letter-spacing="2">地点 VENUE</text>
+          <text x="20" y="55" fill="#fff" font-size="18" font-weight="bold">数字艺术中心</text>
+          <text x="20" y="72" fill="rgba(255,255,255,0.5)" font-size="10">上海市 · 浦东新区 · 1号馆</text>
+        </g>
+
+        <!-- 底部 -->
+        <g transform="translate(0,820)">
+          <line x1="60" y1="0" x2="540" y2="0" stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+          <text x="60" y="20" fill="rgba(255,255,255,0.6)" font-size="10" letter-spacing="2">
+            主办：HTML5 创意设计联盟
+          </text>
+          <text x="540" y="20" text-anchor="end" fill="rgba(255,255,255,0.6)" font-size="10" letter-spacing="2">
+            WWW.CREATIVE-SVG.EXPO
+          </text>
+        </g>
+
+        <!-- 边角装饰 -->
+        <g stroke="#f72585" stroke-width="2" fill="none">
+          <path d="M20,20 L20,40 M20,20 L40,20" />
+          <path d="M580,20 L580,40 M580,20 L560,20" />
+          <path d="M20,830 L20,810 M20,830 L40,830" />
+          <path d="M580,830 L580,810 M580,830 L560,830" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="toolbar">
+      <button onclick="downloadSVG()">下载 SVG</button>
+      <button class="alt" onclick="toggleAnimation()">暂停/播放动画</button>
+    </div>
+    <p class="hint">海报采用纯 SVG 绘制 · 包含渐变标题、旋转几何装饰、浮动元素与动画效果 · 可缩放无损打印</p>
+
+    <script>
+      /* exported downloadSVG, toggleAnimation */
+      function downloadSVG() {
+        const svg = document.querySelector('.poster');
+        const serializer = new XMLSerializer();
+        let source = serializer.serializeToString(svg);
+        if (!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+          source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'HTML5-创意设计展-海报.svg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      let animPaused = false;
+      function toggleAnimation() {
+        animPaused = !animPaused;
+        const svg = document.querySelector('.poster');
+        if (document.documentElement.style.pauseAnimations) {
+          // SVG SMIL pause - 通过 SVGSVGElement API
+          if (animPaused) svg.pauseAnimations();
+          else svg.unpauseAnimations();
+        } else {
+          // 回退：切换 display
+          svg.querySelectorAll('animate, animateTransform').forEach(function (_a) {
+            // 无法直接暂停，使用 SVGSVGElement API
+          });
+          if (animPaused) svg.pauseAnimations();
+          else svg.unpauseAnimations();
+        }
+      }
+    </script>
+  </body>
+</html>

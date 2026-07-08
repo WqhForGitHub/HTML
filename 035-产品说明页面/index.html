@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Nimbus Pro 4K 投影仪产品说明页面 - 概览、特性、规格、使用步骤与常见问题" />
+    <title>Nimbus Pro 4K 投影仪 | 产品说明</title>
+    <style>
+      :root {
+        --pri: #6d28d9;
+        --pri-l: #ede9fe;
+        --ink: #1f2937;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --bg: #f9fafb;
+        --ok: #059669;
+        --warn: #d97706;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+        line-height: 1.75;
+      }
+      a {
+        color: var(--pri);
+        text-decoration: none;
+      }
+
+      /* 顶栏 */
+      .nav {
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav .logo {
+        font-weight: 800;
+        font-size: 20px;
+      }
+      .nav .logo b {
+        color: var(--pri);
+      }
+      .nav ul {
+        list-style: none;
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+      }
+      .nav a {
+        color: var(--ink);
+      }
+      .nav a:hover {
+        color: var(--pri);
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 24px 60px;
+      }
+
+      /* 面包屑 */
+      .crumb {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+      .crumb a:hover {
+        color: var(--pri);
+      }
+
+      /* 概览 */
+      .overview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+        align-items: center;
+        background: #fff;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+      }
+      .overview img {
+        width: 100%;
+        border-radius: 12px;
+      }
+      .ov-info .badge {
+        display: inline-block;
+        background: var(--pri-l);
+        color: var(--pri);
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .ov-info h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .ov-info .tagline {
+        font-size: 16px;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+      .ov-info .price {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--pri);
+        margin-bottom: 16px;
+      }
+      .ov-info .price small {
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: 400;
+        text-decoration: line-through;
+        margin-left: 8px;
+      }
+      .ov-info .cta {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+      .btn {
+        padding: 11px 24px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .btn-pri {
+        background: var(--pri);
+        color: #fff;
+      }
+      .btn-ghost {
+        background: #fff;
+        color: var(--pri);
+        border: 1px solid var(--pri);
+      }
+
+      .key-stats {
+        display: flex;
+        gap: 24px;
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+      .key-stats div {
+        text-align: center;
+        flex: 1;
+      }
+      .key-stats .num {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--pri);
+      }
+      .key-stats .lbl {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* 特性 */
+      section.block {
+        margin-top: 40px;
+      }
+      section.block > h2 {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        text-align: center;
+      }
+      section.block > .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+      }
+      .feature {
+        background: #fff;
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        transition: 0.2s;
+      }
+      .feature:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(109, 40, 217, 0.1);
+        border-color: var(--pri);
+      }
+      .feature .ic {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: var(--pri-l);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+      .feature h3 {
+        font-size: 17px;
+        margin-bottom: 6px;
+      }
+      .feature p {
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      /* 规格表 */
+      .specs {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .specs table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .specs th,
+      .specs td {
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+      .specs th {
+        background: var(--pri-l);
+        width: 200px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .specs tr:last-child th,
+      .specs tr:last-child td {
+        border-bottom: none;
+      }
+      .specs .group td {
+        background: #f3f4f6;
+        font-weight: 700;
+        color: var(--pri);
+      }
+
+      /* 使用步骤 */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        counter-reset: step;
+      }
+      .step {
+        background: #fff;
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        position: relative;
+      }
+      .step::before {
+        counter-increment: step;
+        content: counter(step);
+        position: absolute;
+        top: -14px;
+        left: 20px;
+        width: 30px;
+        height: 30px;
+        background: var(--pri);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .step h3 {
+        font-size: 16px;
+        margin: 6px 0 6px;
+      }
+      .step p {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      /* FAQ */
+      .faq {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .faq-item {
+        border-bottom: 1px solid var(--line);
+      }
+      .faq-item:last-child {
+        border-bottom: none;
+      }
+      .faq-q {
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 15px;
+        list-style: none;
+      }
+      .faq-q::-webkit-details-marker {
+        display: none;
+      }
+      .faq-q .arrow {
+        transition: 0.2s;
+        color: var(--pri);
+      }
+      .faq-item[open] .arrow {
+        transform: rotate(90deg);
+      }
+      .faq-a {
+        padding: 0 20px 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* 盒装清单 */
+      .box-list {
+        background: #fff;
+        border-radius: 12px;
+        padding: 22px;
+        border: 1px solid var(--line);
+      }
+      .box-list ul {
+        columns: 2;
+        list-style: none;
+      }
+      .box-list li {
+        padding: 6px 0;
+        font-size: 14px;
+        break-inside: avoid;
+      }
+      .box-list li::before {
+        content: '✓';
+        color: var(--ok);
+        font-weight: 700;
+        margin-right: 8px;
+      }
+
+      @media (max-width: 780px) {
+        .overview {
+          grid-template-columns: 1fr;
+          padding: 22px;
+        }
+        .steps {
+          grid-template-columns: 1fr 1fr;
+        }
+        .box-list ul {
+          columns: 1;
+        }
+        .specs th {
+          width: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="nav-inner">
+        <div class="logo">
+          Nimbus
+          <b>.</b>
+        </div>
+        <nav aria-label="主导航">
+          <ul>
+            <li><a href="#overview">概览</a></li>
+            <li><a href="#features">特性</a></li>
+            <li><a href="#specs">规格</a></li>
+            <li><a href="#setup">使用</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <nav class="crumb" aria-label="面包屑">
+        <a href="#">首页</a>
+        /
+        <a href="#">投影设备</a>
+        / Nimbus Pro 4K
+      </nav>
+
+      <!-- 概览 -->
+      <section class="overview" id="overview">
+        <img src="https://picsum.photos/seed/projector/600/420" alt="Nimbus Pro 4K 投影仪" />
+        <div class="ov-info">
+          <span class="badge">2026 新品</span>
+          <h1>Nimbus Pro 4K 投影仪</h1>
+          <p class="tagline">激光光源 · 3500 ANSI 流明 · 支持 HDR10+，客厅里的家庭影院</p>
+          <div class="price">
+            ¥4,999
+            <small>¥5,999</small>
+          </div>
+          <p style="font-size: 14px; color: var(--muted)">
+            采用全新三色激光光源技术，覆盖 154% DCI-P3 色域，画面细节纤毫毕现。内置智能系统，开机即用。
+          </p>
+          <div class="cta">
+            <button class="btn btn-pri">立即购买</button>
+            <button class="btn btn-ghost">加入购物车</button>
+          </div>
+          <div class="key-stats">
+            <div>
+              <div class="num">4K</div>
+              <div class="lbl">超高清分辨率</div>
+            </div>
+            <div>
+              <div class="num">3500</div>
+              <div class="lbl">ANSI 流明</div>
+            </div>
+            <div>
+              <div class="num">30000h</div>
+              <div class="lbl">光源寿命</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 特性 -->
+      <section class="block" id="features">
+        <h2>核心特性</h2>
+        <p class="sub">为追求极致影音体验而生的全面升级</p>
+        <div class="features">
+          <article class="feature">
+            <div class="ic">🎨</div>
+            <h3>三色激光光源</h3>
+            <p>红绿蓝三色独立激光，色域覆盖达 154% DCI-P3，色彩还原精准自然。</p>
+          </article>
+          <article class="feature">
+            <div class="ic">🔆</div>
+            <h3>3500 ANSI 高亮</h3>
+            <p>即使白天不拉窗帘，画面依然清晰明亮，告别"投影只能晚上看"。</p>
+          </article>
+          <article class="feature">
+            <div class="ic">🎬</div>
+            <h3>HDR10+ 动态元数据</h3>
+            <p>逐帧调节亮度与对比度，亮部不过曝、暗部有细节，画面层次丰富。</p>
+          </article>
+          <article class="feature">
+            <div class="ic">🤖</div>
+            <h3>全自动梯形校正</h3>
+            <p>开机自动对焦与梯形校正，任意角度放置即可获得方正画面。</p>
+          </article>
+          <article class="feature">
+            <div class="ic">🔊</div>
+            <h3>杜比全景声</h3>
+            <p>内置双 12W 全频扬声器，支持杜比全景声，无需外接音响即可震撼。</p>
+          </article>
+          <article class="feature">
+            <div class="ic">⚡</div>
+            <h3>MEMC 运动补偿</h3>
+            <p>高速画面插帧补偿，看球赛、玩游戏无拖影，动态清晰度大幅提升。</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 技术规格 -->
+      <section class="block" id="specs">
+        <h2>技术规格</h2>
+        <p class="sub">详细参数一览</p>
+        <div class="specs">
+          <table>
+            <tr class="group"><td colspan="2">显示参数</td></tr>
+            <tr>
+              <th>显示技术</th>
+              <td>0.47" DMD 三色激光</td>
+            </tr>
+            <tr>
+              <th>标准分辨率</th>
+              <td>3840 × 2160 (4K UHD)</td>
+            </tr>
+            <tr>
+              <th>亮度</th>
+              <td>3500 ANSI 流明</td>
+            </tr>
+            <tr>
+              <th>对比度</th>
+              <td>3000:1 (动态 10000:1)</td>
+            </tr>
+            <tr>
+              <th>色域</th>
+              <td>154% DCI-P3</td>
+            </tr>
+            <tr class="group"><td colspan="2">系统与接口</td></tr>
+            <tr>
+              <th>处理器</th>
+              <td>MTK MT9669 四核</td>
+            </tr>
+            <tr>
+              <th>内存 / 存储</th>
+              <td>4GB RAM + 64GB ROM</td>
+            </tr>
+            <tr>
+              <th>操作系统</th>
+              <td>Nimbus OS 3.0 (基于 Android 12)</td>
+            </tr>
+            <tr>
+              <th>HDMI 接口</th>
+              <td>HDMI 2.1 × 2 / HDMI eARC × 1</td>
+            </tr>
+            <tr>
+              <th>无线连接</th>
+              <td>Wi-Fi 6 / 蓝牙 5.2</td>
+            </tr>
+            <tr class="group"><td colspan="2">其他</td></tr>
+            <tr>
+              <th>光源寿命</th>
+              <td>30000 小时以上</td>
+            </tr>
+            <tr>
+              <th>噪音</th>
+              <td>&lt; 28 dB (标准模式)</td>
+            </tr>
+            <tr>
+              <th>整机尺寸</th>
+              <td>245 × 215 × 165 mm</td>
+            </tr>
+            <tr>
+              <th>重量</th>
+              <td>约 3.6 kg</td>
+            </tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- 使用步骤 -->
+      <section class="block" id="setup">
+        <h2>快速上手</h2>
+        <p class="sub">四步开始你的家庭影院之旅</p>
+        <div class="steps">
+          <article class="step">
+            <h3>放置投影仪</h3>
+            <p>将投影仪平稳放置于茶几或支架上，正对墙面或幕布，保持镜头无遮挡。</p>
+          </article>
+          <article class="step">
+            <h3>连接电源</h3>
+            <p>接入电源线，按下主机电源键开机，首次启动约需 30 秒进入系统。</p>
+          </article>
+          <article class="step">
+            <h3>自动校正</h3>
+            <p>系统将自动完成对焦与梯形校正，如需手动微调可在设置中调整。</p>
+          </article>
+          <article class="step">
+            <h3>连接网络</h3>
+            <p>按提示连接 Wi-Fi，登录账号后即可观看海量影视内容，享受大屏体验。</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 盒装清单 -->
+      <section class="block">
+        <h2>盒装清单</h2>
+        <p class="sub">开箱即含以下物品</p>
+        <div class="box-list">
+          <ul>
+            <li>Nimbus Pro 4K 投影仪 × 1</li>
+            <li>电源线 × 1</li>
+            <li>遥控器（含电池）× 1</li>
+            <li>HDMI 2.1 线缆 × 1</li>
+            <li>快速入门指南 × 1</li>
+            <li>保修卡 × 1</li>
+            <li>清洁布 × 1</li>
+            <li>便携收纳袋 × 1</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="block" id="faq">
+        <h2>常见问题</h2>
+        <p class="sub">关于 Nimbus Pro 4K 你可能想知道的</p>
+        <div class="faq">
+          <details class="faq-item" open>
+            <summary class="faq-q">
+              白天观看画面会不会看不清？
+              <span class="arrow">▶</span>
+            </summary>
+            <div class="faq-a">
+              Nimbus Pro 4K 亮度达 3500 ANSI
+              流明，在普通客厅光照环境下仍可清晰观看。若阳光直射屏幕，建议适当拉上窗帘以获得最佳效果。
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              可以投在天花板上观看吗？
+              <span class="arrow">▶</span>
+            </summary>
+            <div class="faq-a">
+              支持。产品支持 360° 投影与侧投，配合专用吊装支架可投至天花板。请确保安装牢固，避免坠落风险。
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              支持外接游戏主机吗？
+              <span class="arrow">▶</span>
+            </summary>
+            <div class="faq-a">
+              完全支持。配备两路 HDMI 2.1 接口，支持 4K 120Hz 输入，兼容 PS5、Xbox Series X 等次世代主机，输入延迟低至
+              12ms。
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              光源需要更换吗？寿命多久？
+              <span class="arrow">▶</span>
+            </summary>
+            <div class="faq-a">
+              采用三色激光光源，寿命长达 30000 小时以上，按每天使用 4 小时计算可使用 20 年，无需更换光源。
+            </div>
+          </details>
+          <details class="faq-item">
+            <summary class="faq-q">
+              保修期是多久？
+              <span class="arrow">▶</span>
+            </summary>
+            <div class="faq-a">
+              整机享受 2 年免费保修，光源部分提供 3 年保修。可在官方小程序激活延保服务，最长可延至 5 年。
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

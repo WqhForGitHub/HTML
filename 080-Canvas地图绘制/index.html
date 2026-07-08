@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas 地图绘制</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0a1828;
+      }
+      canvas {
+        display: block;
+        cursor: pointer;
+      }
+      .tooltip {
+        position: fixed;
+        pointer-events: none;
+        background: rgba(10, 30, 50, 0.92);
+        color: #c8e8ff;
+        border: 1px solid #4a8fc8;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 13px;
+        line-height: 1.6;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 10;
+        backdrop-filter: blur(8px);
+      }
+      .tooltip b {
+        color: #ffd8a0;
+        font-size: 15px;
+      }
+      .tooltip .row {
+        color: #8ab8d8;
+      }
+      .tooltip .val {
+        color: #c8e8ff;
+      }
+      .legend {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        color: #c8e8ff;
+        font-family: 'Microsoft YaHei', sans-serif;
+        font-size: 13px;
+        line-height: 1.8;
+        text-shadow: 0 0 6px rgba(80, 160, 220, 0.5);
+        pointer-events: none;
+      }
+      .legend b {
+        color: #ffd8a0;
+        font-size: 16px;
+      }
+      .legend .item {
+        margin-top: 4px;
+      }
+      .legend .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+    <div class="legend">
+      <b>中国主要城市网络图</b>
+      <div class="item">
+        <span class="dot" style="background: #ff6090"></span>
+        核心枢纽
+      </div>
+      <div class="item">
+        <span class="dot" style="background: #4afc4a"></span>
+        主要城市
+      </div>
+      <div class="item">
+        <span class="dot" style="background: #4a8fc8"></span>
+        连接航线
+      </div>
+      <div class="item">悬停城市查看信息</div>
+    </div>
+    <div class="tooltip" id="tip"></div>
+    <script>
+      const canvas = document.getElementById('c');
+      const ctx = canvas.getContext('2d');
+      const tip = document.getElementById('tip');
+      let W,
+        H,
+        scale = 1,
+        offsetX = 0,
+        offsetY = 0;
+      let mouseX = -1,
+        mouseY = -1;
+      let hovered = null;
+      let t = 0;
+
+      const cities = [
+        { name: '北京', x: 0.72, y: 0.32, hub: true, pop: '2189万', desc: '首都·政治文化中心' },
+        { name: '上海', x: 0.82, y: 0.55, hub: true, pop: '2487万', desc: '国际经济金融中心' },
+        { name: '广州', x: 0.68, y: 0.78, hub: true, pop: '1881万', desc: '南方商贸枢纽' },
+        { name: '深圳', x: 0.7, y: 0.8, hub: false, pop: '1768万', desc: '科技创新之都' },
+        { name: '成都', x: 0.45, y: 0.6, hub: true, pop: '2127万', desc: '西南门户' },
+        { name: '重庆', x: 0.5, y: 0.62, hub: false, pop: '3212万', desc: '山城·长江上游' },
+        { name: '武汉', x: 0.62, y: 0.58, hub: false, pop: '1374万', desc: '九省通衢' },
+        { name: '西安', x: 0.52, y: 0.45, hub: false, pop: '1316万', desc: '古都·丝路起点' },
+        { name: '杭州', x: 0.8, y: 0.58, hub: false, pop: '1238万', desc: '人间天堂' },
+        { name: '南京', x: 0.76, y: 0.52, hub: false, pop: '942万', desc: '六朝古都' },
+        { name: '哈尔滨', x: 0.78, y: 0.15, hub: false, pop: '988万', desc: '冰城' },
+        { name: '沈阳', x: 0.76, y: 0.25, hub: false, pop: '907万', desc: '东北重镇' },
+        { name: '昆明', x: 0.4, y: 0.78, hub: false, pop: '846万', desc: '春城' },
+        { name: '拉萨', x: 0.25, y: 0.62, hub: false, pop: '87万', desc: '日光城' },
+        { name: '乌鲁木齐', x: 0.18, y: 0.3, hub: false, pop: '408万', desc: '西域门户' },
+        { name: '兰州', x: 0.42, y: 0.42, hub: false, pop: '438万', desc: '黄河之滨' },
+      ];
+
+      const routes = [
+        [0, 1],
+        [0, 4],
+        [0, 7],
+        [0, 10],
+        [0, 11],
+        [0, 5],
+        [1, 2],
+        [1, 8],
+        [1, 9],
+        [1, 3],
+        [2, 3],
+        [2, 12],
+        [2, 6],
+        [4, 5],
+        [4, 12],
+        [4, 13],
+        [4, 14],
+        [5, 6],
+        [6, 7],
+        [6, 9],
+        [7, 14],
+        [7, 15],
+        [8, 9],
+        [10, 11],
+        [13, 14],
+        [12, 13],
+      ];
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        scale = Math.min(W, H) * 0.85;
+        offsetX = (W - scale) / 2;
+        offsetY = (H - scale) / 2 + 20;
+      }
+      window.addEventListener('resize', resize);
+
+      function toScreen(c) {
+        return { x: offsetX + c.x * scale, y: offsetY + c.y * scale };
+      }
+
+      function drawBackground() {
+        const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+        g.addColorStop(0, '#102030');
+        g.addColorStop(1, '#050a14');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = 'rgba(80,140,200,0.06)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, H);
+          ctx.stroke();
+        }
+        for (let y = 0; y < H; y += 40) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(W, y);
+          ctx.stroke();
+        }
+      }
+
+      function drawMap() {
+        ctx.fillStyle = 'rgba(60,100,140,0.15)';
+        ctx.strokeStyle = 'rgba(120,180,220,0.5)';
+        ctx.lineWidth = 1.5;
+
+        const outline = [
+          [0.15, 0.3],
+          [0.2, 0.22],
+          [0.3, 0.15],
+          [0.4, 0.1],
+          [0.55, 0.08],
+          [0.65, 0.1],
+          [0.72, 0.15],
+          [0.78, 0.18],
+          [0.82, 0.22],
+          [0.85, 0.3],
+          [0.88, 0.4],
+          [0.85, 0.5],
+          [0.82, 0.58],
+          [0.78, 0.65],
+          [0.72, 0.72],
+          [0.68, 0.82],
+          [0.62, 0.88],
+          [0.55, 0.85],
+          [0.48, 0.82],
+          [0.42, 0.85],
+          [0.35, 0.8],
+          [0.3, 0.72],
+          [0.25, 0.65],
+          [0.2, 0.55],
+          [0.15, 0.45],
+          [0.12, 0.38],
+        ];
+        ctx.beginPath();
+        for (let i = 0; i < outline.length; i++) {
+          const p = toScreen({ x: outline[i][0], y: outline[i][1] });
+          if (i === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(80,140,200,0.1)';
+        const regions = [
+          [
+            [0.3, 0.15],
+            [0.55, 0.08],
+            [0.65, 0.1],
+            [0.6, 0.3],
+            [0.45, 0.35],
+            [0.35, 0.3],
+          ],
+          [
+            [0.45, 0.4],
+            [0.65, 0.35],
+            [0.75, 0.45],
+            [0.7, 0.6],
+            [0.55, 0.62],
+            [0.45, 0.55],
+          ],
+          [
+            [0.25, 0.62],
+            [0.4, 0.6],
+            [0.45, 0.75],
+            [0.35, 0.82],
+            [0.25, 0.75],
+          ],
+        ];
+        for (const r of regions) {
+          ctx.beginPath();
+          for (let i = 0; i < r.length; i++) {
+            const p = toScreen({ x: r[i][0], y: r[i][1] });
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+          }
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      function drawRoutes() {
+        for (let i = 0; i < routes.length; i++) {
+          const a = toScreen(cities[routes[i][0]]);
+          const b = toScreen(cities[routes[i][1]]);
+          const mx = (a.x + b.x) / 2;
+          const my = (a.y + b.y) / 2 - Math.abs(a.x - b.x) * 0.15;
+
+          ctx.strokeStyle = 'rgba(74,143,200,0.35)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.quadraticCurveTo(mx, my, b.x, b.y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          const progress = (t * 0.005 + i * 0.3) % 1;
+          const px =
+            (1 - progress) * (1 - progress) * a.x + 2 * (1 - progress) * progress * mx + progress * progress * b.x;
+          const py =
+            (1 - progress) * (1 - progress) * a.y + 2 * (1 - progress) * progress * my + progress * progress * b.y;
+          const g = ctx.createRadialGradient(px, py, 0, px, py, Math.max(1, 6));
+          g.addColorStop(0, 'rgba(255,220,120,0.9)');
+          g.addColorStop(1, 'rgba(255,220,120,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function drawCities() {
+        for (const c of cities) {
+          const p = toScreen(c);
+          const pulse = Math.sin(t * 0.05 + c.x * 10) * 0.3 + 0.7;
+          const isHovered = hovered === c;
+          const baseR = c.hub ? 6 : 4;
+          const color = c.hub ? '255,96,144' : '74,252,74';
+
+          const ringR = baseR + 4 + Math.sin(t * 0.04) * 3;
+          ctx.strokeStyle = `rgba(${color},${pulse * 0.5})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, Math.max(1, ringR), 0, Math.PI * 2);
+          ctx.stroke();
+
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, baseR * 3));
+          g.addColorStop(0, `rgba(${color},0.6)`);
+          g.addColorStop(1, `rgba(${color},0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, baseR * 3, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = `rgb(${color})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, baseR + (isHovered ? 2 : 0), 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = isHovered ? '#ffe8b0' : '#c8e8ff';
+          ctx.font = `${isHovered ? 'bold ' : ''}${c.hub ? 13 : 11}px "Microsoft YaHei", sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText(c.name, p.x, p.y + baseR + 5);
+
+          if (isHovered) {
+            ctx.strokeStyle = 'rgba(255,232,176,0.8)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, baseR + 6, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+      }
+
+      function checkHover() {
+        hovered = null;
+        for (const c of cities) {
+          const p = toScreen(c);
+          const dx = mouseX - p.x;
+          const dy = mouseY - p.y;
+          if (dx * dx + dy * dy < 200) {
+            hovered = c;
+            break;
+          }
+        }
+        if (hovered) {
+          const p = toScreen(hovered);
+          tip.style.display = 'block';
+          tip.style.left = p.x + 15 + 'px';
+          tip.style.top = p.y + 15 + 'px';
+          tip.innerHTML = `<b>${hovered.name}</b><br>
+      <span class="row">人口：</span><span class="val">${hovered.pop}</span><br>
+      <span class="row">类型：</span><span class="val">${hovered.hub ? '核心枢纽' : '主要城市'}</span><br>
+      <span class="row">${hovered.desc}</span>`;
+        } else {
+          tip.style.display = 'none';
+        }
+      }
+
+      function loop() {
+        t++;
+        drawBackground();
+        drawMap();
+        drawRoutes();
+        checkHover();
+        drawCities();
+        requestAnimationFrame(loop);
+      }
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+      canvas.addEventListener('mouseleave', () => {
+        mouseX = -1;
+        mouseY = -1;
+      });
+
+      resize();
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>026 - aside 侧边栏演示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #eef1f5;
+        color: #2d3748;
+        line-height: 1.7;
+      }
+
+      /* 注解面板 */
+      .annotation {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 320px;
+        background: #fffbe6;
+        border: 2px solid #ffd666;
+        border-radius: 10px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        font-size: 13px;
+        z-index: 1000;
+      }
+      .annotation h3 {
+        color: #d48806;
+        margin-bottom: 8px;
+        font-size: 15px;
+      }
+      .annotation code {
+        background: #fff1b8;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: Consolas, monospace;
+        color: #ad6800;
+      }
+      .annotation p {
+        margin-bottom: 6px;
+      }
+      .annotation .close-btn {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        cursor: pointer;
+        color: #999;
+        border: none;
+        background: none;
+        font-size: 18px;
+      }
+
+      /* 页头 */
+      .site-header {
+        background: #1e293b;
+        color: #fff;
+        padding: 20px 30px;
+      }
+      .site-header h1 {
+        font-size: 22px;
+      }
+      .site-header h1 span {
+        color: #38bdf8;
+      }
+
+      /* 主体布局 */
+      .layout {
+        max-width: 1200px;
+        margin: 24px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 24px;
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* 主内容 */
+      main.main-content {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+      main.main-content > article > header h2 {
+        font-size: 24px;
+        color: #1e293b;
+        margin-bottom: 10px;
+      }
+      .article-meta {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      main.main-content p {
+        margin-bottom: 16px;
+        color: #475569;
+        text-align: justify;
+      }
+      main.main-content h3 {
+        color: #334155;
+        margin: 24px 0 12px;
+      }
+      main.main-content img {
+        width: 100%;
+        border-radius: 10px;
+        margin: 16px 0;
+      }
+
+      /* aside 侧边栏 */
+      aside.sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .widget {
+        background: #fff;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+      .widget h3 {
+        font-size: 16px;
+        color: #1e293b;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+        position: relative;
+      }
+      .widget h3::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background: #38bdf8;
+      }
+
+      /* 作者卡片 */
+      .author-card {
+        text-align: center;
+      }
+      .author-card img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 10px;
+        display: block;
+        border: 3px solid #38bdf8;
+      }
+      .author-card .name {
+        font-weight: bold;
+        color: #1e293b;
+        font-size: 17px;
+      }
+      .author-card .title {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+      .author-card .bio {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 12px;
+      }
+      .author-stats {
+        display: flex;
+        justify-content: space-around;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+      }
+      .author-stats div {
+        text-align: center;
+      }
+      .author-stats strong {
+        display: block;
+        color: #38bdf8;
+        font-size: 18px;
+      }
+      .author-stats small {
+        color: #94a3b8;
+        font-size: 12px;
+      }
+
+      /* 相关文章 */
+      .related-list {
+        list-style: none;
+      }
+      .related-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .related-list li:last-child {
+        border-bottom: none;
+      }
+      .related-list a {
+        color: #334155;
+        text-decoration: none;
+        font-size: 14px;
+        display: flex;
+        gap: 10px;
+        transition: color 0.3s;
+      }
+      .related-list a:hover {
+        color: #38bdf8;
+      }
+      .related-list .num {
+        background: #e0f2fe;
+        color: #0284c7;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+
+      /* 标签云 */
+      .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tag-cloud a {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 5px 12px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.3s;
+      }
+      .tag-cloud a:hover {
+        background: #38bdf8;
+        color: #fff;
+      }
+      .tag-cloud a.hot {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      /* 广告 */
+      .ad-widget {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        color: #fff;
+        text-align: center;
+        padding: 30px 22px;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+      .ad-widget::before {
+        content: '广告';
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        font-size: 11px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+      .ad-widget h4 {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+      .ad-widget p {
+        font-size: 13px;
+        opacity: 0.95;
+        margin-bottom: 14px;
+      }
+      .ad-widget button {
+        background: #fff;
+        color: #ef4444;
+        border: none;
+        padding: 8px 22px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      /* 订阅 */
+      .subscribe-widget {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        color: #fff;
+      }
+      .subscribe-widget h3 {
+        color: #fff;
+      }
+      .subscribe-widget h3::after {
+        background: #38bdf8;
+      }
+      .subscribe-widget p {
+        font-size: 13px;
+        color: #cbd5e1;
+        margin-bottom: 12px;
+      }
+      .subscribe-widget input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        outline: none;
+      }
+      .subscribe-widget button {
+        width: 100%;
+        background: #38bdf8;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      footer.site-footer {
+        text-align: center;
+        padding: 24px;
+        color: #94a3b8;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 注解面板 -->
+    <aside class="annotation" id="annotation">
+      <button class="close-btn" onclick="document.getElementById('annotation').style.display = 'none'">&times;</button>
+      <h3>
+        语义元素说明：
+        <code>&lt;aside&gt;</code>
+      </h3>
+      <p>
+        <code>&lt;aside&gt;</code>
+        表示与主内容相关、但又可独立存在的内容，通常表现为侧边栏。
+      </p>
+      <p>常见内容：相关链接、作者介绍、广告、标签云、热门文章、订阅表单。</p>
+      <p>
+        关键特征：去掉
+        <code>&lt;aside&gt;</code>
+        后，主内容仍应完整可读。它是对主内容的"补充"。
+      </p>
+      <p>
+        本页右侧的整个侧边栏就是一个
+        <code>&lt;aside&gt;</code>
+        。
+      </p>
+    </aside>
+
+    <header class="site-header">
+      <h1>
+        技术
+        <span>博客</span>
+        · 探索 Web 开发的无限可能
+      </h1>
+    </header>
+
+    <div class="layout">
+      <!-- 主内容区 -->
+      <main class="main-content">
+        <article>
+          <header>
+            <h2>深入理解 CSS Flexbox 与 Grid 布局</h2>
+            <div class="article-meta">作者：李明 &nbsp;|&nbsp; 发布于 2026-07-08 &nbsp;|&nbsp; 阅读 2,460</div>
+          </header>
+
+          <p>
+            CSS 布局是前端开发的核心技能之一。在现代 Web 开发中，Flexbox 和 Grid
+            是两大主力布局系统，它们各自擅长不同的场景，理解它们的特点与适用场景，能让我们写出更优雅、更高效的布局代码。
+          </p>
+
+          <img src="https://picsum.photos/seed/csslayout/600/280" alt="CSS 布局示意图" />
+
+          <h3>一、Flexbox：一维布局之王</h3>
+          <p>
+            Flexbox（弹性盒布局）是一维布局系统，它擅长处理一行或一列中的元素排列。无论是水平居中、等宽分布、还是自适应分配空间，Flexbox
+            都能轻松应对。它的核心思想是让容器有能力调整子元素的宽度、高度和顺序，以最佳方式填充可用空间。
+          </p>
+
+          <p>
+            典型应用场景包括：导航栏、按钮组、卡片横排、表单输入组等。Flexbox 让许多过去需要 hack
+            才能实现的布局变得简单直接。
+          </p>
+
+          <h3>二、Grid：二维布局之王</h3>
+          <p>
+            CSS Grid
+            是二维布局系统，能同时控制行和列。当我们需要构建复杂的页面整体结构，如杂志式布局、仪表盘、产品展示网格时，Grid
+            是不二之选。Grid 允许我们定义网格轨道、网格区域，让元素精确地放置在指定位置。
+          </p>
+
+          <img src="https://picsum.photos/seed/gridlayout/600/280" alt="Grid 布局示意图" />
+
+          <h3>三、何时用哪个</h3>
+          <p>
+            一个简单的原则：从内容出发选 Flexbox，从布局出发选 Grid。当元素的排列方向单一、需根据内容自适应时，用
+            Flexbox；当需要整体规划行列结构时，用 Grid。实际项目中，二者常配合使用--例如用 Grid 搭建页面骨架，用 Flexbox
+            处理局部细节。
+          </p>
+
+          <p>
+            本页面的布局就使用了 Grid：左侧主内容区与右侧
+            <code>&lt;aside&gt;</code>
+            侧边栏通过 grid 两列布局实现，响应式下自动转为单列。
+          </p>
+        </article>
+      </main>
+
+      <!-- 侧边栏 aside -->
+      <aside class="sidebar" aria-label="侧边栏">
+        <!-- 作者卡片 -->
+        <section class="widget author-card">
+          <img src="https://picsum.photos/seed/author/100/100" alt="作者头像" />
+          <div class="name">李明</div>
+          <div class="title">资深前端架构师</div>
+          <p class="bio">10 年 Web 开发经验，专注 CSS 与性能优化，热爱分享技术。</p>
+          <div class="author-stats">
+            <div>
+              <strong>86</strong>
+              <small>文章</small>
+            </div>
+            <div>
+              <strong>12k</strong>
+              <small>粉丝</small>
+            </div>
+            <div>
+              <strong>3.2k</strong>
+              <small>获赞</small>
+            </div>
+          </div>
+        </section>
+
+        <!-- 相关文章 -->
+        <section class="widget">
+          <h3>相关阅读</h3>
+          <ul class="related-list">
+            <li>
+              <a href="#">
+                <span class="num">1</span>
+                <span>CSS 自定义属性的进阶用法</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="num">2</span>
+                <span>响应式设计的最佳实践</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="num">3</span>
+                <span>深入理解 CSS 层叠上下文</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="num">4</span>
+                <span>现代 CSS 容器查询入门</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="num">5</span>
+                <span>CSS 动画性能优化指南</span>
+              </a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 标签云 -->
+        <section class="widget">
+          <h3>热门标签</h3>
+          <div class="tag-cloud">
+            <a href="#" class="hot">CSS</a>
+            <a href="#" class="hot">HTML5</a>
+            <a href="#">JavaScript</a>
+            <a href="#">布局</a>
+            <a href="#">响应式</a>
+            <a href="#">Flexbox</a>
+            <a href="#">Grid</a>
+            <a href="#">动画</a>
+            <a href="#">性能</a>
+            <a href="#">Web 标准</a>
+          </div>
+        </section>
+
+        <!-- 广告 -->
+        <section class="widget ad-widget">
+          <h4>前端进阶课程</h4>
+          <p>系统学习现代 CSS 布局，限时 7 折优惠</p>
+          <button onclick="alert('感谢关注课程！')">立即了解</button>
+        </section>
+
+        <!-- 订阅 -->
+        <section class="widget subscribe-widget">
+          <h3>订阅更新</h3>
+          <p>输入邮箱，第一时间获取最新文章推送</p>
+          <form
+            onsubmit="
+              event.preventDefault();
+              alert('订阅成功！');
+              this.reset();
+            "
+          >
+            <input type="email" placeholder="你的邮箱地址" required />
+            <button type="submit">订阅</button>
+          </form>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="site-footer">
+      &copy; 2026 技术博客 · 右侧侧边栏由
+      <code>&lt;aside&gt;</code>
+      语义元素实现
+    </footer>
+  </body>
+</html>

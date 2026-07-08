@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>翻转卡片效果</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: #fff;
+        padding: 50px 20px;
+        background-attachment: fixed;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.4rem;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #43e97b, #38f9d7, #43e97b);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3s linear infinite;
+      }
+      @keyframes shine {
+        to {
+          background-position: 200% center;
+        }
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #99a;
+        margin-bottom: 50px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 30px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .scene {
+        perspective: 1200px;
+        height: 320px;
+      }
+
+      .card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+        cursor: pointer;
+      }
+
+      .scene:hover .card,
+      .scene:focus-within .card {
+        transform: rotateY(180deg);
+      }
+
+      .face {
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .front {
+        background: linear-gradient(135deg, var(--c1), var(--c2));
+      }
+
+      .front .icon {
+        font-size: 3.5rem;
+        margin-bottom: 18px;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+      }
+      .front h3 {
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+      }
+      .front .hint {
+        margin-top: 14px;
+        font-size: 0.8rem;
+        opacity: 0.85;
+        background: rgba(255, 255, 255, 0.18);
+        padding: 4px 14px;
+        border-radius: 20px;
+      }
+
+      .back {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        transform: rotateY(180deg);
+        backdrop-filter: blur(8px);
+        justify-content: flex-start;
+      }
+      .back h3 {
+        font-size: 1.2rem;
+        margin-bottom: 14px;
+        color: var(--c2);
+      }
+      .back p {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #ccd;
+      }
+      .back .tags {
+        margin-top: 16px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .back .tag {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      /* 各卡片配色 */
+      .scene:nth-child(1) .card {
+        --c1: #667eea;
+        --c2: #764ba2;
+      }
+      .scene:nth-child(2) .card {
+        --c1: #f093fb;
+        --c2: #f5576c;
+      }
+      .scene:nth-child(3) .card {
+        --c1: #4facfe;
+        --c2: #00f2fe;
+      }
+      .scene:nth-child(4) .card {
+        --c1: #43e97b;
+        --c2: #38f9d7;
+      }
+      .scene:nth-child(5) .card {
+        --c1: #fa709a;
+        --c2: #fee140;
+      }
+      .scene:nth-child(6) .card {
+        --c1: #30cfd0;
+        --c2: #330867;
+      }
+
+      .tip {
+        text-align: center;
+        margin-top: 40px;
+        color: #778;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>3D 翻转卡片效果</h1>
+    <p class="subtitle">将鼠标悬停在卡片上，正面翻转显示背面详情</p>
+
+    <div class="grid">
+      <div class="scene" tabindex="0">
+        <div class="card">
+          <div class="face front">
+            <div class="icon">🎨</div>
+            <h3>设计美学</h3>
+            <div class="hint">悬停翻转</div>
+          </div>
+          <div class="face back">
+            <h3>设计美学</h3>
+            <p>专注于视觉与交互的完美结合，通过色彩、排版与动效打造令人难忘的体验。</p>
+            <div class="tags">
+              <span class="tag">UI</span>
+              <span class="tag">动效</span>
+              <span class="tag">排版</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene" tabindex="0">
+        <div class="card">
+          <div class="face front">
+            <div class="icon">🚀</div>
+            <h3>性能优化</h3>
+            <div class="hint">悬停翻转</div>
+          </div>
+          <div class="face back">
+            <h3>性能优化</h3>
+            <p>利用 GPU 加速、减少重排重绘，确保动画流畅运行于各种设备之上。</p>
+            <div class="tags">
+              <span class="tag">GPU</span>
+              <span class="tag">流畅</span>
+              <span class="tag">60fps</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene" tabindex="0">
+        <div class="card">
+          <div class="face front">
+            <div class="icon">💡</div>
+            <h3>创意交互</h3>
+            <div class="hint">悬停翻转</div>
+          </div>
+          <div class="face back">
+            <h3>创意交互</h3>
+            <p>翻转、滑动、视差与形变，每一种交互都是与用户对话的独特语言。</p>
+            <div class="tags">
+              <span class="tag">3D</span>
+              <span class="tag">视差</span>
+              <span class="tag">微动效</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene" tabindex="0">
+        <div class="card">
+          <div class="face front">
+            <div class="icon">📱</div>
+            <h3>响应式</h3>
+            <div class="hint">悬停翻转</div>
+          </div>
+          <div class="face back">
+            <h3>响应式</h3>
+            <p>自适应各种屏幕尺寸，在桌面、平板与手机上都呈现完美的视觉效果。</p>
+            <div class="tags">
+              <span class="tag">弹性布局</span>
+              <span class="tag">自适应</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene" tabindex="0">
+        <div class="card">
+          <div class="face front">
+            <div class="icon">🔧</div>
+            <h3>可维护性</h3>
+            <div class="hint">悬停翻转</div>
+          </div>
+          <div class="face back">
+            <h3>可维护性</h3>
+            <p>清晰的代码结构、CSS 变量与模块化设计，让维护与扩展变得轻松愉悦。</p>
+            <div class="tags">
+              <span class="tag">CSS变量</span>
+              <span class="tag">模块化</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scene" tabindex="0">
+        <div class="card">
+          <div class="face front">
+            <div class="icon">✨</div>
+            <h3>无障碍</h3>
+            <div class="hint">悬停翻转</div>
+          </div>
+          <div class="face back">
+            <h3>无障碍</h3>
+            <p>支持键盘聚焦触发翻转，注重对比度与可读性，让所有用户都能舒适访问。</p>
+            <div class="tags">
+              <span class="tag">A11y</span>
+              <span class="tag">键盘</span>
+              <span class="tag">对比度</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="tip">提示：也可以用 Tab 键聚焦卡片触发翻转</p>
+  </body>
+</html>

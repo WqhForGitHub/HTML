@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 中国地图 - 省份交互</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1e3a5f);
+        min-height: 100vh;
+        color: #e2e8f0;
+        padding: 30px 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, #fbbf24, #f97316);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .subtitle {
+        text-align: center;
+        color: #94a3b8;
+        margin-bottom: 30px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 24px;
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .map-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+      }
+      .map-card .title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .map-card .hint {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-bottom: 16px;
+      }
+
+      #mapSvg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .province {
+        fill: #3b82f6;
+        fill-opacity: 0.5;
+        stroke: #60a5fa;
+        stroke-width: 1.2;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .province:hover {
+        fill-opacity: 0.85;
+        stroke: #fbbf24;
+        stroke-width: 2;
+      }
+      .province.selected {
+        fill: #fbbf24;
+        fill-opacity: 0.8;
+        stroke: #f97316;
+        stroke-width: 2;
+      }
+      .province-label {
+        fill: #fff;
+        font-size: 9px;
+        text-anchor: middle;
+        pointer-events: none;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .info-panel {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        min-height: 180px;
+      }
+      .info-panel .label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+      }
+      .info-panel .prov-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fbbf24;
+        margin-bottom: 6px;
+      }
+      .info-panel .prov-capital {
+        font-size: 0.95rem;
+        color: #cbd5e0;
+        margin-bottom: 12px;
+      }
+      .info-panel .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .info-panel .stat {
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        padding: 10px;
+      }
+      .info-panel .stat .k {
+        font-size: 0.7rem;
+        color: #94a3b8;
+      }
+      .info-panel .stat .v {
+        font-size: 1.05rem;
+        color: #fff;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+
+      .province-list {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        max-height: 380px;
+        overflow-y: auto;
+      }
+      .province-list .title {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .province-list .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-size: 0.9rem;
+      }
+      .province-list .item:hover {
+        background: rgba(251, 191, 36, 0.15);
+      }
+      .province-list .item.active {
+        background: rgba(251, 191, 36, 0.25);
+        color: #fbbf24;
+        font-weight: 600;
+      }
+      .province-list .item .region {
+        font-size: 0.7rem;
+        color: #64748b;
+      }
+
+      .tooltip-map {
+        position: absolute;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(251, 191, 36, 0.6);
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        color: #fff;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s;
+        z-index: 10;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+      .map-wrap {
+        position: relative;
+      }
+      .legend-bar {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+      .legend-grad {
+        width: 200px;
+        height: 12px;
+        background: linear-gradient(90deg, rgba(59, 130, 246, 0.4), rgba(251, 191, 36, 0.8));
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>SVG 中国地图</h1>
+      <p class="subtitle">简化版省份示意图 · 悬停高亮 · 点击选择 · 侧边栏列表</p>
+
+      <div class="layout">
+        <div class="map-card">
+          <div class="title">中国省份分布图（简化几何示意）</div>
+          <div class="hint">鼠标悬停查看省份名称，点击查看详细信息</div>
+          <div class="map-wrap">
+            <svg id="mapSvg" viewBox="0 0 800 600"></svg>
+            <div class="tooltip-map" id="tooltip"></div>
+          </div>
+          <div class="legend-bar">
+            <span>低人口</span>
+            <div class="legend-grad"></div>
+            <span>高人口</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="info-panel" id="infoPanel">
+            <div class="label">当前选中</div>
+            <div class="prov-name" id="provName">— 请选择省份 —</div>
+            <div class="prov-capital" id="provCapital">点击地图或下方列表查看详情</div>
+            <div class="stats" id="provStats"></div>
+          </div>
+          <div class="province-list">
+            <div class="title">省份列表</div>
+            <div id="provList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simplified province data - approximate positions (not geographically accurate, simplified shapes)
+      const provinces = [
+        // North
+        {
+          name: '北京',
+          region: '华北',
+          capital: '北京',
+          pop: '2189万',
+          area: '1.64万km²',
+          gdp: '4.16万亿',
+          shape: 'rect',
+          x: 470,
+          y: 195,
+          w: 38,
+          h: 30,
+          cx: 489,
+          cy: 210,
+        },
+        {
+          name: '天津',
+          region: '华北',
+          capital: '天津',
+          pop: '1387万',
+          area: '1.19万km²',
+          gdp: '1.63万亿',
+          shape: 'rect',
+          x: 488,
+          y: 222,
+          w: 28,
+          h: 22,
+          cx: 502,
+          cy: 233,
+        },
+        {
+          name: '河北',
+          region: '华北',
+          capital: '石家庄',
+          pop: '7461万',
+          area: '18.88万km²',
+          gdp: '4.04万亿',
+          shape: 'rect',
+          x: 440,
+          y: 195,
+          w: 90,
+          h: 70,
+          cx: 485,
+          cy: 230,
+        },
+        {
+          name: '山西',
+          region: '华北',
+          capital: '太原',
+          pop: '3492万',
+          area: '15.63万km²',
+          gdp: '2.30万亿',
+          shape: 'rect',
+          x: 395,
+          y: 230,
+          w: 50,
+          h: 70,
+          cx: 420,
+          cy: 265,
+        },
+        {
+          name: '内蒙古',
+          region: '华北',
+          capital: '呼和浩特',
+          pop: '2405万',
+          area: '118.3万km²',
+          gdp: '2.41万亿',
+          shape: 'rect',
+          x: 290,
+          y: 130,
+          w: 220,
+          h: 65,
+          cx: 400,
+          cy: 162,
+        },
+
+        // Northeast
+        {
+          name: '辽宁',
+          region: '东北',
+          capital: '沈阳',
+          pop: '4259万',
+          area: '14.59万km²',
+          gdp: '2.96万亿',
+          shape: 'rect',
+          x: 555,
+          y: 220,
+          w: 70,
+          h: 60,
+          cx: 590,
+          cy: 250,
+        },
+        {
+          name: '吉林',
+          region: '东北',
+          capital: '长春',
+          pop: '2407万',
+          area: '18.74万km²',
+          gdp: '1.35万亿',
+          shape: 'rect',
+          x: 580,
+          y: 165,
+          w: 80,
+          h: 55,
+          cx: 620,
+          cy: 192,
+        },
+        {
+          name: '黑龙江',
+          region: '东北',
+          capital: '哈尔滨',
+          pop: '3185万',
+          area: '47.3万km²',
+          gdp: '1.59万亿',
+          shape: 'rect',
+          x: 580,
+          y: 100,
+          w: 95,
+          h: 65,
+          cx: 627,
+          cy: 132,
+        },
+
+        // East
+        {
+          name: '上海',
+          region: '华东',
+          capital: '上海',
+          pop: '2487万',
+          area: '0.63万km²',
+          gdp: '4.72万亿',
+          shape: 'circle',
+          cx: 595,
+          cy: 360,
+          r: 14,
+        },
+        {
+          name: '江苏',
+          region: '华东',
+          capital: '南京',
+          pop: '8475万',
+          area: '10.72万km²',
+          gdp: '12.82万亿',
+          shape: 'rect',
+          x: 540,
+          y: 325,
+          w: 55,
+          h: 50,
+          cx: 567,
+          cy: 350,
+        },
+        {
+          name: '浙江',
+          region: '华东',
+          capital: '杭州',
+          pop: '6577万',
+          area: '10.55万km²',
+          gdp: '8.26万亿',
+          shape: 'rect',
+          x: 555,
+          y: 375,
+          w: 50,
+          h: 55,
+          cx: 580,
+          cy: 402,
+        },
+        {
+          name: '安徽',
+          region: '华东',
+          capital: '合肥',
+          pop: '6127万',
+          area: '14.01万km²',
+          gdp: '4.71万亿',
+          shape: 'rect',
+          x: 500,
+          y: 325,
+          w: 50,
+          h: 65,
+          cx: 525,
+          cy: 357,
+        },
+        {
+          name: '福建',
+          region: '华东',
+          capital: '福州',
+          pop: '4154万',
+          area: '12.4万km²',
+          gdp: '5.31万亿',
+          shape: 'rect',
+          x: 555,
+          y: 430,
+          w: 55,
+          h: 55,
+          cx: 582,
+          cy: 457,
+        },
+        {
+          name: '江西',
+          region: '华东',
+          capital: '南昌',
+          pop: '4519万',
+          area: '16.69万km²',
+          gdp: '3.21万亿',
+          shape: 'rect',
+          x: 500,
+          y: 390,
+          w: 55,
+          h: 65,
+          cx: 527,
+          cy: 422,
+        },
+        {
+          name: '山东',
+          region: '华东',
+          capital: '济南',
+          pop: '10163万',
+          area: '15.79万km²',
+          gdp: '9.20万亿',
+          shape: 'rect',
+          x: 505,
+          y: 255,
+          w: 80,
+          h: 55,
+          cx: 545,
+          cy: 282,
+        },
+
+        // Central
+        {
+          name: '河南',
+          region: '华中',
+          capital: '郑州',
+          pop: '9872万',
+          area: '16.7万km²',
+          gdp: '6.13万亿',
+          shape: 'rect',
+          x: 440,
+          y: 300,
+          w: 65,
+          h: 55,
+          cx: 472,
+          cy: 327,
+        },
+        {
+          name: '湖北',
+          region: '华中',
+          capital: '武汉',
+          pop: '5775万',
+          area: '18.59万km²',
+          gdp: '5.37万亿',
+          shape: 'rect',
+          x: 440,
+          y: 355,
+          w: 65,
+          h: 55,
+          cx: 472,
+          cy: 382,
+        },
+        {
+          name: '湖南',
+          region: '华中',
+          capital: '长沙',
+          pop: '6622万',
+          area: '21.18万km²',
+          gdp: '4.87万亿',
+          shape: 'rect',
+          x: 440,
+          y: 410,
+          w: 65,
+          h: 60,
+          cx: 472,
+          cy: 440,
+        },
+
+        // South
+        {
+          name: '广东',
+          region: '华南',
+          capital: '广州',
+          pop: '12684万',
+          area: '17.97万km²',
+          gdp: '13.04万亿',
+          shape: 'rect',
+          x: 500,
+          y: 470,
+          w: 70,
+          h: 60,
+          cx: 535,
+          cy: 500,
+        },
+        {
+          name: '广西',
+          region: '华南',
+          capital: '南宁',
+          pop: '5037万',
+          area: '23.6万km²',
+          gdp: '2.63万亿',
+          shape: 'rect',
+          x: 425,
+          y: 470,
+          w: 75,
+          h: 60,
+          cx: 462,
+          cy: 500,
+        },
+        {
+          name: '海南',
+          region: '华南',
+          capital: '海口',
+          pop: '1008万',
+          area: '3.54万km²',
+          gdp: '0.68万亿',
+          shape: 'circle',
+          cx: 470,
+          cy: 565,
+          r: 18,
+        },
+        {
+          name: '台湾',
+          region: '华南',
+          capital: '台北',
+          pop: '2356万',
+          area: '3.6万km²',
+          gdp: '5.07万亿',
+          shape: 'circle',
+          cx: 635,
+          cy: 460,
+          r: 12,
+        },
+
+        // Southwest
+        {
+          name: '重庆',
+          region: '西南',
+          capital: '重庆',
+          pop: '3205万',
+          area: '8.24万km²',
+          gdp: '2.91万亿',
+          shape: 'rect',
+          x: 385,
+          y: 380,
+          w: 40,
+          h: 40,
+          cx: 405,
+          cy: 400,
+        },
+        {
+          name: '四川',
+          region: '西南',
+          capital: '成都',
+          pop: '8372万',
+          area: '48.6万km²',
+          gdp: '6.02万亿',
+          shape: 'rect',
+          x: 310,
+          y: 330,
+          w: 80,
+          h: 90,
+          cx: 350,
+          cy: 375,
+        },
+        {
+          name: '贵州',
+          region: '西南',
+          capital: '贵阳',
+          pop: '3856万',
+          area: '17.6万km²',
+          gdp: '2.02万亿',
+          shape: 'rect',
+          x: 385,
+          y: 420,
+          w: 55,
+          h: 50,
+          cx: 412,
+          cy: 445,
+        },
+        {
+          name: '云南',
+          region: '西南',
+          capital: '昆明',
+          pop: '4693万',
+          area: '39.4万km²',
+          gdp: '3.01万亿',
+          shape: 'rect',
+          x: 310,
+          y: 420,
+          w: 75,
+          h: 80,
+          cx: 347,
+          cy: 460,
+        },
+        {
+          name: '西藏',
+          region: '西南',
+          capital: '拉萨',
+          pop: '365万',
+          area: '122.84万km²',
+          gdp: '0.21万亿',
+          shape: 'rect',
+          x: 160,
+          y: 320,
+          w: 150,
+          h: 100,
+          cx: 235,
+          cy: 370,
+        },
+
+        // Northwest
+        {
+          name: '陕西',
+          region: '西北',
+          capital: '西安',
+          pop: '3956万',
+          area: '20.58万km²',
+          gdp: '3.36万亿',
+          shape: 'rect',
+          x: 380,
+          y: 265,
+          w: 55,
+          h: 65,
+          cx: 407,
+          cy: 297,
+        },
+        {
+          name: '甘肃',
+          region: '西北',
+          capital: '兰州',
+          pop: '2502万',
+          area: '45.59万km²',
+          gdp: '1.12万亿',
+          shape: 'rect',
+          x: 270,
+          y: 240,
+          w: 110,
+          h: 60,
+          cx: 325,
+          cy: 270,
+        },
+        {
+          name: '青海',
+          region: '西北',
+          capital: '西宁',
+          pop: '595万',
+          area: '72.23万km²',
+          gdp: '0.36万亿',
+          shape: 'rect',
+          x: 250,
+          y: 290,
+          w: 80,
+          h: 60,
+          cx: 290,
+          cy: 320,
+        },
+        {
+          name: '宁夏',
+          region: '西北',
+          capital: '银川',
+          pop: '720万',
+          area: '6.64万km²',
+          gdp: '0.51万亿',
+          shape: 'rect',
+          x: 360,
+          y: 240,
+          w: 30,
+          h: 30,
+          cx: 375,
+          cy: 255,
+        },
+        {
+          name: '新疆',
+          region: '西北',
+          capital: '乌鲁木齐',
+          pop: '2585万',
+          area: '166万km²',
+          gdp: '1.77万亿',
+          shape: 'rect',
+          x: 80,
+          y: 160,
+          w: 180,
+          h: 130,
+          cx: 170,
+          cy: 225,
+        },
+
+        // Special
+        {
+          name: '香港',
+          region: '华南',
+          capital: '香港',
+          pop: '747万',
+          area: '0.11万km²',
+          gdp: '0.29万亿',
+          shape: 'circle',
+          cx: 555,
+          cy: 525,
+          r: 8,
+        },
+        {
+          name: '澳门',
+          region: '华南',
+          capital: '澳门',
+          pop: '68万',
+          area: '0.003万km²',
+          gdp: '0.02万亿',
+          shape: 'circle',
+          cx: 540,
+          cy: 535,
+          r: 5,
+        },
+      ];
+
+      const svg = document.getElementById('mapSvg');
+      const tooltip = document.getElementById('tooltip');
+      const provList = document.getElementById('provList');
+      const provName = document.getElementById('provName');
+      const provCapital = document.getElementById('provCapital');
+      const provStats = document.getElementById('provStats');
+
+      // Population-based color intensity
+      function getProvColor(prov) {
+        const popNum = parseInt(prov.pop);
+        const max = 13000;
+        const ratio = Math.min(1, popNum / max);
+        // blue to gold gradient
+        if (ratio < 0.3) return '#3b82f6';
+        if (ratio < 0.5) return '#06b6d4';
+        if (ratio < 0.7) return '#10b981';
+        if (ratio < 0.9) return '#fbbf24';
+        return '#f97316';
+      }
+
+      provinces.forEach((p, i) => {
+        let el;
+        const color = getProvColor(p);
+        if (p.shape === 'circle') {
+          el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          el.setAttribute('cx', p.cx);
+          el.setAttribute('cy', p.cy);
+          el.setAttribute('r', p.r);
+        } else {
+          el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          el.setAttribute('x', p.x);
+          el.setAttribute('y', p.y);
+          el.setAttribute('width', p.w);
+          el.setAttribute('height', p.h);
+          el.setAttribute('rx', 4);
+        }
+        el.classList.add('province');
+        el.setAttribute('fill', color);
+        el.dataset.idx = i;
+
+        el.addEventListener('mouseenter', (_e) => {
+          const rect = svg.getBoundingClientRect();
+          const scaleX = rect.width / 800;
+          const scaleY = rect.height / 600;
+          tooltip.style.left = p.cx * scaleX + 'px';
+          tooltip.style.top = p.cy * scaleY - 10 + 'px';
+          tooltip.style.transform = 'translate(-50%, -100%)';
+          tooltip.innerHTML = `<strong>${p.name}</strong> · ${p.region}`;
+          tooltip.style.opacity = 1;
+        });
+        el.addEventListener('mouseleave', () => {
+          tooltip.style.opacity = 0;
+        });
+        el.addEventListener('click', () => selectProvince(i));
+        svg.appendChild(el);
+
+        // Label
+        const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lbl.setAttribute('x', p.cx);
+        lbl.setAttribute('y', p.cy + 3);
+        lbl.classList.add('province-label');
+        lbl.textContent = p.name;
+        svg.appendChild(lbl);
+      });
+
+      // Sort provinces by region for sidebar
+      const regionOrder = ['华北', '东北', '华东', '华中', '华南', '西南', '西北'];
+      const sortedProvs = [...provinces.map((p, i) => ({ ...p, idx: i }))].sort((a, b) => {
+        const ra = regionOrder.indexOf(a.region);
+        const rb = regionOrder.indexOf(b.region);
+        if (ra !== rb) return ra - rb;
+        return a.name.localeCompare(b.name);
+      });
+
+      sortedProvs.forEach((p) => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.dataset.idx = p.idx;
+        item.innerHTML = `<span>${p.name}</span><span class="region">${p.region}</span>`;
+        item.addEventListener('click', () => selectProvince(p.idx));
+        item.addEventListener('mouseenter', () => {
+          // highlight on map
+          const mapEl = svg.querySelector(`.province[data-idx="${p.idx}"]`);
+          if (mapEl) mapEl.dispatchEvent(new Event('mouseenter'));
+        });
+        provList.appendChild(item);
+      });
+
+      function selectProvince(idx) {
+        // Update map highlight
+        document.querySelectorAll('.province').forEach((el) => el.classList.remove('selected'));
+        const el = svg.querySelector(`.province[data-idx="${idx}"]`);
+        if (el) el.classList.add('selected');
+
+        // Update sidebar list
+        document.querySelectorAll('.province-list .item').forEach((it) => it.classList.remove('active'));
+        const listItem = provList.querySelector(`.item[data-idx="${idx}"]`);
+        if (listItem) {
+          listItem.classList.add('active');
+          listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Update info panel
+        const p = provinces[idx];
+        provName.textContent = p.name;
+        provCapital.textContent = `省会：${p.capital} · ${p.region}地区`;
+        provStats.innerHTML = `
+    <div class="stat"><div class="k">人口</div><div class="v">${p.pop}</div></div>
+    <div class="stat"><div class="k">面积</div><div class="v">${p.area}</div></div>
+    <div class="stat"><div class="k">GDP</div><div class="v">${p.gdp}</div></div>
+    <div class="stat"><div class="k">区域</div><div class="v">${p.region}</div></div>
+  `;
+      }
+
+      // Default select Beijing
+      selectProvince(0);
+    </script>
+  </body>
+</html>

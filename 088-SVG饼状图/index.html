@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 饼状图 / 环形图</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #2d1b69, #11998e);
+        min-height: 100vh;
+        color: #e2e8f0;
+        padding: 30px 20px;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, #43e97b, #38f9d7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .subtitle {
+        text-align: center;
+        color: #cbd5e0;
+        margin-bottom: 30px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .controls button {
+        background: rgba(67, 233, 123, 0.2);
+        border: 1px solid rgba(67, 233, 123, 0.5);
+        color: #e2e8f0;
+        padding: 8px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .controls button:hover {
+        background: rgba(67, 233, 123, 0.4);
+      }
+      .controls button.active {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        color: #0c4a6e;
+        border-color: transparent;
+        font-weight: 700;
+      }
+
+      .chart-area {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 24px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 30px;
+      }
+      @media (max-width: 720px) {
+        .chart-area {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .chart-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #pieSvg {
+        width: 100%;
+        max-width: 420px;
+        height: auto;
+      }
+
+      .legend-side {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .legend-side .title {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .legend-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .legend-item.disabled {
+        opacity: 0.4;
+      }
+      .legend-item.highlighted {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      .legend-swatch {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+      .legend-text {
+        flex: 1;
+      }
+      .legend-name {
+        font-size: 0.9rem;
+        color: #e2e8f0;
+      }
+      .legend-val {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 2px;
+      }
+
+      .center-text {
+        fill: #fff;
+        font-weight: 700;
+        text-anchor: middle;
+      }
+      .slice {
+        cursor: pointer;
+        transition: transform 0.25s;
+        transform-origin: center;
+      }
+      .slice:hover,
+      .slice.active {
+        transform: scale(1.06);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>SVG 饼状图 / 环形图</h1>
+      <p class="subtitle">市场份额分布 · 悬停高亮 · 点击图例切换 · 饼图/环形图模式</p>
+
+      <div class="controls">
+        <button class="active" data-mode="pie">饼图模式</button>
+        <button data-mode="donut">环形图模式</button>
+      </div>
+
+      <div class="chart-area">
+        <div class="chart-side">
+          <svg id="pieSvg" viewBox="0 0 400 400"></svg>
+        </div>
+        <div class="legend-side">
+          <div class="title">市场份额 (2024 Q4)</div>
+          <div id="legendList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const initialData = [
+        { name: '阿里巴巴', value: 32, color: '#f97316' },
+        { name: '腾讯控股', value: 26, color: '#3b82f6' },
+        { name: '字节跳动', value: 18, color: '#a78bfa' },
+        { name: '美团点评', value: 10, color: '#fbbf24' },
+        { name: '京东集团', value: 8, color: '#ef4444' },
+        { name: '其他', value: 6, color: '#94a3b8' },
+      ];
+      const data = JSON.parse(JSON.stringify(initialData));
+      const activeFlags = data.map(() => true);
+      let mode = 'pie';
+
+      const svg = document.getElementById('pieSvg');
+      const legendList = document.getElementById('legendList');
+      const cx = 200,
+        cy = 200,
+        R = 140,
+        donutR = 75;
+
+      function render() {
+        svg.innerHTML = '';
+        const visible = data.filter((_, i) => activeFlags[i]);
+        const total = visible.reduce((s, d) => s + d.value, 0);
+        if (total === 0) return;
+
+        let angle = -90;
+        visible.forEach((d, idx) => {
+          const realIdx = data.indexOf(d);
+          const pct = d.value / total;
+          const span = pct * 360;
+          const startA = angle;
+          const endA = angle + span;
+          angle = endA;
+
+          const sRad = (startA * Math.PI) / 180;
+          const eRad = (endA * Math.PI) / 180;
+          const x1 = cx + R * Math.cos(sRad);
+          const y1 = cy + R * Math.sin(sRad);
+          const x2 = cx + R * Math.cos(eRad);
+          const y2 = cy + R * Math.sin(eRad);
+          const large = span > 180 ? 1 : 0;
+
+          let pathD;
+          if (mode === 'pie') {
+            pathD = `M ${cx} ${cy} L ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} Z`;
+          } else {
+            const xi1 = cx + donutR * Math.cos(sRad);
+            const yi1 = cy + donutR * Math.sin(sRad);
+            const xi2 = cx + donutR * Math.cos(eRad);
+            const yi2 = cy + donutR * Math.sin(eRad);
+            pathD = `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${donutR} ${donutR} 0 ${large} 0 ${xi1} ${yi1} Z`;
+          }
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', pathD);
+          path.setAttribute('fill', d.color);
+          path.setAttribute('stroke', '#1a1a2e');
+          path.setAttribute('stroke-width', '2');
+          path.classList.add('slice');
+          path.dataset.idx = realIdx;
+
+          // Animation: draw using opacity + scale
+          path.style.opacity = 0;
+          path.style.transformOrigin = `${cx}px ${cy}px`;
+          path.style.transform = 'scale(0.5)';
+          path.style.transition = `opacity 0.5s ease ${idx * 0.08}s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.08}s`;
+          svg.appendChild(path);
+          setTimeout(() => {
+            path.style.opacity = 1;
+            path.style.transform = 'scale(1)';
+          }, 50);
+
+          // Hover
+          path.addEventListener('mouseenter', () => {
+            highlightSlice(realIdx);
+          });
+          path.addEventListener('mouseleave', () => {
+            highlightSlice(-1);
+          });
+
+          // Percentage label
+          const midA = (((startA + endA) / 2) * Math.PI) / 180;
+          const labelR = mode === 'pie' ? R * 0.65 : (R + donutR) / 2;
+          const lx = cx + labelR * Math.cos(midA);
+          const ly = cy + labelR * Math.sin(midA);
+          if (pct > 0.04) {
+            const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            lbl.setAttribute('x', lx);
+            lbl.setAttribute('y', ly + 4);
+            lbl.setAttribute('text-anchor', 'middle');
+            lbl.setAttribute('fill', '#fff');
+            lbl.setAttribute('font-size', '13');
+            lbl.setAttribute('font-weight', '700');
+            lbl.style.pointerEvents = 'none';
+            lbl.style.opacity = 0;
+            lbl.style.transition = `opacity 0.4s ease ${idx * 0.08 + 0.4}s`;
+            lbl.textContent = (pct * 100).toFixed(1) + '%';
+            svg.appendChild(lbl);
+            setTimeout(() => (lbl.style.opacity = 1), 50);
+          }
+        });
+
+        // Center text (donut mode)
+        if (mode === 'donut') {
+          const ct = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          ct.setAttribute('x', cx);
+          ct.setAttribute('y', cy - 5);
+          ct.classList.add('center-text');
+          ct.setAttribute('font-size', '20');
+          ct.textContent = total + '%';
+          svg.appendChild(ct);
+          const cs = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          cs.setAttribute('x', cx);
+          cs.setAttribute('y', cy + 18);
+          cs.classList.add('center-text');
+          cs.setAttribute('font-size', '11');
+          cs.setAttribute('fill', '#94a3b8');
+          cs.textContent = '总份额';
+          svg.appendChild(cs);
+        }
+
+        renderLegend(total);
+      }
+
+      function renderLegend(total) {
+        legendList.innerHTML = '';
+        data.forEach((d, i) => {
+          const item = document.createElement('div');
+          item.className = 'legend-item' + (activeFlags[i] ? '' : ' disabled');
+          item.innerHTML = `
+      <div class="legend-swatch" style="background:${d.color};"></div>
+      <div class="legend-text">
+        <div class="legend-name">${d.name}</div>
+        <div class="legend-val">${d.value}% · ${total ? ((d.value / total) * 100).toFixed(1) : 0}% 占比</div>
+      </div>
+    `;
+          item.addEventListener('click', () => {
+            // Toggle
+            const activeCount = activeFlags.filter((a) => a).length;
+            if (activeFlags[i] && activeCount === 1) return; // keep at least one
+            activeFlags[i] = !activeFlags[i];
+            render();
+          });
+          item.addEventListener('mouseenter', () => {
+            if (activeFlags[i]) highlightSlice(i);
+          });
+          item.addEventListener('mouseleave', () => {
+            highlightSlice(-1);
+          });
+          legendList.appendChild(item);
+        });
+      }
+
+      function highlightSlice(idx) {
+        document.querySelectorAll('.slice').forEach((s) => {
+          if (parseInt(s.dataset.idx) === idx) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+        document.querySelectorAll('.legend-item').forEach((it, i) => {
+          it.classList.toggle('highlighted', i === idx && activeFlags[i]);
+        });
+      }
+
+      document.querySelectorAll('.controls button[data-mode]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.controls button[data-mode]').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          mode = btn.dataset.mode;
+          render();
+        });
+      });
+
+      render();
+    </script>
+  </body>
+</html>

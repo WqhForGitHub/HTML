@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>粒子背景动画</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(180deg, #0a0e27 0%, #1a1040 50%, #2d0a4e 100%);
+        color: #fff;
+      }
+
+      .scene {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+      }
+
+      /* 粒子 */
+      .particle {
+        position: absolute;
+        bottom: -20px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #fff, rgba(255, 255, 255, 0.6));
+        box-shadow: 0 0 8px rgba(170, 200, 255, 0.8);
+        animation: floatUp linear infinite;
+        opacity: 0;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) translateX(0) scale(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+          transform: translateY(-10vh) translateX(0) scale(1);
+        }
+        90% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(-110vh) translateX(var(--drift, 50px)) scale(0.3);
+          opacity: 0;
+        }
+      }
+
+      /* 发光大球 */
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(40px);
+        opacity: 0.4;
+        animation: orbFloat 12s ease-in-out infinite;
+      }
+      .orb1 {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, #ff6ec4, transparent 70%);
+        top: 20%;
+        left: 10%;
+      }
+      .orb2 {
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, #4facfe, transparent 70%);
+        bottom: 15%;
+        right: 12%;
+        animation-delay: -4s;
+      }
+      .orb3 {
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, #43e97b, transparent 70%);
+        top: 50%;
+        left: 60%;
+        animation-delay: -8s;
+      }
+      @keyframes orbFloat {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        33% {
+          transform: translate(40px, -30px) scale(1.1);
+        }
+        66% {
+          transform: translate(-30px, 40px) scale(0.9);
+        }
+      }
+
+      /* 内容 */
+      .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 10;
+      }
+      h1 {
+        font-size: 3.2rem;
+        margin-bottom: 16px;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #ff6ec4, #4facfe, #43e97b, #ff6ec4);
+        background-size: 300% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradShift 6s linear infinite;
+        filter: drop-shadow(0 0 20px rgba(120, 115, 245, 0.4));
+      }
+      @keyframes gradShift {
+        to {
+          background-position: 300% center;
+        }
+      }
+      .content p {
+        color: #ccd0ff;
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+      }
+
+      .credit {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: #445;
+        font-size: 0.85rem;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene" id="scene">
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+
+      <div class="content">
+        <h1>粒子之境</h1>
+        <p>上百颗光粒缓缓上升 · 模糊光球漂浮流动</p>
+      </div>
+    </div>
+
+    <div class="credit">JS 生成粒子 · CSS 动画驱动</div>
+
+    <script>
+      const scene = document.getElementById('scene');
+      const colors = ['#fff', '#ffd6f5', '#d6e8ff', '#d6ffe8', '#fff0d6'];
+      const count = 120;
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 8 + 2;
+        const duration = Math.random() * 12 + 8;
+        const delay = Math.random() * 15;
+        const drift = (Math.random() - 0.5) * 200;
+        const left = Math.random() * 100;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = left + '%';
+        p.style.animationDuration = duration + 's';
+        p.style.animationDelay = delay + 's';
+        p.style.setProperty('--drift', drift + 'px');
+        p.style.background = `radial-gradient(circle, ${color}, transparent)`;
+        // 远景小粒子模糊营造景深
+        if (size < 4) {
+          p.style.filter = 'blur(1.5px)';
+          p.style.opacity = '0.6';
+        }
+        scene.appendChild(p);
+      }
+    </script>
+  </body>
+</html>

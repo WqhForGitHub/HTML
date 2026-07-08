@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="GitHub 风格个人主页" />
+    <title>octocat (Octocat) · GitHub</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --bg: #0d1117;
+        --bg-overlay: #010409;
+        --bg-soft: #161b22;
+        --bg-hover: #1c2128;
+        --border: #30363d;
+        --border-muted: #21262d;
+        --text: #c9d1d9;
+        --text-bright: #f0f6fc;
+        --muted: #8b949e;
+        --accent: #58a6ff;
+        --success: #3fb950;
+        --attention: #d29922;
+        --danger: #f85149;
+        --done: #a371f7;
+        --green-1: #0e4429;
+        --green-2: #006d32;
+        --green-3: #26a641;
+        --green-4: #39d353;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+        font-size: 14px;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* Top nav */
+      .topnav {
+        background: var(--bg-overlay);
+        border-bottom: 1px solid var(--border);
+        height: 48px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .topnav-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .topnav svg {
+        width: 20px;
+        height: 20px;
+        color: var(--text-bright);
+      }
+      .topnav .search {
+        flex: 1;
+        max-width: 280px;
+        padding: 6px 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .topnav nav {
+        display: flex;
+        gap: 16px;
+      }
+      .topnav nav a {
+        font-size: 14px;
+        color: var(--text-bright);
+        font-weight: 600;
+      }
+      .topnav nav a:hover {
+        color: var(--muted);
+      }
+      .topnav .actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-left: auto;
+      }
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .icon-btn:hover {
+        background: var(--bg-hover);
+        color: var(--text-bright);
+      }
+      .avatar-sm {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+
+      .layout {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 296px 1fr;
+        gap: 24px;
+      }
+
+      /* Left sidebar profile */
+      .sidebar {
+        position: sticky;
+        top: 72px;
+        align-self: start;
+      }
+      .sidebar img.avatar {
+        width: 100%;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        margin-bottom: 16px;
+      }
+      .sidebar h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-bright);
+        line-height: 1.25;
+      }
+      .sidebar h2 {
+        font-size: 20px;
+        font-weight: 300;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+      .follow-btn {
+        display: block;
+        width: 100%;
+        padding: 6px 14px;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-bright);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.15s;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      .follow-btn:hover {
+        background: var(--bg-hover);
+        border-color: var(--muted);
+      }
+      .bio {
+        font-size: 14px;
+        color: var(--text);
+        margin-bottom: 16px;
+      }
+      .follow-counts {
+        display: flex;
+        gap: 12px;
+        font-size: 14px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .follow-counts a {
+        color: var(--text);
+      }
+      .follow-counts a:hover {
+        color: var(--accent);
+      }
+      .follow-counts strong {
+        color: var(--text-bright);
+      }
+      .follow-counts .muted {
+        color: var(--muted);
+      }
+      .profile-meta {
+        font-size: 14px;
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-muted);
+      }
+      .profile-meta a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text);
+      }
+      .profile-meta a:hover {
+        color: var(--accent);
+      }
+      .profile-meta svg {
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+      }
+      .orgs {
+        padding-top: 16px;
+        margin-top: 16px;
+        border-top: 1px solid var(--border-muted);
+      }
+      .orgs h3 {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+      .org-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .org-list img {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+      }
+
+      /* Main area */
+      .tabs {
+        display: flex;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+        overflow-x: auto;
+      }
+      .tab {
+        padding: 8px 12px;
+        font-size: 14px;
+        color: var(--text);
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .tab.active {
+        color: var(--text-bright);
+        border-bottom-color: var(--attention);
+        font-weight: 600;
+      }
+      .tab:hover {
+        color: var(--text-bright);
+      }
+      .tab .count {
+        background: var(--bg-soft);
+        padding: 0 6px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .pinned-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .pinned-head h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-bright);
+      }
+      .pinned-head a {
+        font-size: 14px;
+        color: var(--accent);
+      }
+      .pinned-head a:hover {
+        text-decoration: underline;
+      }
+
+      .pinned-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+      .repo {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        transition: 0.15s;
+      }
+      .repo:hover {
+        border-color: var(--muted);
+      }
+      .repo-head {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .repo-head svg {
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+      }
+      .repo-head a {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .repo-head a:hover {
+        text-decoration: underline;
+      }
+      .repo-head .vis {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--muted);
+        padding: 3px 7px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+      }
+      .repo-desc {
+        font-size: 13px;
+        color: var(--text);
+        margin-bottom: 12px;
+        min-height: 32px;
+      }
+      .repo-foot {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .lang {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .lang-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .repo-foot a {
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .repo-foot a:hover {
+        color: var(--accent);
+      }
+
+      /* Contribution */
+      .contrib-card {
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      .contrib-head {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        font-size: 14px;
+      }
+      .contrib-head a {
+        color: var(--accent);
+      }
+      .contrib-graph {
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+      .contrib-months {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: calc(15px * 4);
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .contrib-wrap {
+        display: flex;
+        gap: 6px;
+      }
+      .contrib-days {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        font-size: 10px;
+        color: var(--muted);
+        width: 30px;
+      }
+      .contrib-grid {
+        display: grid;
+        grid-template-rows: repeat(7, 11px);
+        grid-auto-flow: column;
+        grid-auto-columns: 11px;
+        gap: 3px;
+      }
+      .cell {
+        width: 11px;
+        height: 11px;
+        border-radius: 2px;
+        background: #161b22;
+      }
+      .cell.l1 {
+        background: var(--green-1);
+      }
+      .cell.l2 {
+        background: var(--green-2);
+      }
+      .cell.l3 {
+        background: var(--green-3);
+      }
+      .cell.l4 {
+        background: var(--green-4);
+      }
+      .contrib-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .contrib-legend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .contrib-legend .cell {
+        display: inline-block;
+      }
+
+      /* Activity */
+      .activity h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-bright);
+        margin-bottom: 16px;
+      }
+      .act-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .act-item {
+        display: flex;
+        gap: 12px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-muted);
+      }
+      .act-item:last-child {
+        border: none;
+      }
+      .act-item img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .act-item .content {
+        font-size: 14px;
+        color: var(--text);
+      }
+      .act-item .content strong {
+        color: var(--text-bright);
+      }
+      .act-item .content a {
+        color: var(--accent);
+      }
+      .act-item .time {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      @media (max-width: 1012px) {
+        .layout {
+          grid-template-columns: 1fr;
+          padding: 16px;
+        }
+        .sidebar {
+          position: static;
+          max-width: 296px;
+        }
+        .pinned-grid {
+          grid-template-columns: 1fr;
+        }
+        .topnav nav {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topnav">
+      <div class="topnav-inner">
+        <svg viewBox="0 0 16 16" fill="currentColor">
+          <path
+            d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.59.01 1.78 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
+          />
+        </svg>
+        <div class="search">🔍 搜索或跳转...</div>
+        <nav>
+          <a href="#">Pull requests</a>
+          <a href="#">Issues</a>
+          <a href="#">Marketplace</a>
+          <a href="#">Explore</a>
+        </nav>
+        <div class="actions">
+          <div class="icon-btn">🔔</div>
+          <div class="icon-btn">+</div>
+          <img class="avatar-sm" src="https://picsum.photos/seed/octo/40/40" alt="头像" />
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <img class="avatar" src="https://picsum.photos/seed/octocat/300/300" alt="Octocat" />
+        <h1>Octocat</h1>
+        <h2>octocat</h2>
+        <a href="#" class="follow-btn">Follow</a>
+        <p class="bio">
+          🤖 GitHub 吉祥物 / 开源布道者 / 代码爱好者
+          <br />
+          Always coding, always shipping 🚀
+        </p>
+        <div class="follow-counts">
+          <a href="#">
+            <strong>1.2k</strong>
+            <span class="muted">followers</span>
+          </a>
+          <a href="#">
+            <strong>86</strong>
+            <span class="muted">·</span>
+          </a>
+          <a href="#">
+            <strong>42</strong>
+            <span class="muted">following</span>
+          </a>
+        </div>
+        <div class="profile-meta">
+          <a href="#">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="m12.596 11.596-3.535 3.536a1.5 1.5 0 0 1-2.122 0l-3.535-3.536a6.5 6.5 0 1 1 9.192-9.193 6.5 6.5 0 0 1 0 9.193ZM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+              />
+            </svg>
+            San Francisco, CA
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="m10.875.96-.425.263c-.213.132-.317.392-.255.633l.066.276c.026.106.022.214-.011.317L8.974 6.49l-.763-2.715a.75.75 0 0 0-.466-.503l-.408-.145a.75.75 0 0 0-.51.018L2.03 4.554A1.75 1.75 0 0 0 1 6.146V8.25c0 .414.336.75.75.75h.5a.75.75 0 0 0 .75-.75V6.5l1.6-.571V11h-.5a.75.75 0 0 0-.75.75v.5c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.5a.75.75 0 0 0-.75-.75h-.5V7.69l3.276 5.271a.75.75 0 0 0 .624.343h.5a.75.75 0 0 0 .75-.75V1.75a.75.75 0 0 0-.75-.79Z"
+              />
+            </svg>
+            GitHub
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Z"
+              />
+            </svg>
+            octo.cat
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 12.251c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.809L8.38 9.397a.75.75 0 0 1-.76 0L1.5 5.809v6.442Z"
+              />
+            </svg>
+            octo@github.com
+          </a>
+          <a href="#">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Z"
+              />
+            </svg>
+            @octocat
+          </a>
+          <span style="display: flex; align-items: center; gap: 8px; color: var(--muted)">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
+            </svg>
+            08:42 (UTC-08:00)
+          </span>
+        </div>
+        <div class="orgs">
+          <h3>组织</h3>
+          <div class="org-list">
+            <img src="https://picsum.photos/seed/orga1/40/40" alt="组织" />
+            <img src="https://picsum.photos/seed/orga2/40/40" alt="组织" />
+            <img src="https://picsum.photos/seed/orga3/40/40" alt="组织" />
+            <img src="https://picsum.photos/seed/orga4/40/40" alt="组织" />
+            <img src="https://picsum.photos/seed/orga5/40/40" alt="组织" />
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="tabs">
+          <div class="tab active">📖 Overview</div>
+          <div class="tab">
+            📦 Repositories
+            <span class="count">128</span>
+          </div>
+          <div class="tab">
+            🚀 Projects
+            <span class="count">8</span>
+          </div>
+          <div class="tab">
+            📦 Packages
+            <span class="count">3</span>
+          </div>
+          <div class="tab">
+            ⭐ Stars
+            <span class="count">412</span>
+          </div>
+        </div>
+
+        <div class="pinned-head">
+          <h2>📌 Pinned</h2>
+          <a href="#">Customize your pins</a>
+        </div>
+        <div class="pinned-grid">
+          <div class="repo">
+            <div class="repo-head">
+              <svg viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"
+                />
+              </svg>
+              <a href="#">octocat/hello-world</a>
+              <span class="vis">Public</span>
+            </div>
+            <p class="repo-desc">My first repository on GitHub! A simple Hello World demo in multiple languages.</p>
+            <div class="repo-foot">
+              <span class="lang">
+                <span class="lang-dot" style="background: #f1e05a"></span>
+                JavaScript
+              </span>
+              <a href="#">★ 2,841</a>
+              <a href="#">⑂ 412</a>
+            </div>
+          </div>
+          <div class="repo">
+            <div class="repo-head">
+              <svg viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"
+                />
+              </svg>
+              <a href="#">octocat/git-consortium</a>
+              <span class="vis">Public</span>
+            </div>
+            <p class="repo-desc">This repository is for demonstrating Git workflows and collaboration patterns.</p>
+            <div class="repo-foot">
+              <span class="lang">
+                <span class="lang-dot" style="background: #4479a1"></span>
+                Shell
+              </span>
+              <a href="#">★ 1,256</a>
+              <a href="#">⑂ 89</a>
+            </div>
+          </div>
+          <div class="repo">
+            <div class="repo-head">
+              <svg viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"
+                />
+              </svg>
+              <a href="#">octocat/Spoon-Knife</a>
+              <span class="vis">Public</span>
+            </div>
+            <p class="repo-desc">
+              This repo is for demonstration purposes only. Fork it to learn the fork & pull workflow.
+            </p>
+            <div class="repo-foot">
+              <span class="lang">
+                <span class="lang-dot" style="background: #e34c26"></span>
+                HTML
+              </span>
+              <a href="#">★ 12,034</a>
+              <a href="#">⑂ 1.2k</a>
+            </div>
+          </div>
+          <div class="repo">
+            <div class="repo-head">
+              <svg viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"
+                />
+              </svg>
+              <a href="#">octocat/Hello-World</a>
+              <span class="vis">Public</span>
+            </div>
+            <p class="repo-desc">The classic Hello World tutorial, written in 50+ programming languages.</p>
+            <div class="repo-foot">
+              <span class="lang">
+                <span class="lang-dot" style="background: #3178c6"></span>
+                TypeScript
+              </span>
+              <a href="#">★ 5,672</a>
+              <a href="#">⑂ 234</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contrib-card">
+          <div class="contrib-head">
+            <strong style="color: var(--text-bright)">2,847 contributions in the last year</strong>
+            <a href="#">Contribution settings ▾</a>
+          </div>
+          <div class="contrib-graph">
+            <div class="contrib-months">
+              <span>Jan</span>
+              <span>Feb</span>
+              <span>Mar</span>
+              <span>Apr</span>
+              <span>May</span>
+              <span>Jun</span>
+              <span>Jul</span>
+              <span>Aug</span>
+              <span>Sep</span>
+              <span>Oct</span>
+              <span>Nov</span>
+              <span>Dec</span>
+            </div>
+            <div class="contrib-wrap">
+              <div class="contrib-days">
+                <span>Mon</span>
+                <span>Wed</span>
+                <span>Fri</span>
+              </div>
+              <div class="contrib-grid" id="contribGrid"></div>
+            </div>
+          </div>
+          <div class="contrib-foot">
+            <a href="#">Learn how we count contributions</a>
+            <div class="contrib-legend">
+              <span>Less</span>
+              <span class="cell"></span>
+              <span class="cell l1"></span>
+              <span class="cell l2"></span>
+              <span class="cell l3"></span>
+              <span class="cell l4"></span>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity">
+          <h2>Recent activity</h2>
+          <div class="act-list">
+            <div class="act-item">
+              <img src="https://picsum.photos/seed/octocat/40/40" alt="" />
+              <div>
+                <div class="content">
+                  <strong>octocat</strong>
+                  starred
+                  <a href="#">facebook/react</a>
+                </div>
+                <div class="time">2 hours ago</div>
+              </div>
+            </div>
+            <div class="act-item">
+              <img src="https://picsum.photos/seed/octocat/40/40" alt="" />
+              <div>
+                <div class="content">
+                  <strong>octocat</strong>
+                  created a branch
+                  <a href="#">feature/auth</a>
+                  in
+                  <a href="#">octocat/hello-world</a>
+                </div>
+                <div class="time">5 hours ago</div>
+              </div>
+            </div>
+            <div class="act-item">
+              <img src="https://picsum.photos/seed/octocat/40/40" alt="" />
+              <div>
+                <div class="content">
+                  <strong>octocat</strong>
+                  merged pull request
+                  <a href="#">#42 Fix login redirect bug</a>
+                  in
+                  <a href="#">octocat/cloud-app</a>
+                </div>
+                <div class="time">1 day ago</div>
+              </div>
+            </div>
+            <div class="act-item">
+              <img src="https://picsum.photos/seed/octocat/40/40" alt="" />
+              <div>
+                <div class="content">
+                  <strong>octocat</strong>
+                  forked
+                  <a href="#">vuejs/core</a>
+                  to
+                  <a href="#">octocat/core</a>
+                </div>
+                <div class="time">2 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const grid = document.getElementById('contribGrid');
+      const weeks = 53;
+      for (let w = 0; w < weeks; w++) {
+        for (let d = 0; d < 7; d++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          const r = Math.random();
+          let lvl = 0;
+          if (r > 0.45) lvl = 1;
+          if (r > 0.65) lvl = 2;
+          if (r > 0.82) lvl = 3;
+          if (r > 0.93) lvl = 4;
+          if (lvl > 0) cell.classList.add('l' + lvl);
+          grid.appendChild(cell);
+        }
+      }
+    </script>
+  </body>
+</html>

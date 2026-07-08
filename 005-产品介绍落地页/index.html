@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TaskFlow - 让团队协作更高效的一体化项目管理工具" />
+    <title>TaskFlow · 让协作更高效</title>
+    <style>
+      :root {
+        --primary: #7c3aed;
+        --primary-dark: #5b21b6;
+        --accent: #f59e0b;
+        --pink: #ec4899;
+        --ink: #1e1b4b;
+        --muted: #6b7280;
+        --bg: #faf5ff;
+        --paper: #ffffff;
+        --line: #ede9fe;
+        --grad: linear-gradient(135deg, #7c3aed, #ec4899);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        color: var(--ink);
+        line-height: 1.7;
+        background: var(--bg);
+      }
+      a {
+        text-decoration: none;
+      }
+      .btn {
+        padding: 13px 28px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: 0.25s;
+        display: inline-block;
+      }
+      .btn-primary {
+        background: var(--grad);
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.35);
+      }
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 30px rgba(124, 58, 237, 0.5);
+      }
+      .btn-ghost {
+        background: #fff;
+        color: var(--primary);
+        border: 1px solid var(--line);
+      }
+      .btn-ghost:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+      }
+      .container {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      /* Nav */
+      header {
+        position: sticky;
+        top: 0;
+        background: rgba(250, 245, 255, 0.85);
+        backdrop-filter: blur(12px);
+        z-index: 50;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: 800;
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 30px;
+      }
+      nav a {
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 500;
+        transition: 0.2s;
+      }
+      nav a:hover {
+        color: var(--primary);
+      }
+      /* Hero */
+      .hero {
+        padding: 80px 0 100px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.2), transparent 60%);
+        top: -100px;
+        right: -150px;
+        border-radius: 50%;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.2), transparent 60%);
+        bottom: -100px;
+        left: -150px;
+        border-radius: 50%;
+      }
+      .badge {
+        display: inline-block;
+        background: #fff;
+        border: 1px solid var(--line);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .hero h1 {
+        font-size: 56px;
+        line-height: 1.15;
+        font-weight: 800;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 2;
+      }
+      .hero h1 .grad {
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .hero p {
+        font-size: 19px;
+        color: var(--muted);
+        max-width: 620px;
+        margin: 0 auto 36px;
+        position: relative;
+        z-index: 2;
+      }
+      .hero-btns {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 2;
+      }
+      .hero-mock {
+        margin-top: 60px;
+        position: relative;
+        z-index: 2;
+      }
+      .hero-mock img {
+        width: 100%;
+        max-width: 1000px;
+        border-radius: 14px;
+        box-shadow: 0 30px 80px rgba(124, 58, 237, 0.25);
+        border: 6px solid #fff;
+      }
+      /* Logos */
+      .logos {
+        padding: 50px 0;
+        text-align: center;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .logos p {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+      .logos-row {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .logos-row span {
+        font-size: 22px;
+        font-weight: 800;
+        color: #cbd5e1;
+        letter-spacing: 1px;
+      }
+      /* Features */
+      section.features {
+        padding: 90px 0;
+      }
+      .sec-head {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      .sec-head .kicker {
+        color: var(--primary);
+        font-weight: 700;
+        letter-spacing: 3px;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+      .sec-head h2 {
+        font-size: 38px;
+        margin: 10px 0;
+        font-weight: 800;
+      }
+      .sec-head p {
+        color: var(--muted);
+        font-size: 16px;
+        max-width: 580px;
+        margin: 0 auto;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
+      .feat {
+        background: #fff;
+        padding: 34px 28px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        transition: 0.3s;
+      }
+      .feat:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(124, 58, 237, 0.12);
+        border-color: var(--primary);
+      }
+      .feat .icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: var(--grad);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 18px;
+      }
+      .feat h3 {
+        font-size: 19px;
+        margin-bottom: 10px;
+      }
+      .feat p {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      /* Screenshots */
+      section.shots {
+        background: #fff;
+        padding: 90px 0;
+      }
+      .shots-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-top: 50px;
+      }
+      .shot {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .shot img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+        transition: 0.5s;
+        display: block;
+      }
+      .shot:hover img {
+        transform: scale(1.08);
+      }
+      .shot .cap {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 16px;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+        color: #fff;
+        font-weight: 600;
+      }
+      /* Pricing */
+      section.pricing {
+        padding: 90px 0;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        margin-top: 50px;
+      }
+      .plan {
+        background: #fff;
+        border-radius: 16px;
+        padding: 36px 30px;
+        border: 1px solid var(--line);
+        transition: 0.3s;
+        position: relative;
+      }
+      .plan:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+      }
+      .plan.popular {
+        border: 2px solid var(--primary);
+        box-shadow: 0 20px 50px rgba(124, 58, 237, 0.2);
+      }
+      .plan .tag-pop {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--grad);
+        color: #fff;
+        padding: 4px 16px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .plan h3 {
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+      .plan .desc {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .plan .price {
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .plan .price small {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      .plan ul {
+        list-style: none;
+        margin: 24px 0;
+      }
+      .plan ul li {
+        padding: 8px 0 8px 28px;
+        position: relative;
+        color: var(--ink);
+        font-size: 14px;
+        border-bottom: 1px dashed var(--line);
+      }
+      .plan ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-weight: bold;
+      }
+      /* Testimonials */
+      section.testi {
+        background: #fff;
+        padding: 90px 0;
+      }
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        margin-top: 50px;
+      }
+      .testi-card {
+        background: var(--bg);
+        padding: 30px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+      }
+      .testi-card .stars {
+        color: var(--accent);
+        font-size: 16px;
+        margin-bottom: 14px;
+        letter-spacing: 2px;
+      }
+      .testi-card .quote {
+        font-size: 15px;
+        color: var(--ink);
+        margin-bottom: 20px;
+        line-height: 1.7;
+      }
+      .testi-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .testi-author img {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .testi-author .name {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .testi-author .role {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      /* CTA */
+      .cta-band {
+        padding: 80px 0;
+      }
+      .cta-inner {
+        background: var(--grad);
+        border-radius: 24px;
+        padding: 60px 40px;
+        text-align: center;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-inner::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        top: -100px;
+        right: -80px;
+      }
+      .cta-inner h2 {
+        font-size: 36px;
+        margin-bottom: 14px;
+        font-weight: 800;
+        position: relative;
+      }
+      .cta-inner p {
+        opacity: 0.92;
+        margin-bottom: 28px;
+        font-size: 17px;
+        position: relative;
+      }
+      .cta-inner .btn-white {
+        background: #fff;
+        color: var(--primary);
+        position: relative;
+      }
+      .cta-inner .btn-white:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      }
+      /* Footer */
+      footer {
+        background: #1e1b4b;
+        color: #a5b4fc;
+        padding: 50px 0 24px;
+        text-align: center;
+      }
+      footer .logo {
+        margin-bottom: 14px;
+      }
+      footer p {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      @media (max-width: 900px) {
+        nav ul {
+          display: none;
+        }
+        .hero h1 {
+          font-size: 36px;
+        }
+        .features-grid,
+        .shots-grid,
+        .pricing-grid,
+        .testi-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="nav">
+          <div class="logo">TaskFlow</div>
+          <nav>
+            <ul>
+              <li><a href="#features">功能</a></li>
+              <li><a href="#screens">截图</a></li>
+              <li><a href="#pricing">价格</a></li>
+              <li><a href="#testi">客户</a></li>
+            </ul>
+          </nav>
+          <a href="#" class="btn btn-primary">免费试用</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <span class="badge">✨ 全新 2.0 版本正式发布</span>
+        <h1>
+          让团队协作
+          <br />
+          <span class="grad">更高效、更专注</span>
+        </h1>
+        <p>
+          TaskFlow 是一体化项目管理工具，集任务管理、文档协作、进度追踪于一体，帮助团队减少 40%
+          沟通成本，让每个人都能专注于真正重要的事情。
+        </p>
+        <div class="hero-btns">
+          <a href="#" class="btn btn-primary">免费开始使用</a>
+          <a href="#features" class="btn btn-ghost">了解功能 →</a>
+        </div>
+        <div class="hero-mock">
+          <img src="https://picsum.photos/seed/dashboard/1000/560.jpg" alt="产品界面" />
+        </div>
+      </div>
+    </section>
+
+    <section class="logos">
+      <div class="container">
+        <p>已服务超过 10,000+ 团队，包括</p>
+        <div class="logos-row">
+          <span>字节跳动</span>
+          <span>美团</span>
+          <span>小米</span>
+          <span>B站</span>
+          <span>知乎</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <div class="sec-head">
+          <div class="kicker">CORE FEATURES</div>
+          <h2>核心功能，覆盖工作全流程</h2>
+          <p>从任务规划到交付验收，TaskFlow 提供完整的协作能力，让团队事半功倍</p>
+        </div>
+        <div class="features-grid">
+          <div class="feat">
+            <div class="icon">📋</div>
+            <h3>可视化任务看板</h3>
+            <p>拖拽式看板管理，支持自定义工作流，让任务状态一目了然，团队进度实时同步。</p>
+          </div>
+          <div class="feat">
+            <div class="icon">📊</div>
+            <h3>数据驱动报表</h3>
+            <p>多维度数据看板，自动生成燃尽图、成员效率分析，让项目健康度可量化。</p>
+          </div>
+          <div class="feat">
+            <div class="icon">💬</div>
+            <h3>即时沟通协作</h3>
+            <p>任务内嵌评论与 @ 提醒，无需切换工具，讨论与上下文紧密结合。</p>
+          </div>
+          <div class="feat">
+            <div class="icon">🔗</div>
+            <h3>集成常用工具</h3>
+            <p>原生支持 GitHub、Figma、飞书等 50+ 主流工具，工作流无缝衔接。</p>
+          </div>
+          <div class="feat">
+            <div class="icon">⏰</div>
+            <h3>智能时间追踪</h3>
+            <p>自动记录任务耗时，生成个人时间报告，帮助团队合理规划与复盘。</p>
+          </div>
+          <div class="feat">
+            <div class="icon">🔐</div>
+            <h3>企业级安全</h3>
+            <p>细粒度权限控制、数据加密、操作日志审计，通过 ISO 27001 安全认证。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shots" id="screens">
+      <div class="container">
+        <div class="sec-head">
+          <div class="kicker">PRODUCT PREVIEW</div>
+          <h2>简洁直观的产品界面</h2>
+          <p>每个细节都经过精心设计，只为带来流畅的工作体验</p>
+        </div>
+        <div class="shots-grid">
+          <div class="shot">
+            <img src="https://picsum.photos/seed/s1/600/400.jpg" alt="" />
+            <div class="cap">任务看板视图</div>
+          </div>
+          <div class="shot">
+            <img src="https://picsum.photos/seed/s2/600/400.jpg" alt="" />
+            <div class="cap">甘特图规划</div>
+          </div>
+          <div class="shot">
+            <img src="https://picsum.photos/seed/s3/600/400.jpg" alt="" />
+            <div class="cap">数据报表中心</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+      <div class="container">
+        <div class="sec-head">
+          <div class="kicker">PRICING</div>
+          <h2>简单透明的价格方案</h2>
+          <p>无论个人还是团队，都能找到适合的方案，所有套餐均含 14 天免费试用</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="plan">
+            <h3>个人版</h3>
+            <p class="desc">适合自由职业者与个人使用</p>
+            <div class="price">
+              ¥0
+              <small>/月</small>
+            </div>
+            <ul>
+              <li>最多 3 个项目</li>
+              <li>基础任务看板</li>
+              <li>1GB 存储空间</li>
+              <li>社区支持</li>
+            </ul>
+            <a href="#" class="btn btn-ghost" style="width: 100%; text-align: center">免费开始</a>
+          </div>
+          <div class="plan popular">
+            <span class="tag-pop">最受欢迎</span>
+            <h3>团队版</h3>
+            <p class="desc">适合中小型团队协作</p>
+            <div class="price">
+              ¥39
+              <small>/用户/月</small>
+            </div>
+            <ul>
+              <li>无限项目与成员</li>
+              <li>甘特图与报表</li>
+              <li>100GB 存储空间</li>
+              <li>集成第三方工具</li>
+              <li>优先邮件支持</li>
+            </ul>
+            <a href="#" class="btn btn-primary" style="width: 100%; text-align: center">立即购买</a>
+          </div>
+          <div class="plan">
+            <h3>企业版</h3>
+            <p class="desc">适合大型组织定制需求</p>
+            <div class="price">
+              联系
+              <small>销售</small>
+            </div>
+            <ul>
+              <li>团队版全部功能</li>
+              <li>SSO 单点登录</li>
+              <li>专属客户成功经理</li>
+              <li>私有化部署选项</li>
+              <li>SLA 服务保障</li>
+            </ul>
+            <a href="#" class="btn btn-ghost" style="width: 100%; text-align: center">联系销售</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="testi" id="testi">
+      <div class="container">
+        <div class="sec-head">
+          <div class="kicker">TESTIMONIALS</div>
+          <h2>听听用户怎么说</h2>
+          <p>超过 10,000 个团队正在使用 TaskFlow 提升协作效率</p>
+        </div>
+        <div class="testi-grid">
+          <div class="testi-card">
+            <div class="stars">★★★★★</div>
+            <p class="quote">
+              "TaskFlow 真正改变了我们团队的工作方式。看板视图让每个人都知道该做什么，沟通成本降低了至少一半。"
+            </p>
+            <div class="testi-author">
+              <img src="https://picsum.photos/seed/u1/80/80.jpg" alt="" />
+              <div>
+                <div class="name">陈思远</div>
+                <div class="role">蓝石科技 · CTO</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="stars">★★★★★</div>
+            <p class="quote">
+              "作为产品经理，每天要处理大量需求。TaskFlow 的报表功能让我能清晰看到迭代进度，向上汇报也轻松多了。"
+            </p>
+            <div class="testi-author">
+              <img src="https://picsum.photos/seed/u2/80/80.jpg" alt="" />
+              <div>
+                <div class="name">林婉清</div>
+                <div class="role">云栖网络 · 产品负责人</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="stars">★★★★★</div>
+            <p class="quote">
+              "界面简洁、上手快，团队成员一周内就完全适应。集成了我们用的所有工具，再也不用来回切换了。"
+            </p>
+            <div class="testi-author">
+              <img src="https://picsum.photos/seed/u3/80/80.jpg" alt="" />
+              <div>
+                <div class="name">赵明轩</div>
+                <div class="role">星辰设计 · 创始人</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="container">
+        <div class="cta-inner">
+          <h2>准备好提升团队效率了吗？</h2>
+          <p>14 天免费试用，无需信用卡，随时取消</p>
+          <a href="#" class="btn btn-white">立即免费试用 →</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="logo">TaskFlow</div>
+        <p>让团队协作更高效、更专注</p>
+        <p>© 2026 TaskFlow Inc. · 京ICP备20268888号</p>
+      </div>
+    </footer>
+  </body>
+</html>

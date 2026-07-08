@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG 手写动画 - 书法笔触模拟</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', 'STKaiti', 'KaiTi', sans-serif;
+        background: linear-gradient(135deg, #2c1810, #4a2c1a, #3d2418);
+        min-height: 100vh;
+        color: #f4e4c1;
+        padding: 30px 20px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 36px;
+        margin-bottom: 8px;
+        background: linear-gradient(90deg, #ffd700, #ff8c00, #ffd700);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 4px;
+      }
+      .subtitle {
+        text-align: center;
+        color: #c9a876;
+        margin-bottom: 30px;
+        font-size: 15px;
+      }
+      .stage {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #fdf6e3, #f4e4c1);
+        border-radius: 16px;
+        padding: 40px 30px;
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.5),
+          inset 0 0 80px rgba(139, 90, 43, 0.1);
+        border: 8px solid #8b5a2b;
+        position: relative;
+      }
+      .stage::before {
+        content: '';
+        position: absolute;
+        inset: 12px;
+        border: 1px solid rgba(139, 90, 43, 0.3);
+        border-radius: 8px;
+        pointer-events: none;
+      }
+      .ink-title {
+        text-align: center;
+        color: #5a3a1a;
+        font-size: 22px;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+      svg {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+      }
+      .ink-stroke {
+        fill: none;
+        stroke: #1a1a1a;
+        stroke-width: 8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+      }
+      .ink-stroke.thin {
+        stroke-width: 5;
+      }
+      .ink-stroke.med {
+        stroke-width: 6;
+      }
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      button {
+        background: linear-gradient(135deg, #8b5a2b, #5a3a1a);
+        color: #f4e4c1;
+        border: 2px solid #ffd700;
+        padding: 10px 24px;
+        border-radius: 30px;
+        font-size: 15px;
+        cursor: pointer;
+        font-family: inherit;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+      }
+      button.gold {
+        background: linear-gradient(135deg, #ffd700, #ff8c00);
+        color: #2c1810;
+      }
+      .signature-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .sig-card {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        border: 1px solid rgba(139, 90, 43, 0.3);
+      }
+      .sig-card h4 {
+        color: #5a3a1a;
+        margin-bottom: 8px;
+      }
+      .seal {
+        display: inline-block;
+        background: #c0392b;
+        color: #fff;
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+      .info {
+        text-align: center;
+        color: #8b6f47;
+        margin-top: 14px;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVG 书法手写动画</h1>
+    <p class="subtitle">使用 stroke-dashoffset 模拟毛笔书写 · 逐笔逐字呈现 · 中国书法之美</p>
+
+    <div class="stage">
+      <p class="ink-title">主舞台 · 「翰墨」</p>
+      <svg viewBox="0 0 600 240" width="600" id="mainStage">
+        <!-- 翰 字 (简化笔画) -->
+        <g id="char-han">
+          <!-- 左侧"倝"上部 -->
+          <path class="ink-stroke" d="M120,40 L120,90" />
+          <path class="ink-stroke thin" d="M100,60 L140,60" />
+          <path class="ink-stroke thin" d="M90,80 L150,80" />
+          <path class="ink-stroke" d="M110,40 L130,40" />
+          <!-- 左侧"倝"中部 日 -->
+          <path class="ink-stroke med" d="M100,100 L150,100 L150,140 L100,140 Z" />
+          <path class="ink-stroke thin" d="M100,120 L150,120" />
+          <!-- 右侧 羽 -->
+          <path class="ink-stroke" d="M170,50 Q190,40 210,50 Q200,70 210,90 Q190,80 170,90 Q180,70 170,50" />
+          <path class="ink-stroke" d="M220,50 Q240,40 260,50 Q250,70 260,90 Q240,80 220,90 Q230,70 220,50" />
+          <!-- 下部 -->
+          <path class="ink-stroke" d="M120,150 L210,150" />
+          <path class="ink-stroke" d="M165,150 L165,200" />
+        </g>
+        <!-- 墨 字 -->
+        <g id="char-mo" transform="translate(280,0)">
+          <!-- 上部 黑 -->
+          <path class="ink-stroke" d="M40,40 L120,40" />
+          <path class="ink-stroke thin" d="M50,55 L110,55" />
+          <path class="ink-stroke thin" d="M55,70 L105,70" />
+          <!-- 田字 -->
+          <path class="ink-stroke med" d="M50,85 L120,85 L120,140 L50,140 Z" />
+          <path class="ink-stroke thin" d="M85,85 L85,140" />
+          <path class="ink-stroke thin" d="M50,112 L120,112" />
+          <!-- 下部 土 -->
+          <path class="ink-stroke" d="M60,155 L110,155" />
+          <path class="ink-stroke" d="M85,155 L85,195" />
+          <!-- 四点底 -->
+          <path class="ink-stroke" d="M40,210 Q45,205 50,210" />
+          <path class="ink-stroke" d="M70,210 Q75,205 80,210" />
+          <path class="ink-stroke" d="M100,210 Q105,205 110,210" />
+          <path class="ink-stroke" d="M130,210 Q135,205 140,210" />
+        </g>
+        <!-- 装饰印章 -->
+        <g transform="translate(490,170)">
+          <rect x="0" y="0" width="50" height="50" fill="#c0392b" rx="3" />
+          <text
+            x="25"
+            y="22"
+            text-anchor="middle"
+            fill="#fff"
+            font-size="14"
+            font-weight="bold"
+            font-family="STKaiti, KaiTi, serif"
+          >
+            翰墨
+          </text>
+          <text
+            x="25"
+            y="40"
+            text-anchor="middle"
+            fill="#fff"
+            font-size="14"
+            font-weight="bold"
+            font-family="STKaiti, KaiTi, serif"
+          >
+            留香
+          </text>
+        </g>
+      </svg>
+
+      <div class="signature-row">
+        <div class="sig-card">
+          <h4>英文签名 · Aurora</h4>
+          <svg viewBox="0 0 260 100" width="240" id="sig1">
+            <path
+              class="ink-stroke thin"
+              style="stroke: #1a1a1a"
+              d="M20,70 Q30,30 50,60 Q70,90 90,40 Q110,10 130,60 Q150,90 170,50 Q190,20 220,55"
+            />
+            <path class="ink-stroke thin" style="stroke: #1a1a1a" d="M210,55 Q215,75 230,65" />
+          </svg>
+          <div class="seal">签名</div>
+        </div>
+        <div class="sig-card">
+          <h4>中文 · 龍</h4>
+          <svg viewBox="0 0 200 160" width="200" id="sig2">
+            <g>
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M60,30 L130,30" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M95,30 L95,60" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M50,55 L140,55" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M70,70 L120,70" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M60,85 L130,85 L130,120 L60,120 Z" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M95,85 L95,120" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M50,135 L140,135" />
+              <path class="ink-stroke thin" style="stroke: #c0392b" d="M95,135 L95,150" />
+            </g>
+          </svg>
+          <div class="seal">龍印</div>
+        </div>
+        <div class="sig-card">
+          <h4>印章 · 福寿</h4>
+          <svg viewBox="0 0 160 160" width="160" id="sig3">
+            <rect
+              x="10"
+              y="10"
+              width="140"
+              height="140"
+              fill="none"
+              stroke="#c0392b"
+              stroke-width="6"
+              class="ink-stroke"
+            />
+            <text
+              x="80"
+              y="60"
+              text-anchor="middle"
+              fill="#c0392b"
+              font-size="40"
+              font-weight="bold"
+              font-family="STKaiti,serif"
+            >
+              福
+            </text>
+            <text
+              x="80"
+              y="120"
+              text-anchor="middle"
+              fill="#c0392b"
+              font-size="40"
+              font-weight="bold"
+              font-family="STKaiti,serif"
+            >
+              寿
+            </text>
+          </svg>
+          <div class="seal">吉祥</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="gold" onclick="writeAll()">重新书写</button>
+        <button onclick="toggleSpeed()">切换速度</button>
+      </div>
+      <p class="info">提示：每个笔画按顺序逐笔书写，模拟毛笔运笔节奏</p>
+    </div>
+
+    <script>
+      /* exported toggleSpeed */
+      let speedMul = 1;
+      let speedIdx = 0;
+      const speeds = [1, 1.6, 0.6];
+
+      function writeAll() {
+        // 主舞台
+        const mainPaths = document.querySelectorAll('#mainStage .ink-stroke');
+        mainPaths.forEach(function (p, _i) {
+          p.style.transition = 'none';
+          p.style.strokeDashoffset = '1000';
+        });
+        // 触发回流
+        void document.getElementById('mainStage').offsetWidth;
+        mainPaths.forEach(function (p, i) {
+          const dur = 0.6 / speedMul;
+          p.style.transition = 'stroke-dashoffset ' + dur + 's ease';
+          setTimeout(
+            function () {
+              p.style.strokeDashoffset = '0';
+            },
+            i * (400 / speedMul) + 50,
+          );
+        });
+
+        // 签名1
+        const sig1Paths = document.querySelectorAll('#sig1 .ink-stroke');
+        sig1Paths.forEach(function (p, _i) {
+          p.style.transition = 'none';
+          p.style.strokeDashoffset = '1000';
+        });
+        void document.getElementById('sig1').offsetWidth;
+        sig1Paths.forEach(function (p, i) {
+          p.style.transition = 'stroke-dashoffset ' + 1.5 / speedMul + 's ease';
+          setTimeout(
+            function () {
+              p.style.strokeDashoffset = '0';
+            },
+            i * (800 / speedMul) + 3000,
+          );
+        });
+
+        // 签名2
+        const sig2Paths = document.querySelectorAll('#sig2 .ink-stroke');
+        sig2Paths.forEach(function (p, _i) {
+          p.style.transition = 'none';
+          p.style.strokeDashoffset = '1000';
+        });
+        void document.getElementById('sig2').offsetWidth;
+        sig2Paths.forEach(function (p, i) {
+          p.style.transition = 'stroke-dashoffset ' + 0.5 / speedMul + 's ease';
+          setTimeout(
+            function () {
+              p.style.strokeDashoffset = '0';
+            },
+            i * (250 / speedMul) + 4000,
+          );
+        });
+
+        // 签名3 印章
+        const sig3Paths = document.querySelectorAll('#sig3 .ink-stroke');
+        sig3Paths.forEach(function (p, _i) {
+          p.style.transition = 'none';
+          p.style.strokeDashoffset = '1000';
+        });
+        void document.getElementById('sig3').offsetWidth;
+        sig3Paths.forEach(function (p, i) {
+          p.style.transition = 'stroke-dashoffset ' + 1.2 / speedMul + 's ease';
+          setTimeout(
+            function () {
+              p.style.strokeDashoffset = '0';
+            },
+            5000 + i * 300,
+          );
+        });
+      }
+
+      function toggleSpeed() {
+        speedIdx = (speedIdx + 1) % speeds.length;
+        speedMul = speeds[speedIdx];
+        writeAll();
+      }
+
+      window.addEventListener('load', function () {
+        setTimeout(writeAll, 400);
+      });
+    </script>
+  </body>
+</html>

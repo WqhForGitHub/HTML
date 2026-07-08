@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>027 - main 主内容区域演示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: #f0f2f5;
+        color: #2d3748;
+        line-height: 1.7;
+      }
+
+      /* 注解面板 */
+      .annotation {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 330px;
+        background: #fffbe6;
+        border: 2px solid #ffd666;
+        border-radius: 10px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        font-size: 13px;
+        z-index: 1000;
+      }
+      .annotation h3 {
+        color: #d48806;
+        margin-bottom: 8px;
+        font-size: 15px;
+      }
+      .annotation code {
+        background: #fff1b8;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: Consolas, monospace;
+        color: #ad6800;
+      }
+      .annotation p {
+        margin-bottom: 6px;
+      }
+      .annotation .warning {
+        background: #fff1b8;
+        padding: 6px 8px;
+        border-radius: 4px;
+        margin-top: 6px;
+        color: #d48806;
+      }
+      .annotation .close-btn {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        cursor: pointer;
+        color: #999;
+        border: none;
+        background: none;
+        font-size: 18px;
+      }
+
+      /* header（在 main 之外） */
+      .site-header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: #fff;
+        padding: 30px 20px;
+        text-align: center;
+        position: relative;
+      }
+      .site-header::after {
+        content: 'header（在 main 之外）';
+        position: absolute;
+        top: 8px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.25);
+        padding: 2px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .site-header h1 {
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+      .site-header p {
+        opacity: 0.9;
+      }
+      .top-nav {
+        margin-top: 16px;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .top-nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 6px 16px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        font-size: 14px;
+        transition: background 0.3s;
+      }
+      .top-nav a:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      /* main 主内容区域 */
+      main.main-content {
+        max-width: 900px;
+        margin: 30px auto;
+        background: #fff;
+        border-radius: 14px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        position: relative;
+        border: 3px dashed #6a11cb;
+      }
+      main.main-content::before {
+        content: 'main（页面主内容，每个文档仅一个）';
+        position: absolute;
+        top: -14px;
+        left: 20px;
+        background: #6a11cb;
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      main.main-content h2 {
+        color: #6a11cb;
+        font-size: 26px;
+        margin-bottom: 16px;
+        margin-top: 10px;
+      }
+      main.main-content > p {
+        color: #4a5568;
+        margin-bottom: 16px;
+        text-align: justify;
+      }
+
+      .main-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin: 24px 0;
+      }
+      .feature-box {
+        background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #6a11cb;
+      }
+      .feature-box h3 {
+        color: #6b21a8;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+      .feature-box p {
+        font-size: 13px;
+        color: #7c3aed;
+      }
+
+      .highlight-box {
+        background: #fef3c7;
+        border-left: 5px solid #f59e0b;
+        padding: 16px 20px;
+        border-radius: 0 8px 8px 0;
+        margin: 20px 0;
+      }
+      .highlight-box strong {
+        color: #92400e;
+      }
+
+      .code-block {
+        background: #1e1e2e;
+        color: #cdd6f4;
+        padding: 16px;
+        border-radius: 8px;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        margin: 16px 0;
+        overflow-x: auto;
+      }
+      .code-block .kw {
+        color: #cba6f7;
+      }
+      .code-block .tag {
+        color: #f38ba8;
+      }
+      .code-block .cm {
+        color: #6c7086;
+      }
+
+      /* footer（在 main 之外） */
+      .site-footer {
+        background: #1e293b;
+        color: #cbd5e1;
+        padding: 30px 20px;
+        text-align: center;
+        position: relative;
+        font-size: 14px;
+      }
+      .site-footer::before {
+        content: 'footer（在 main 之外）';
+        position: absolute;
+        top: 8px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .site-footer p {
+        margin-bottom: 6px;
+      }
+      .site-footer a {
+        color: #818cf8;
+        text-decoration: none;
+      }
+
+      /* 跳转链接（无障碍） */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #6a11cb;
+        color: #fff;
+        padding: 8px 16px;
+        text-decoration: none;
+        z-index: 100;
+      }
+      .skip-link:focus {
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 注解面板 -->
+    <aside class="annotation" id="annotation">
+      <button class="close-btn" onclick="document.getElementById('annotation').style.display = 'none'">&times;</button>
+      <h3>
+        语义元素说明：
+        <code>&lt;main&gt;</code>
+      </h3>
+      <p>
+        <code>&lt;main&gt;</code>
+        表示文档的主要内容区域，是页面的核心信息所在。
+      </p>
+      <p>
+        <strong>
+          关键规则：每个文档中只能有一个
+          <code>&lt;main&gt;</code>
+          元素，且不应是
+          <code>&lt;article&gt;</code>
+          、
+          <code>&lt;aside&gt;</code>
+          、
+          <code>&lt;footer&gt;</code>
+          、
+          <code>&lt;header&gt;</code>
+          、
+          <code>&lt;nav&gt;</code>
+          的子元素。
+        </strong>
+      </p>
+      <p>它排除了 header、footer、nav、aside 等重复出现的内容，专为核心内容而设，便于屏幕阅读器直接跳转到主内容。</p>
+      <div class="warning">
+        注意：本页中央紫色虚线框内即为唯一的
+        <code>&lt;main&gt;</code>
+        。
+      </div>
+    </aside>
+
+    <!-- 页面 header（在 main 之外） -->
+    <header class="site-header">
+      <h1>云栖学院 · 在线学习平台</h1>
+      <p>让每个人都能享受优质教育</p>
+      <nav class="top-nav">
+        <a href="#">首页</a>
+        <a href="#">课程</a>
+        <a href="#">讲师</a>
+        <a href="#">社区</a>
+        <a href="#">关于</a>
+      </nav>
+    </header>
+
+    <!-- main 主内容区域（页面核心，唯一） -->
+    <main class="main-content" id="main-content">
+      <a href="#main-content" class="skip-link">跳到主内容</a>
+
+      <h2>欢迎来到云栖学院</h2>
+      <p>
+        云栖学院是一个专注于 IT
+        技术领域的在线学习平台，提供从前端、后端、数据分析到人工智能的全栈课程。无论你是初学者还是资深工程师，都能在这里找到适合的学习路径。本页面展示的核心内容区域，正是用
+        <code>&lt;main&gt;</code>
+        语义元素定义的，它代表了页面中最重要、最独特的内容。
+      </p>
+
+      <p>
+        根据 HTML5 规范，
+        <code>&lt;main&gt;</code>
+        元素的内容应当与文档的其他部分明显不同，即它不包含诸如导航链接、站点标志、版权信息等在多个页面中重复出现的内容。这种语义上的明确划分，使得辅助技术（如屏幕阅读器）能帮助用户快速定位到页面的核心信息。
+      </p>
+
+      <div class="main-features">
+        <section class="feature-box">
+          <h3>系统化课程</h3>
+          <p>覆盖全栈技术栈，从入门到精通的学习路径设计。</p>
+        </section>
+        <section class="feature-box">
+          <h3>实战项目</h3>
+          <p>每个课程配备真实项目，学以致用，积累作品集。</p>
+        </section>
+        <section class="feature-box">
+          <h3>名师授课</h3>
+          <p>来自一线大厂的资深工程师亲自讲授，分享实战经验。</p>
+        </section>
+        <section class="feature-box">
+          <h3>社区答疑</h3>
+          <p>活跃的学习社区，遇到问题随时提问，共同进步。</p>
+        </section>
+      </div>
+
+      <div class="highlight-box">
+        <strong>重要提示：</strong>
+        一个 HTML 文档中应当只包含一个
+        <code>&lt;main&gt;</code>
+        元素。这是因为
+        <code>&lt;main&gt;</code>
+        的目的是标记页面的"主体内容"，而一个页面只应有一个主体。如果存在多个，浏览器和辅助技术可能无法正确识别。
+      </div>
+
+      <h3 style="color: #6a11cb; margin-bottom: 10px">正确的使用方式示例：</h3>
+      <div class="code-block">
+        <span class="tag">&lt;body&gt;</span>
+        <span class="tag">&lt;header&gt;</span>
+        站点头部、导航...
+        <span class="tag">&lt;/header&gt;</span>
+        <span class="tag">&lt;main&gt;</span>
+        <span class="cm">&lt;!-- 页面核心内容，且全文档唯一 --&gt;</span>
+        <span class="tag">&lt;h1&gt;</span>
+        页面主标题
+        <span class="tag">&lt;/h1&gt;</span>
+        <span class="tag">&lt;p&gt;</span>
+        核心内容段落...
+        <span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;/main&gt;</span>
+        <span class="tag">&lt;footer&gt;</span>
+        版权、链接...
+        <span class="tag">&lt;/footer&gt;</span>
+        <span class="tag">&lt;/body&gt;</span>
+      </div>
+
+      <p>
+        在结构上，
+        <code>&lt;main&gt;</code>
+        通常位于
+        <code>&lt;header&gt;</code>
+        与
+        <code>&lt;footer&gt;</code>
+        之间，是文档 body 的直接子元素。它内部可以包含
+        <code>&lt;article&gt;</code>
+        、
+        <code>&lt;section&gt;</code>
+        、
+        <code>&lt;aside&gt;</code>
+        等其他语义元素，组织页面主体。
+      </p>
+    </main>
+
+    <!-- 页面 footer（在 main 之外） -->
+    <footer class="site-footer">
+      <p>&copy; 2026 云栖学院 · 保留所有权利</p>
+      <p>
+        关于我们 &nbsp;|&nbsp; 联系方式 &nbsp;|&nbsp;
+        <a href="#">隐私政策</a>
+        &nbsp;|&nbsp;
+        <a href="#">服务条款</a>
+      </p>
+      <p style="margin-top: 8px; font-size: 12px; opacity: 0.7">
+        本页 header 与 footer 均在
+        <code>&lt;main&gt;</code>
+        之外，main 内才是页面核心内容
+      </p>
+    </footer>
+  </body>
+</html>

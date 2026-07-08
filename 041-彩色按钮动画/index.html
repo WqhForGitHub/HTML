@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>彩色按钮动画展示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        background: linear-gradient(135deg, #1e1e2f 0%, #2a2a4a 50%, #1a1a2e 100%);
+        color: #fff;
+        padding: 40px 20px;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.4rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ade80, #ff6ec4);
+        background-size: 300% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: titleShift 4s linear infinite;
+      }
+
+      @keyframes titleShift {
+        to {
+          background-position: 300% center;
+        }
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #aab;
+        margin-bottom: 40px;
+        font-size: 1rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .cell {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        min-height: 220px;
+        backdrop-filter: blur(6px);
+      }
+
+      .label {
+        font-size: 0.85rem;
+        color: #8a8aa0;
+        letter-spacing: 1px;
+      }
+
+      /* 1. 渐变流动按钮 */
+      .btn-gradient {
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ade80, #ff6ec4);
+        background-size: 300% auto;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 20px rgba(120, 115, 245, 0.4);
+      }
+      .btn-gradient:hover {
+        background-position: 100% 0;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(120, 115, 245, 0.6);
+      }
+
+      /* 2. 涟漪效果按钮 */
+      .btn-ripple {
+        position: relative;
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        overflow: hidden;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transition: transform 0.2s;
+      }
+      .btn-ripple:active {
+        transform: scale(0.96);
+      }
+      .btn-ripple::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.6s ease,
+          height 0.6s ease;
+      }
+      .btn-ripple:active::after {
+        width: 300px;
+        height: 300px;
+        transition: 0s;
+      }
+      .btn-ripple:hover {
+        box-shadow: 0 6px 25px rgba(118, 75, 162, 0.5);
+      }
+
+      /* 3. 弹跳按钮 */
+      .btn-bounce {
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        animation: bounce 2s ease-in-out infinite;
+        box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-12px);
+        }
+      }
+
+      /* 4. 脉冲按钮 */
+      .btn-pulse {
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        animation: pulse 1.8s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(67, 233, 123, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 22px rgba(67, 233, 123, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(67, 233, 123, 0);
+        }
+      }
+
+      /* 5. 光泽扫过按钮 */
+      .btn-shine {
+        position: relative;
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        overflow: hidden;
+        background: linear-gradient(135deg, #fa709a, #fee140);
+      }
+      .btn-shine::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -120%;
+        width: 80%;
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        transform: skewX(-25deg);
+      }
+      .btn-shine:hover::before {
+        animation: shine 0.9s ease;
+      }
+      @keyframes shine {
+        to {
+          left: 120%;
+        }
+      }
+
+      /* 6. 变形按钮 */
+      .btn-morph {
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #30cfd0, #330867);
+        border-radius: 30px;
+        transition:
+          border-radius 0.4s ease,
+          transform 0.4s ease,
+          letter-spacing 0.4s ease;
+      }
+      .btn-morph:hover {
+        border-radius: 8px;
+        transform: scale(1.05);
+        letter-spacing: 3px;
+      }
+
+      /* 7. 边框流光按钮 */
+      .btn-border-flow {
+        position: relative;
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        background: #1a1a2e;
+        z-index: 1;
+      }
+      .btn-border-flow::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 32px;
+        background: linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+        background-size: 300% auto;
+        animation: borderFlow 3s linear infinite;
+        z-index: -2;
+      }
+      .btn-border-flow::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        background: #1a1a2e;
+        z-index: -1;
+      }
+      @keyframes borderFlow {
+        to {
+          background-position: 300% 0;
+        }
+      }
+
+      /* 8. 按压霓虹按钮 */
+      .btn-neon {
+        padding: 14px 38px;
+        font-size: 1rem;
+        color: #0ff;
+        border: 2px solid #0ff;
+        border-radius: 30px;
+        cursor: pointer;
+        background: transparent;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        text-shadow: 0 0 8px #0ff;
+        box-shadow:
+          0 0 12px #0ff,
+          inset 0 0 12px #0ff;
+      }
+      .btn-neon:hover {
+        color: #000;
+        background: #0ff;
+        box-shadow:
+          0 0 30px #0ff,
+          inset 0 0 30px rgba(255, 255, 255, 0.4);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        color: #667;
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>彩色按钮动画展示</h1>
+    <p class="subtitle">悬停、点击或观察 — 八种纯 CSS 按钮动画效果</p>
+
+    <div class="grid">
+      <div class="cell">
+        <button class="btn-gradient">渐变流动</button>
+        <span class="label">悬停渐变流动</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-ripple">点击涟漪</button>
+        <span class="label">点击产生涟漪</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-bounce">弹跳按钮</button>
+        <span class="label">持续弹跳动画</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-pulse">脉冲按钮</button>
+        <span class="label">脉冲光圈扩散</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-shine">光泽扫过</button>
+        <span class="label">悬停光泽扫过</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-morph">变形按钮</button>
+        <span class="label">悬停变形放大</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-border-flow">边框流光</button>
+        <span class="label">边框彩色流动</span>
+      </div>
+
+      <div class="cell">
+        <button class="btn-neon">霓虹按钮</button>
+        <span class="label">霓虹发光悬停</span>
+      </div>
+    </div>
+
+    <footer>纯 CSS3 动画 · 无 JavaScript 依赖</footer>
+  </body>
+</html>

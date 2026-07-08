@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS雨滴效果</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        font-family: 'Microsoft YaHei', sans-serif;
+        color: #fff;
+      }
+      body {
+        background: linear-gradient(to bottom, #0a1428 0%, #1a2a44 40%, #2a3a54 70%, #1a2438 100%);
+        position: relative;
+      }
+      h1 {
+        position: absolute;
+        top: 30px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 28px;
+        letter-spacing: 8px;
+        color: rgba(180, 210, 240, 0.95);
+        text-shadow: 0 2px 12px rgba(0, 20, 50, 0.7);
+        z-index: 10;
+      }
+      .hint {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: rgba(180, 210, 240, 0.6);
+        font-size: 13px;
+        letter-spacing: 3px;
+        z-index: 10;
+      }
+
+      /* 远处城市剪影 */
+      .city {
+        position: absolute;
+        bottom: 12%;
+        left: 0;
+        right: 0;
+        height: 25%;
+        z-index: 2;
+        background: linear-gradient(to top, #050a14 0%, #0a1424 100%);
+        clip-path: polygon(
+          0% 100%,
+          0% 60%,
+          3% 60%,
+          3% 45%,
+          6% 45%,
+          6% 55%,
+          9% 55%,
+          9% 35%,
+          12% 35%,
+          12% 50%,
+          15% 50%,
+          15% 30%,
+          18% 30%,
+          18% 40%,
+          21% 40%,
+          21% 25%,
+          24% 25%,
+          24% 45%,
+          27% 45%,
+          27% 35%,
+          30% 35%,
+          30% 20%,
+          33% 20%,
+          33% 40%,
+          36% 40%,
+          36% 50%,
+          39% 50%,
+          39% 30%,
+          42% 30%,
+          42% 45%,
+          45% 45%,
+          45% 25%,
+          48% 25%,
+          48% 40%,
+          51% 40%,
+          51% 15%,
+          54% 15%,
+          54% 35%,
+          57% 35%,
+          57% 50%,
+          60% 50%,
+          60% 30%,
+          63% 30%,
+          63% 45%,
+          66% 45%,
+          66% 20%,
+          69% 20%,
+          69% 40%,
+          72% 40%,
+          72% 35%,
+          75% 35%,
+          75% 50%,
+          78% 50%,
+          78% 30%,
+          81% 30%,
+          81% 45%,
+          84% 45%,
+          84% 25%,
+          87% 25%,
+          87% 40%,
+          90% 40%,
+          90% 55%,
+          93% 55%,
+          93% 35%,
+          96% 35%,
+          96% 50%,
+          100% 50%,
+          100% 100%
+        );
+      }
+      /* 窗户灯光 */
+      .windows {
+        position: absolute;
+        bottom: 12%;
+        left: 0;
+        right: 0;
+        height: 25%;
+        z-index: 3;
+        pointer-events: none;
+      }
+      .win {
+        position: absolute;
+        width: 4px;
+        height: 6px;
+        background: rgba(255, 200, 100, 0.7);
+        box-shadow: 0 0 6px rgba(255, 200, 100, 0.5);
+        animation: winFlicker 4s ease-in-out infinite;
+      }
+      @keyframes winFlicker {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 0.3;
+        }
+        75% {
+          opacity: 0.9;
+        }
+      }
+
+      .ground {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 12%;
+        background: linear-gradient(to top, #050a14, #0a1428);
+        z-index: 4;
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+      }
+      /* 地面积水反光 */
+      .ground::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        background: linear-gradient(to bottom, rgba(120, 160, 200, 0.25), transparent);
+      }
+
+      .rain-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 6;
+        overflow: hidden;
+      }
+      .raindrop {
+        position: absolute;
+        top: -100px;
+        width: 2px;
+        background: linear-gradient(to bottom, transparent, rgba(180, 210, 240, 0.7));
+        border-radius: 0 0 2px 2px;
+        animation-name: rainFall;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
+      @keyframes rainFall {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(110vh);
+          opacity: 0.6;
+        }
+      }
+
+      /* 水花溅射 */
+      .splash {
+        position: absolute;
+        bottom: 12%;
+        width: 2px;
+        height: 2px;
+        pointer-events: none;
+        z-index: 5;
+      }
+      .splash::before,
+      .splash::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 8px;
+        height: 8px;
+        border: 1.5px solid rgba(180, 210, 240, 0.6);
+        border-top: none;
+        border-left: none;
+        border-radius: 0 0 50% 0;
+        transform-origin: bottom left;
+        animation: splashOut 0.6s ease-out forwards;
+      }
+      .splash::after {
+        transform: scaleX(-1);
+        transform-origin: bottom right;
+        left: -2px;
+      }
+      @keyframes splashOut {
+        0% {
+          opacity: 1;
+          transform: rotate(0) scale(0.5);
+        }
+        100% {
+          opacity: 0;
+          transform: rotate(70deg) scale(1.5);
+        }
+      }
+      .splash::after {
+        animation: splashOutLeft 0.6s ease-out forwards;
+      }
+      @keyframes splashOutLeft {
+        0% {
+          opacity: 1;
+          transform: scaleX(-1) rotate(0) scale(0.5);
+        }
+        100% {
+          opacity: 0;
+          transform: scaleX(-1) rotate(70deg) scale(1.5);
+        }
+      }
+
+      /* 闪电 */
+      .lightning {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0);
+        z-index: 7;
+        pointer-events: none;
+      }
+      .lightning.flash {
+        animation: flash 0.5s ease-out;
+      }
+      @keyframes flash {
+        0% {
+          background: rgba(255, 255, 255, 0);
+        }
+        10% {
+          background: rgba(220, 230, 255, 0.6);
+        }
+        20% {
+          background: rgba(255, 255, 255, 0);
+        }
+        30% {
+          background: rgba(220, 230, 255, 0.4);
+        }
+        100% {
+          background: rgba(255, 255, 255, 0);
+        }
+      }
+
+      .controls {
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 10;
+      }
+      .controls button {
+        padding: 8px 20px;
+        margin: 0 6px;
+        background: rgba(180, 210, 240, 0.1);
+        border: 1px solid rgba(180, 210, 240, 0.4);
+        color: #dde8f4;
+        border-radius: 20px;
+        cursor: pointer;
+        letter-spacing: 2px;
+        font-size: 13px;
+        backdrop-filter: blur(8px);
+        transition: all 0.3s;
+      }
+      .controls button:hover {
+        background: rgba(180, 210, 240, 0.25);
+      }
+      .controls button.active {
+        background: rgba(180, 210, 240, 0.35);
+        border-color: #dde8f4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>夜 雨 连 绵</h1>
+    <div class="controls">
+      <button id="bLight">小雨</button>
+      <button id="bMed" class="active">中雨</button>
+      <button id="bHeavy">大雨</button>
+      <button id="bStorm">暴雨雷电</button>
+    </div>
+    <div class="windows" id="windows"></div>
+    <div class="city"></div>
+    <div class="ground"></div>
+    <div class="rain-container" id="rain"></div>
+    <div class="lightning" id="lightning"></div>
+    <div class="hint">线性渐变雨滴下落 · 地面溅起水花 · 偶有闪电划破夜空</div>
+
+    <script>
+      const rain = document.getElementById('rain');
+      const lightning = document.getElementById('lightning');
+      const windowsEl = document.getElementById('windows');
+      const densityMap = { light: 80, med: 180, heavy: 320, storm: 450 };
+      let stormTimer = null;
+
+      // 生成窗户灯光
+      for (let i = 0; i < 40; i++) {
+        const w = document.createElement('div');
+        w.className = 'win';
+        w.style.left = Math.random() * 100 + '%';
+        w.style.bottom = 3 + Math.random() * 18 + '%';
+        w.style.animationDelay = Math.random() * 4 + 's';
+        if (Math.random() > 0.6) w.style.background = 'rgba(255,240,180,0.6)';
+        windowsEl.appendChild(w);
+      }
+
+      function makeRain(count) {
+        rain.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+          const drop = document.createElement('div');
+          drop.className = 'raindrop';
+          const len = 10 + Math.random() * 25;
+          drop.style.height = len + 'px';
+          drop.style.left = Math.random() * 100 + 'vw';
+          const dur = 0.4 + Math.random() * 0.8;
+          drop.style.animationDuration = dur + 's';
+          drop.style.animationDelay = -Math.random() * dur + 's';
+          drop.style.opacity = 0.4 + Math.random() * 0.5;
+          rain.appendChild(drop);
+        }
+      }
+
+      function setActive(btn) {
+        document.querySelectorAll('.controls button').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      // 水花持续生成
+      function spawnSplash() {
+        const splash = document.createElement('div');
+        splash.className = 'splash';
+        splash.style.left = Math.random() * 100 + 'vw';
+        splash.style.bottom = 10 + Math.random() * 2 + '%';
+        document.body.appendChild(splash);
+        setTimeout(() => splash.remove(), 600);
+      }
+
+      setInterval(spawnSplash, 80);
+
+      // 闪电
+      function triggerLightning() {
+        lightning.classList.remove('flash');
+        void lightning.offsetWidth;
+        lightning.classList.add('flash');
+      }
+
+      document.getElementById('bLight').addEventListener('click', (e) => {
+        setActive(e.target);
+        makeRain(densityMap.light);
+        if (stormTimer) {
+          clearInterval(stormTimer);
+          stormTimer = null;
+        }
+        setInterval(spawnSplash, 200);
+      });
+      document.getElementById('bMed').addEventListener('click', (e) => {
+        setActive(e.target);
+        makeRain(densityMap.med);
+        if (stormTimer) {
+          clearInterval(stormTimer);
+          stormTimer = null;
+        }
+        setInterval(spawnSplash, 100);
+      });
+      document.getElementById('bHeavy').addEventListener('click', (e) => {
+        setActive(e.target);
+        makeRain(densityMap.heavy);
+        if (stormTimer) {
+          clearInterval(stormTimer);
+          stormTimer = null;
+        }
+        setInterval(spawnSplash, 50);
+      });
+      document.getElementById('bStorm').addEventListener('click', (e) => {
+        setActive(e.target);
+        makeRain(densityMap.storm);
+        setInterval(spawnSplash, 30);
+        stormTimer = setInterval(() => {
+          if (Math.random() > 0.5) triggerLightning();
+        }, 2500);
+        setTimeout(triggerLightning, 500);
+      });
+
+      makeRain(densityMap.med);
+    </script>
+  </body>
+</html>
