@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>动画性能优化 CSS vs JS</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #d946ef;
+        --ok: #22c55e;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .stage {
+        position: relative;
+        height: 80px;
+        background: #1e293b;
+        border-radius: 8px;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      .dot {
+        position: absolute;
+        top: 30px;
+        left: 10px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .dot.css {
+        animation: slide 2s linear infinite;
+      }
+      @keyframes slide {
+        0% {
+          left: 10px;
+        }
+        50% {
+          left: calc(100% - 30px);
+        }
+        100% {
+          left: 10px;
+        }
+      }
+      .ctrl {
+        display: flex;
+        gap: 8px;
+        margin: 10px 0;
+      }
+      .ctrl button {
+        flex: 1;
+        padding: 9px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      .fps {
+        font-family: monospace;
+        font-size: 14px;
+        text-align: center;
+        padding: 8px;
+        background: var(--card);
+        border-radius: 8px;
+        color: #f0abfc;
+        margin-bottom: 10px;
+      }
+      .fps b {
+        color: #4ade80;
+        font-size: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .card p,
+      .card li {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .card ul {
+        list-style: none;
+      }
+      .card li {
+        padding: 4px 0 4px 18px;
+        position: relative;
+      }
+      .card li::before {
+        content: '✓';
+        position: absolute;
+        left: 4px;
+        color: var(--ok);
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(217, 70, 239, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #f0abfc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>动画性能 CSS vs JS</h1>
+    <div class="sub">面试题 28 · 优先 CSS 动画</div>
+
+    <div class="fps">实时 FPS：<b id="fps">60</b></div>
+
+    <div class="card">
+      <h2>CSS 动画演示（transform / opacity）</h2>
+      <div class="stage"><div class="dot css"></div></div>
+      <p>使用 animation + transform，跳过 Layout/Paint，仅合成层，最流畅。</p>
+    </div>
+
+    <div class="card">
+      <h2>JS 动画演示（点击开/关）</h2>
+      <div class="stage"><div class="dot" id="jsd"></div></div>
+      <div class="ctrl">
+        <button onclick="toggleJS(true)">开启 setInterval(left)</button>
+        <button onclick="toggleJS(false)">停止</button>
+      </div>
+      <p>JS 改 left 每帧触发重排，FPS 会明显下降。</p>
+    </div>
+
+    <div class="card">
+      <h2>优化原则</h2>
+      <ul>
+        <li>优先 CSS transition / animation 跑合成层 (transform / opacity)</li>
+        <li>JS 动画用 requestAnimationFrame 替代 setTimeout</li>
+        <li>避免动画改 width/height/top/left/margin</li>
+        <li>加 will-change / translateZ 提升合成层</li>
+        <li>大区域动画考虑 canvas / WebGL</li>
+      </ul>
+    </div>
+
+    <div class="tip">💡 选择：UI 动效用 CSS（声明式、GPU）；逻辑复杂或物理动画用 JS + rAF；移动端慎用 JS 逐帧改布局。</div>
+
+    <script>
+      const fpsEl = document.getElementById('fps');
+      let last = performance.now(),
+        frames = 0;
+      function fpsLoop() {
+        frames++;
+        const now = performance.now();
+        if (now - last >= 1000) {
+          fpsEl.textContent = frames;
+          frames = 0;
+          last = now;
+        }
+        requestAnimationFrame(fpsLoop);
+      }
+      fpsLoop();
+
+      const jsd = document.getElementById('jsd');
+      let jsOn = false,
+        pos = 10,
+        dir = 1,
+        timer = null;
+      function toggleJS(on) {
+        jsOn = on;
+        if (on && !timer) {
+          timer = setInterval(() => {
+            pos += dir * 4;
+            if (pos > 220) dir = -1;
+            if (pos < 10) dir = 1;
+            jsd.style.left = pos + 'px'; // 触发重排
+          }, 16);
+        } else if (!on && timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+    </script>
+  </body>
+</html>

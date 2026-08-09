@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>软键盘遮挡处理</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #ec4899;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .chat {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 12px;
+        height: 300px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .msg {
+        max-width: 70%;
+        padding: 9px 12px;
+        margin: 5px 0;
+        border-radius: 10px;
+        font-size: 13px;
+        background: #1e293b;
+        color: var(--text);
+        align-self: flex-start;
+      }
+      .msg.me {
+        background: var(--accent);
+        color: #fff;
+        align-self: flex-end;
+      }
+      .bar {
+        position: sticky;
+        bottom: 0;
+        background: #1e293b;
+        padding: 10px;
+        border-radius: 10px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .bar input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        border-radius: 8px;
+        font-size: 14px;
+      }
+      .bar button {
+        padding: 9px 16px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .card ul {
+        list-style: none;
+      }
+      .card li {
+        font-size: 13px;
+        color: var(--muted);
+        padding: 5px 0 5px 18px;
+        position: relative;
+      }
+      .card li::before {
+        content: '✓';
+        position: absolute;
+        left: 4px;
+        color: var(--accent);
+      }
+      .kbd {
+        font-size: 12px;
+        color: var(--accent);
+        padding: 8px;
+        background: rgba(236, 72, 153, 0.1);
+        border-radius: 6px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>软键盘遮挡输入框</h1>
+    <div class="sub">面试题 25 · 聚焦输入框观察效果</div>
+
+    <div class="chat" id="chat">
+      <div class="msg">底部输入框聚焦时看看发生了什么 👇</div>
+      <div class="msg me">这是聊天演示</div>
+      <div class="bar" id="bar">
+        <input id="input" type="text" placeholder="点我聚焦弹键盘" />
+        <button onclick="send()">发送</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>解决方案</h2>
+      <ul>
+        <li>输入框 focus 时 scrollIntoView({block:'center'}) 滚到可视</li>
+        <li>监听 resize / visualViewport 变化，计算键盘高度上移页面</li>
+        <li>用 position: sticky 而非 fixed 放输入框，键盘自然挤上来</li>
+        <li>iOS：document.body scrollTop 调整；Android：resize 已降低视口</li>
+        <li>底部留 padding-bottom: 永远不贴边</li>
+      </ul>
+      <div class="kbd" id="info">visualViewport 高度：-</div>
+    </div>
+
+    <script>
+      const chat = document.getElementById('chat');
+      const input = document.getElementById('input');
+      const info = document.getElementById('info');
+      input.addEventListener('focus', () => {
+        setTimeout(() => {
+          input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      });
+      function send() {
+        const v = input.value.trim();
+        if (!v) return;
+        const m = document.createElement('div');
+        m.className = 'msg me';
+        m.textContent = v;
+        chat.insertBefore(m, document.getElementById('bar'));
+        input.value = '';
+      }
+      function upd() {
+        const vh = window.visualViewport ? Math.round(window.visualViewport.height) : window.innerHeight;
+        info.textContent = `visualViewport 高度：${vh}px | window：${window.innerHeight}px`;
+      }
+      window.visualViewport && window.visualViewport.addEventListener('resize', upd);
+      upd();
+    </script>
+  </body>
+</html>

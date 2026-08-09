@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>postcss-px-to-viewport</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #dd6b20;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #fdba74;
+        white-space: pre-wrap;
+        word-break: break-all;
+        margin: 8px 0;
+      }
+      .arrow {
+        text-align: center;
+        color: var(--accent);
+        font-size: 22px;
+        margin: 4px 0;
+      }
+      .out {
+        color: #bbf7d0;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(221, 107, 32, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #fdba74;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>postcss-px-to-viewport</h1>
+    <div class="sub">面试题 15 · 自动适配配置</div>
+
+    <div class="card">
+      <h2>1. 安装</h2>
+      <div class="code">npm i postcss-px-to-viewport -D
+# 或新版
+npm i postcss-px-to-viewport-8-plugin -D</div>
+    </div>
+
+    <div class="card">
+      <h2>2. 配置 (postcss.config.js)</h2>
+      <div class="code">module.exports = {
+  plugins: {
+    'postcss-px-to-viewport': {
+      viewportWidth: 375,      // 设计稿宽
+      unitPrecision: 5,       // 小数精度
+      unitToConvert: 'px',    // 转换单位
+      viewportUnit: 'vw',     // 转成什么
+      selectorBlackList: [],   // 忽略选择器
+      minPixelValue: 1,        // 小于1px不转
+      mediaQuery: false,
+      exclude: /node_modules/
+    }
+  }
+}</div>
+    </div>
+
+    <div class="card">
+      <h2>3. 效果预览（编译前后）</h2>
+      <div class="code">/* 你写的源码 */
+.card {
+  width: 200px;
+  font-size: 16px;
+  border-radius: 8px;
+}</div>
+      <div class="arrow">↓ PostCSS 编译</div>
+      <div class="code out">/* 生成产物 (375 设计稿) */
+.card {
+  width: 53.33333vw;
+  font-size: 4.26667vw;
+  border-radius: 2.13333vw;
+}</div>
+    </div>
+
+    <div class="tip">
+      💡 优势：开发照常用 px 写设计稿，插件自动转 vw；不想转换的属性可用 /* 不转 */ 注释或大写 PX 标记。
+    </div>
+  </body>
+</html>

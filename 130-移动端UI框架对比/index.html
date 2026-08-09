@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>移动端 UI 框架对比</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 22px;
+      }
+      .vs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .team {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .team.vant {
+        border-top: 4px solid #4fc08d;
+      }
+      .team.ant {
+        border-top: 4px solid #1677ff;
+      }
+      .team h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      .team.vant h2 {
+        color: #4fc08d;
+      }
+      .team.ant h2 {
+        color: #1677ff;
+      }
+      .team p {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-bottom: 5px;
+      }
+      .row {
+        font-size: 13px;
+        padding: 5px 0;
+        border-bottom: 1px dashed var(--border);
+        color: var(--muted);
+      }
+      .row b {
+        color: var(--text);
+      }
+      .row:last-child {
+        border-bottom: none;
+      }
+      .others {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 14px;
+      }
+      .others h3 {
+        font-size: 15px;
+        margin-bottom: 8px;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tags span {
+        font-size: 12px;
+        padding: 5px 10px;
+        background: rgba(99, 102, 241, 0.15);
+        color: #c7d2fe;
+        border-radius: 6px;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(99, 102, 241, 0.12);
+        border-left: 3px solid #6366f1;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #c7d2fe;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>移动端 UI 框架</h1>
+    <div class="sub">面试题 9 · Vant vs Ant Design Mobile</div>
+
+    <div class="vs">
+      <div class="team vant">
+        <h2>Vant 4</h2>
+        <p>有赞出品，基于 Vue 3</p>
+        <div class="row"><b>生态：</b>Vue 生态最成熟</div>
+        <div class="row"><b>组件：</b>80+ 组件丰富</div>
+        <div class="row"><b>体积：</b>支持按需引入</div>
+        <div class="row"><b>主题：</b>定制度高，CSS 变量</div>
+        <div class="row"><b>适合：</b>电商 / 业务型 Vue 项目</div>
+      </div>
+      <div class="team ant">
+        <h2>Ant Design Mobile</h2>
+        <p>蚂蚁出品，基于 React</p>
+        <div class="row"><b>生态：</b>React 生态主流</div>
+        <div class="row"><b>组件：</b>60+ 精致组件</div>
+        <div class="row"><b>体积：</b>支持按需引入</div>
+        <div class="row"><b>主题：</b>设计规范统一</div>
+        <div class="row"><b>适合：</b>金融 / 中后台 React</div>
+      </div>
+    </div>
+
+    <div class="others">
+      <h3>其他主流框架</h3>
+      <div class="tags">
+        <span>NutUI (京东, Vue3)</span>
+        <span>Varlet (Vue3, Material)</span>
+        <span>Taro UI (React, 跨端)</span>
+        <span>Vant Weapp (小程序)</span>
+        <span>iView UI (View UI)</span>
+        <span>Mint UI (已停更)</span>
+      </div>
+    </div>
+
+    <div class="tip">
+      💡 选型：Vue 技术栈选 Vant / NutUI；React 选 Ant Design Mobile；多端统一考虑 Taro / uni-app。
+    </div>
+  </body>
+</html>

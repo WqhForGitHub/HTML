@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebView 与浏览器对比</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #7c3aed;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .intro {
+        background: rgba(124, 58, 237, 0.12);
+        border-left: 3px solid var(--accent);
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #ddd6fe;
+        margin-bottom: 16px;
+      }
+      .vs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .col {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .col h2 {
+        font-size: 15px;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--border);
+      }
+      .col.web h2 {
+        color: #38bdf8;
+      }
+      .col.app h2 {
+        color: var(--accent);
+      }
+      .row {
+        font-size: 12.5px;
+        color: var(--muted);
+        padding: 4px 0;
+        border-bottom: 1px dashed var(--border);
+      }
+      .row b {
+        color: var(--text);
+      }
+      .why {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .why h3 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .why ul {
+        list-style: none;
+      }
+      .why li {
+        font-size: 13px;
+        color: var(--muted);
+        padding: 5px 0 5px 20px;
+        position: relative;
+      }
+      .why li::before {
+        content: '▸';
+        position: absolute;
+        left: 4px;
+        color: var(--accent);
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(124, 58, 237, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #ddd6fe;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebView vs 原生浏览器</h1>
+    <div class="sub">面试题 27</div>
+
+    <div class="intro">
+      💡 WebView 是 App 内嵌的网页容器（基于系统 WebView 内核），相比独立浏览器有更多限制与可控性。
+    </div>
+
+    <div class="vs">
+      <div class="col web">
+        <h2>原生浏览器</h2>
+        <div class="row"><b>地址栏：</b>有</div>
+        <div class="row"><b>内核：</b>系统自带最新</div>
+        <div class="row"><b>能力：</b>只能 Web API</div>
+        <div class="row"><b>通信：</b>无原生交互</div>
+        <div class="row"><b>更新：</b>随系统</div>
+        <div class="row"><b>同源：</b>严格</div>
+      </div>
+      <div class="col app">
+        <h2>App WebView</h2>
+        <div class="row"><b>地址栏：</b>无</div>
+        <div class="row"><b>内核：</b>可能被魔改 / X5</div>
+        <div class="row"><b>能力：</b>可 JSBridge 调原生</div>
+        <div class="row"><b>通信：</b>双向通信</div>
+        <div class="row"><b>更新：</b>App 版本绑定</div>
+        <div class="row"><b>同源：</b>可白名单放宽</div>
+      </div>
+    </div>
+
+    <div class="why">
+      <h3>WebView 常见坑</h3>
+      <ul>
+        <li>Android 4.4 以下 WebView 内核老旧，新 ES 语法不支持</li>
+        <li>厂商定制内核（X5/T7/UC）行为可能与系统不一致</li>
+        <li>本地 HTML / file:// 协议下 CORS / cookie 行为不同</li>
+        <li>iOS WKWebView 与 UIWebView 内存、稳定性差异大</li>
+        <li>需配合 JSBridge 才能用相机、定位、支付等原生能力</li>
+      </ul>
+    </div>
+
+    <div class="tip">💡 调试：Android chrome://inspect 接 USB；iOS Mac Safari → 开发 → 模拟器 / 真机。</div>
+  </body>
+</html>

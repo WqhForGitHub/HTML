@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSBridge 与原生通信</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #0891b2;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .card p {
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+      .code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #67e8f9;
+        white-space: pre-wrap;
+        margin: 8px 0;
+        word-break: break-all;
+      }
+      .flow {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      .node {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+        padding: 10px 6px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 12px;
+      }
+      .arrow {
+        color: var(--accent);
+      }
+      .demo {
+        text-align: center;
+        padding: 14px;
+        background: linear-gradient(135deg, rgba(8, 145, 178, 0.2), rgba(99, 102, 241, 0.12));
+        border-radius: 10px;
+        margin: 10px 0;
+      }
+      .demo button {
+        padding: 10px 20px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        margin: 4px;
+      }
+      .log {
+        font-family: monospace;
+        font-size: 12.5px;
+        color: #67e8f9;
+        padding: 8px 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+        margin-top: 8px;
+        height: 70px;
+        overflow-y: auto;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(8, 145, 178, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #67e8f9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>JSBridge 原生通信</h1>
+    <div class="sub">面试题 26 · H5 调原生 API</div>
+
+    <div class="card">
+      <h2>什么是 JSBridge</h2>
+      <p>JSBridge 是 H5 与原生 App 之间通信的桥梁：H5 调原生能力（相机/分享/扫码），原生回调 JS。</p>
+      <div class="flow">
+        <div class="node">H5 (JS)</div>
+        <div class="arrow">→调用→</div>
+        <div class="node">JSBridge</div>
+        <div class="arrow">→分发→</div>
+        <div class="node">原生 App</div>
+        <div class="arrow">→回调→</div>
+        <div class="node">H5 回调</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>两种通信方式</h2>
+      <p><b>1. 注入式（推荐）</b>：原生向 WebView 注入全局对象</p>
+      <div class="code">window.webkit.messageHandlers.app.postMessage({...})  // iOS
+window.Android.share('title', 'url')               // Android</div>
+      <p><b>2. URL Scheme 拦截</b></p>
+      <div class="code">iframe.src = 'myapp://action?name=share&cb=cb123'
+// 原生拦截 URL 解析参数执行，再通过 evaluateJavaScript 回调 cb123</div>
+    </div>
+
+    <div class="demo">
+      <button onclick="callNative('getUserInfo')">调用 getUserInfo</button>
+      <button onclick="callNative('share')">调用 share</button>
+      <div class="log" id="log">日志区（模拟，非 WebView 下使用 mock）\n</div>
+    </div>
+
+    <div class="tip">💡 框架：jsBridge / dsBridge / WebViewJavascriptBridge；现多用注入式保证类型安全与异步 Promise 化封装。</div>
+
+    <script>
+      const logEl = document.getElementById('log');
+      function log(m) {
+        logEl.textContent += '\n> ' + m;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      window.cbSeq = 0;
+      window.__appCallbacks = {};
+      function callNative(name) {
+        const cb = 'cb' + ++window.cbSeq;
+        const msg = { action: name, callback: cb };
+        window.__appCallbacks[cb] = (res) => log('收到回调: ' + JSON.stringify(res));
+        if (window.webkit || window.Android) {
+          // 真机调用
+          log('调用原生: ' + JSON.stringify(msg));
+        } else {
+          // mock 回调
+          log('调用原生(mock): ' + JSON.stringify(msg));
+          setTimeout(() => {
+            const mock = { name: name, ok: true, data: { from: 'native' } };
+            window.__appCallbacks[cb](mock);
+          }, 400);
+        }
+      }
+    </script>
+  </body>
+</html>

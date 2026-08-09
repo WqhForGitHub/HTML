@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>H5 与 PC 端开发对比</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #6366f1;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .col {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 14px;
+      }
+      .col h2 {
+        font-size: 16px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .col.pc h2 {
+        color: #38bdf8;
+      }
+      .col.h5 h2 {
+        color: var(--accent);
+      }
+      .row {
+        font-size: 13px;
+        margin-bottom: 8px;
+        color: var(--muted);
+      }
+      .row b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .list {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .list h3 {
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      .list ul {
+        list-style: none;
+      }
+      .list li {
+        font-size: 14px;
+        color: var(--muted);
+        padding: 7px 0 7px 22px;
+        position: relative;
+        border-bottom: 1px dashed var(--border);
+      }
+      .list li:last-child {
+        border-bottom: none;
+      }
+      .list li::before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 14px;
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+      }
+      .tip {
+        margin-top: 16px;
+        padding: 12px 14px;
+        background: rgba(99, 102, 241, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #c7d2fe;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>H5 移动端 vs PC 端 Web 开发</h1>
+    <div class="sub">面试题 1 · 核心差异对比</div>
+
+    <div class="compare">
+      <div class="col pc">
+        <h2>PC 端</h2>
+        <div class="row"><b>屏幕尺寸：</b>大屏、横屏为主</div>
+        <div class="row"><b>交互方式：</b>鼠标 + 键盘</div>
+        <div class="row"><b>网络环境：</b>相对稳定 Wi-Fi</div>
+        <div class="row"><b>浏览器：</b>Chrome/Edge/Safari</div>
+        <div class="row"><b>适配：</b>固定宽度 + 响应式</div>
+        <div class="row"><b>性能：</b>资源充裕</div>
+      </div>
+      <div class="col h5">
+        <h2>H5 移动端</h2>
+        <div class="row"><b>屏幕尺寸：</b>小屏、竖屏为主</div>
+        <div class="row"><b>交互方式：</b>触摸 / 手势</div>
+        <div class="row"><b>网络环境：</b>4G/5G 不稳定</div>
+        <div class="row"><b>浏览器：</b>WebView / UC/QQ</div>
+        <div class="row"><b>适配：</b>rem / vw 多端适配</div>
+        <div class="row"><b>性能：</b>受设备限制需优化</div>
+      </div>
+    </div>
+
+    <div class="list">
+      <h3>主要区别要点</h3>
+      <ul>
+        <li>布局方式：PC 多为固定居中，H5 强调流式 / 弹性 / 全屏适配</li>
+        <li>注意 1px 边框、300ms 点击延迟、点击穿透等移动端特有问题</li>
+        <li>触摸事件 touchstart/move/end 替代鼠标 click/hover</li>
+        <li>需处理软键盘弹出、安全区域（刘海屏）、横竖屏切换</li>
+        <li>资源加载：弱网下需懒加载、骨架屏、预加载优化首屏</li>
+        <li>调试方式：PC 用 DevTools，H5 常用 vConsole / 真机远程调试</li>
+      </ul>
+    </div>
+
+    <div class="tip">
+      💡 H5 开发本质是面向移动浏览器的网页开发，核心难点在「适配 + 触摸交互 + 性能」三大方面。
+    </div>
+  </body>
+</html>

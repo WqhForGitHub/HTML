@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>触摸事件与鼠标事件</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #a78bfa;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card);
+        border-radius: 12px;
+        overflow: hidden;
+        font-size: 12.5px;
+        margin-bottom: 14px;
+      }
+      th,
+      td {
+        padding: 8px 9px;
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+      }
+      th {
+        background: rgba(167, 139, 250, 0.15);
+        color: #ddd6fe;
+      }
+      td b {
+        color: var(--text);
+      }
+      .pad {
+        height: 140px;
+        background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(236, 72, 153, 0.12));
+        border: 1px dashed var(--accent);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: #ddd6fe;
+        margin-bottom: 12px;
+        user-select: none;
+      }
+      .log {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: monospace;
+        font-size: 12.5px;
+        color: #c4b5fd;
+        height: 100px;
+        overflow-y: auto;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(167, 139, 250, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #ddd6fe;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>触摸事件 vs 鼠标事件</h1>
+    <div class="sub">面试题 16 · 在下方区域用手指 / 鼠标操作</div>
+
+    <table>
+      <tr><th>PC 鼠标</th><th>移动触摸</th><th>说明</th></tr>
+      <tr><td><b>mousedown</b></td><td><b>touchstart</b></td><td>按下</td></tr>
+      <tr><td><b>mousemove</b></td><td><b>touchmove</b></td><td>移动</td></tr>
+      <tr><td><b>mouseup</b></td><td><b>touchend</b></td><td>抬起</td></tr>
+      <tr><td>-</td><td><b>touchcancel</b></td><td>被系统中断</td></tr>
+      <tr><td><b>click</b></td><td><b>tap (click)</b></td><td>移动端 click 有 300ms 延迟</td></tr>
+    </table>
+
+    <div class="pad" id="pad">触摸 / 点击 / 滑动此处</div>
+    <div class="log" id="log">事件日志：\n</div>
+
+    <div class="tip">
+      💡 区别：触摸事件支持多点 (touches 集合)；移动端 touch 后会触发 click；event 坐标 pageX/clientX 触摸需用 touches[0]。
+    </div>
+
+    <script>
+      const pad = document.getElementById('pad');
+      const logEl = document.getElementById('log');
+      function log(e) {
+        const t = e.type;
+        let pos = '';
+        if (e.touches && e.touches[0]) pos = `(${e.touches[0].clientX | 0},${e.touches[0].clientY | 0})`;
+        else if (e.clientX !== undefined) pos = `(${e.clientX | 0},${e.clientY | 0})`;
+        logEl.textContent += `\n> ${t} ${pos}`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mousemove', 'mouseup', 'click'].forEach((ev) =>
+        pad.addEventListener(ev, (e) => {
+          log(e);
+          if (ev === 'touchmove') e.preventDefault();
+        }, { passive: false })
+      );
+    </script>
+  </body>
+</html>

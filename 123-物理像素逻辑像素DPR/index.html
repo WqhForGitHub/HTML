@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>物理像素 逻辑像素 DPR</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #a855f7;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+      .grid {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .card h2 {
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: var(--accent);
+      }
+      .card p {
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .formula {
+        font-family: monospace;
+        color: var(--text);
+        margin-top: 8px;
+        padding: 8px 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+        font-size: 13px;
+      }
+      .detect {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.15));
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+      }
+      .detect .label {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .detect .value {
+        font-size: 26px;
+        font-weight: 800;
+        color: #fff;
+      }
+      .detect .row {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 14px;
+        font-size: 13px;
+      }
+      .detect .row span {
+        color: var(--muted);
+      }
+      .detect .row b {
+        color: #c7d2fe;
+      }
+      .tip {
+        margin-top: 16px;
+        padding: 12px 14px;
+        background: rgba(168, 85, 247, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #e9d5ff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>物理像素 · 逻辑像素 · DPR</h1>
+    <div class="sub">面试题 2 · 像素概念解析</div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>物理像素 (Physical Pixel)</h2>
+        <p>设备屏幕上真实存在的发光点，由硬件决定，不可改变。例如 iPhone 屏幕分辨率 1170×2532。</p>
+      </div>
+      <div class="card">
+        <h2>逻辑像素 (CSS Pixel)</h2>
+        <p>CSS 中使用的像素单位 px，是相对单位。浏览器在渲染时把它换算成物理像素显示。</p>
+      </div>
+      <div class="card">
+        <h2>设备像素比 DPR (Device Pixel Ratio)</h2>
+        <p>物理像素与逻辑像素的比值，决定一个 CSS 像素由几个物理像素显示。</p>
+        <div class="formula">DPR = 物理像素 / 逻辑像素</div>
+        <div class="formula">1 CSS px = DPR² 个物理像素</div>
+      </div>
+    </div>
+
+    <div class="detect">
+      <div class="label">您当前设备信息</div>
+      <div class="value" id="dpr">DPR: ...</div>
+      <div class="row">
+        <span>逻辑宽：<b id="cw">-</b></span>
+        <span>物理宽：<b id="pw">-</b></span>
+      </div>
+      <div class="row">
+        <span>屏宽：<b id="sw">-</b></span>
+        <span>UA：<b id="ua">-</b></span>
+      </div>
+    </div>
+
+    <div class="tip">
+      💡 Retina 屏 DPR=2/3，所以 1px CSS 边框在高 DPR 屏幕下会显示得更细，这就是「1px 问题」的根本原因。
+    </div>
+
+    <script>
+      const dpr = window.devicePixelRatio || 1;
+      document.getElementById('dpr').textContent = 'DPR: ' + dpr;
+      document.getElementById('cw').textContent = window.innerWidth + 'px';
+      document.getElementById('pw').textContent = window.screen.width * dpr + 'px';
+      document.getElementById('sw').textContent = window.screen.width + 'px';
+      document.getElementById('ua').textContent = /Mobi|Android/i.test(navigator.userAgent) ? '移动端' : 'PC端';
+    </script>
+  </body>
+</html>

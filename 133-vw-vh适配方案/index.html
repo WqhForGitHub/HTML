@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vw vh 适配方案</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #22c55e;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 5vw;
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 3.4vw;
+        margin-bottom: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 4vw;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 9px;
+        border-radius: 7px;
+        font-size: 3vw;
+        color: #bbf7d0;
+        white-space: pre-wrap;
+        margin: 6px 0;
+        word-break: break-all;
+      }
+      .card p {
+        font-size: 3.4vw;
+        color: var(--muted);
+      }
+      .demo-box {
+        width: 60vw;
+        padding: 3vw;
+        background: linear-gradient(135deg, var(--accent), #16a34a);
+        color: #fff;
+        border-radius: 3vw;
+        text-align: center;
+        margin: 8px auto;
+        font-size: 4vw;
+      }
+      .info {
+        text-align: center;
+        font-family: monospace;
+        font-size: 13px;
+        color: var(--accent);
+        padding: 10px;
+        background: rgba(34, 197, 94, 0.1);
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+      .cmp {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        background: var(--card);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .cmp td {
+        border-bottom: 1px solid var(--border);
+        padding: 7px 9px;
+        color: var(--muted);
+      }
+      .cmp td b {
+        color: var(--text);
+      }
+      .cmp tr:first-child td {
+        background: rgba(34, 197, 94, 0.15);
+        color: #bbf7d0;
+        font-weight: 600;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(34, 197, 94, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #bbf7d0;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>vw / vh 适配方案</h1>
+    <div class="sub">面试题 12 · 与 rem 的区别</div>
+
+    <div class="info" id="info">1vw = ? px</div>
+
+    <div class="card">
+      <h2>原理</h2>
+      <p>1vw = 视口宽 1%；1vh = 视口高 1%。所有尺寸用 vw 表示即可等比缩放，纯 CSS 实现无需 JS。</p>
+      <div class="code">设计稿 375 宽，200px 元素：
+200 / 375 * 100 = 53.33vw</div>
+    </div>
+
+    <div class="demo-box">60vw 宽 · 4vw 字号 · 3vw 内边距</div>
+
+    <table class="cmp">
+      <tr><td>对比项</td><td>rem</td><td>vw/vh</td></tr>
+      <tr><td><b>依赖</b></td><td>需 JS 设根字号</td><td>纯 CSS</td></tr>
+      <tr><td><b>性能</b></td><td>JS 阻塞</td><td>原生渲染快</td></tr>
+      <tr><td><b>兼容</b></td><td>极好</td><td>iOS8+/Android4.4+</td></tr>
+      <tr><td><b>横屏</b></td><td>按宽变化</td><td>vw 按宽；vh 按高</td></tr>
+    </table>
+
+    <div class="tip">
+      💡 vw 更现代，但注意横竖屏切换时 vw 按宽度变化，字号会变大；可配合 vmax/vmin 控制。
+    </div>
+
+    <script>
+      const upd = () => (document.getElementById('info').textContent = '1vw = ' + (window.innerWidth / 100).toFixed(2) + ' px');
+      upd();
+      window.addEventListener('resize', upd);
+    </script>
+  </body>
+</html>

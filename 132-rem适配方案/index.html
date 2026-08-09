@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rem 适配方案</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #14b8a6;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        /* rem 基准值由 JS 设置，这里默认 100px(375宽) */
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 9px;
+        border-radius: 7px;
+        font-size: 12px;
+        color: #99f6e4;
+        white-space: pre-wrap;
+        margin: 6px 0;
+        word-break: break-all;
+      }
+      .calc {
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(99, 102, 241, 0.12));
+        padding: 14px;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 10px;
+      }
+      .calc .v {
+        font-size: 24px;
+        font-weight: 800;
+        color: #5eead4;
+      }
+      .calc span {
+        font-size: 13px;
+        color: var(--muted);
+        display: block;
+        margin-top: 4px;
+      }
+      .demo-box {
+        padding: 0.32rem;
+        background: var(--accent);
+        color: #fff;
+        border-radius: 0.12rem;
+        text-align: center;
+        margin-top: 10px;
+        font-size: 0.28rem;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(20, 184, 166, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #99f6e4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>rem 适配方案</h1>
+    <div class="sub">面试题 11 · 原理与计算</div>
+
+    <div class="card">
+      <h2>核心原理</h2>
+      <p style="font-size: 13.5px; color: var(--muted)">rem = root em，相对根节点 html 字号。JS 监听屏宽动态设置 html.style.fontSize，元素尺寸用 rem，缩放即整体等比。</p>
+      <div class="code">document.documentElement.style.fontSize =
+  innerWidth / 设计稿宽 * 100 + 'px'</div>
+    </div>
+
+    <div class="card">
+      <h2>rem 值计算公式</h2>
+      <div class="code">rem = 设计稿像素 / 根字号基准(rem 与 px 比值)
+例：设计稿 375 宽，基准 100
+则 1rem = 100px
+设计稿 200px → 200/100 = 2rem</div>
+      <div class="calc">
+        <div class="v" id="root">1rem = ? px</div>
+        <span id="info">设计稿 200px = ? rem</span>
+      </div>
+    </div>
+
+    <div class="demo-box">这个盒子 padding:0.32rem font:0.28rem</div>
+
+    <div class="tip">
+      💡 通常约定 1rem = 设计稿宽 / 10，配合 px2rem 插件自动换算，开发时直接写设计稿 px。
+    </div>
+
+    <script>
+      const base = 100;
+      const w = window.innerWidth;
+      document.documentElement.style.fontSize = (w / 375) * base + 'px';
+      const ratio = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      document.getElementById('root').textContent = '1rem = ' + ratio.toFixed(1) + 'px';
+      document.getElementById('info').textContent = '设计稿 200px = ' + (200 / ratio).toFixed(3) + 'rem';
+    </script>
+  </body>
+</html>

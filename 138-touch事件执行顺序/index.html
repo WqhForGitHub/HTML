@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>touch 事件执行顺序</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .flow {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .step {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+        padding: 14px 6px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+      .step.on {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+        transform: scale(1.05);
+      }
+      .step .n {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .step.on .n {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .step .name {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .arr {
+        color: var(--accent);
+        font-size: 18px;
+      }
+      .pad {
+        height: 130px;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.12));
+        border: 1px dashed var(--accent);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bae6fd;
+        margin-bottom: 12px;
+        user-select: none;
+      }
+      .info {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 12px;
+        padding: 10px;
+        background: var(--card);
+        border-radius: 8px;
+      }
+      .info b {
+        color: var(--accent);
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(56, 189, 248, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #bae6fd;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>touch 事件执行顺序</h1>
+    <div class="sub">面试题 17 · 触摸生命周期</div>
+
+    <div class="flow" id="flow">
+      <div class="step" data-e="touchstart"><div class="n">1</div><div class="name">touchstart</div></div>
+      <div class="arr">→</div>
+      <div class="step" data-e="touchmove"><div class="n">2</div><div class="name">touchmove</div></div>
+      <div class="arr">→</div>
+      <div class="step" data-e="touchend"><div class="n">3</div><div class="name">touchend</div></div>
+      <div class="arr">→</div>
+      <div class="step" data-e="click"><div class="n">4</div><div class="name">click(延迟300ms)</div></div>
+    </div>
+
+    <div class="pad" id="pad">在此触摸 / 点击</div>
+    <div class="info" id="info">高亮当前触发的事件阶段</div>
+
+    <div class="tip">
+      💡 特点：touchstart 只触发一次；touchmove 连续多次；touchend 抬起后约 300ms 才触发 click（移动端特有延迟）。
+    </div>
+
+    <script>
+      const pad = document.getElementById('pad');
+      const info = document.getElementById('info');
+      const steps = document.querySelectorAll('.step');
+      let lastTime = 0;
+      function highlight(type) {
+        steps.forEach((s) => s.classList.toggle('on', s.dataset.e === type));
+        const now = Date.now();
+        const gap = lastTime ? now - lastTime : 0;
+        info.innerHTML = `触发 <b>${type}</b> | 距上次 <b>${gap}ms</b>`;
+        lastTime = now;
+      }
+      ['touchstart', 'touchmove', 'touchend', 'click'].forEach((ev) =>
+        pad.addEventListener(ev, (e) => {
+          highlight(ev);
+          if (ev === 'touchmove') e.preventDefault();
+        }, { passive: false })
+      );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>点击穿透问题</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #10b981;
+        --warn: #ef4444;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 22px;
+      }
+      .cause {
+        background: rgba(239, 68, 68, 0.12);
+        border-left: 3px solid var(--warn);
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #fecaca;
+        margin-bottom: 18px;
+      }
+      .stage {
+        position: relative;
+        height: 220px;
+        background: #1e293b;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 16px;
+      }
+      .under-btn {
+        position: absolute;
+        top: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 14px 40px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+      .under-btn:active {
+        background: #059669;
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 15px;
+      }
+      .log {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: monospace;
+        font-size: 13px;
+        color: #86efac;
+        max-height: 100px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+      }
+      .solutions {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .solutions h3 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+      .solutions ul {
+        list-style: none;
+      }
+      .solutions li {
+        font-size: 13.5px;
+        color: var(--muted);
+        padding: 6px 0 6px 22px;
+        position: relative;
+      }
+      .solutions li::before {
+        content: '✓';
+        position: absolute;
+        left: 4px;
+        color: var(--accent);
+        font-weight: bold;
+      }
+      .ctrl {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .ctrl button {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-size: 14px;
+      }
+      .ctrl button.fix {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>点击穿透问题</h1>
+    <div class="sub">面试题 5 · 复现与解决方案</div>
+
+    <div class="cause">
+      💡 原因：触摸事件 touchend 触发后约 300ms 浏览器会再派发 click，若弹层在 touchend 中立即隐藏，click 会"穿透"到下方元素。
+    </div>
+
+    <div class="ctrl">
+      <button onclick="setFix(false)">未修复（会穿透）</button>
+      <button class="fix" onclick="setFix(true)">已修复（不穿透）</button>
+    </div>
+
+    <div class="stage">
+      <button class="under-btn" onclick="log('⚠️ 下层按钮被触发！穿透发生')">下层按钮</button>
+      <div class="overlay" id="overlay">
+        弹层：点我关闭（touchend 关闭）
+      </div>
+    </div>
+
+    <div class="log" id="log">日志：等待操作...\n</div>
+
+    <div class="solutions">
+      <h3>解决方案</h3>
+      <ul>
+        <li>用 click 代替 touchend 关闭弹层，避免延迟</li>
+        <li>touchend 中调用 e.preventDefault() 阻止后续 click</li>
+        <li>弹层关闭加 300ms 延迟（setTimeout）</li>
+        <li>使用 fastclick 库消除 300ms 延迟</li>
+        <li>下层按钮也绑定 touchend 并 stopPropagation</li>
+      </ul>
+    </div>
+
+    <script>
+      let fixed = true;
+      const overlay = document.getElementById('overlay');
+      const logEl = document.getElementById('log');
+      function log(msg) {
+        logEl.textContent += '\n> ' + msg;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      function setFix(v) {
+        fixed = v;
+        overlay.style.display = 'flex';
+        log('\n=== 切换为：' + (v ? '已修复' : '未修复') + ' ===');
+      }
+      overlay.addEventListener('touchend', (e) => {
+        if (fixed) e.preventDefault();
+        overlay.style.display = 'none';
+        log('touchend 触发，弹层关闭' + (fixed ? '（已阻止 click）' : ''));
+      });
+      overlay.addEventListener('click', () => log('click 触发于弹层'));
+    </script>
+  </body>
+</html>

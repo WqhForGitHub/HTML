@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>重排与重绘优化</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #f59e0b;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .card.reflow h2 {
+        color: #ef4444;
+      }
+      .card.repaint h2 {
+        color: #f59e0b;
+      }
+      .card p {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .stage {
+        height: 70px;
+        background: #1e293b;
+        border-radius: 8px;
+        position: relative;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+      .ball {
+        position: absolute;
+        top: 25px;
+        left: 10px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .ctrl {
+        display: flex;
+        gap: 8px;
+        margin: 10px 0;
+      }
+      .ctrl button {
+        flex: 1;
+        padding: 10px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 8px;
+        font-size: 13px;
+      }
+      .stat {
+        font-family: monospace;
+        font-size: 13px;
+        padding: 8px 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+        color: #fcd34d;
+      }
+      .pt {
+        font-size: 12.5px;
+        color: var(--muted);
+        padding: 4px 0 4px 16px;
+        position: relative;
+      }
+      .pt::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #4ade80;
+      }
+      .pt.bad::before {
+        content: '✗';
+        color: #f87171;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(245, 158, 11, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #fcd34d;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>减少重排与重绘</h1>
+    <div class="sub">面试题 23 · 渲染性能优化</div>
+
+    <div class="card reflow">
+      <h2>重排 (Reflow / Layout)</h2>
+      <p>几何位置变化触发重新计算布局，开销大。改变宽高、定位、字号、窗口尺寸都会触发。</p>
+    </div>
+    <div class="card repaint">
+      <h2>重绘 (Repaint)</h2>
+      <p>仅外观变化不影响几何（颜色 / 背景等），开销小但太多也卡。</p>
+    </div>
+
+    <div class="card">
+      <h2 style="color:var(--accent)">动画对比 (transform vs left)</h2>
+      <div class="stage"><div class="ball" id="ball1"></div></div>
+      <div class="stat" id="stat">点击下方按钮移动小球</div>
+      <div class="ctrl">
+        <button onclick="moveLeft()">改 left（重排）</button>
+        <button onclick="moveTrans()">改 transform（GPU）</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="color:#4ade80">优化技巧</h2>
+      <div class="pt">动画用 transform / opacity（仅合成层，不重排）</div>
+      <div class="pt">批量改样式：用 class 替代多次 style.x= 赋值</div>
+      <div class="pt">读写分离：先读完 offsetTop 再写，避免强制同步布局</div>
+      <div class="pt">使用 will-change / translateZ(0) 提升合成层</div>
+      <div class="pt">避免逐项操作 DOM，用 DocumentFragment 批量插入</div>
+      <div class="pt bad">频繁读 offsetWidth 再写样式 → 强制布局抖动</div>
+    </div>
+
+    <div class="tip">💡 想法：transform 走 GPU 合成层，跳过 Layout 和 Paint，移动端动画首选。</div>
+
+    <script>
+      const ball = document.getElementById('ball1');
+      const stat = document.getElementById('stat');
+      let pos = 0;
+      function moveLeft() {
+        const t0 = performance.now();
+        for (let i = 0; i < 5; i++) {
+          pos = (pos + 30) % 200;
+          ball.style.left = 10 + pos + 'px';
+        }
+        stat.textContent = 'left 模式 (重排) 耗时：' + (performance.now() - t0).toFixed(2) + 'ms';
+      }
+      function moveTrans() {
+        const t0 = performance.now();
+        for (let i = 0; i < 5; i++) {
+          pos = (pos + 30) % 200;
+          ball.style.transform = `translateX(${pos}px)`;
+        }
+        stat.textContent = 'transform 模式 (GPU 合成) 耗时：' + (performance.now() - t0).toFixed(2) + 'ms';
+      }
+    </script>
+  </body>
+</html>

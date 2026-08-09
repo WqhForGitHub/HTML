@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>手势操作实现</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #f97316;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+      .stage {
+        height: 220px;
+        background: linear-gradient(135deg, rgba(249, 115, 22, 0.18), rgba(236, 72, 153, 0.12));
+        border: 1px dashed var(--accent);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 12px;
+        touch-action: none;
+      }
+      .box {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--accent), #ec4899);
+        border-radius: 12px;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 13px;
+        transition: background 0.15s;
+      }
+      .box.long {
+        background: linear-gradient(135deg, #ef4444, #f59e0b);
+      }
+      .status {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: monospace;
+        font-size: 13px;
+        color: #fdba74;
+        margin-bottom: 14px;
+        height: 90px;
+        overflow-y: auto;
+      }
+      .guide {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .guide b {
+        color: #fdba74;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>手势操作实现</h1>
+    <div class="sub">面试题 19 · 滑动 / 长按 / 缩放(双指)</div>
+
+    <div class="stage" id="stage">
+      <div class="box" id="box">拖我</div>
+    </div>
+    <div class="status" id="log">事件日志：\n</div>
+
+    <div class="guide">
+      <p><b>滑动：</b>touchstart 记起点 → touchmove 判断方向 → touchend 触发 swipe</p>
+      <p><b>长按：</b>touchstart 起 setTimeout 500ms，移动 / 抬起时取消</p>
+      <p><b>缩放：</b>双指 touchmove 用两指距离变化算 scale</p>
+      <p style="margin-top:8px;color:#94a3b8">试试：单指拖动、按住不放、双指捏合（多触屏设备）</p>
+    </div>
+
+    <script>
+      const stage = document.getElementById('stage');
+      const box = document.getElementById('box');
+      const logEl = document.getElementById('log');
+      function log(m) {
+        logEl.textContent += '\n> ' + m;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      let startX = 0,
+        startY = 0,
+        curX = 0,
+        curY = 0,
+        startLeft = 0,
+        startTop = 0,
+        tId = null,
+        ratio = 1,
+        startDist = 0;
+
+      function dist(t) {
+        const a = t[0],
+          b = t[1];
+        return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      }
+
+      stage.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const t = e.touches;
+        startX = curX = t[0].clientX;
+        startY = curY = t[0].clientY;
+        startLeft = box.offsetLeft;
+        startTop = box.offsetTop;
+        box.classList.remove('long');
+        if (t.length === 1) {
+          tId = setTimeout(() => {
+            box.classList.add('long');
+            log('长按触发 🔥');
+          }, 500);
+        } else if (t.length === 2) {
+          startDist = dist(t);
+          clearTimeout(tId);
+        }
+      });
+
+      stage.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const t = e.touches;
+        if (t.length === 1) {
+          clearTimeout(tId);
+          curX = t[0].clientX;
+          curY = t[0].clientY;
+          let nx = startLeft + (curX - startX);
+          let ny = startTop + (curY - startY);
+          nx = Math.max(0, Math.min(stage.clientWidth - 80, nx));
+          ny = Math.max(0, Math.min(stage.clientHeight - 80, ny));
+          box.style.left = nx + 'px';
+          box.style.top = ny + 'px';
+          box.style.transform = 'translateX(0)';
+        } else if (t.length === 2 && startDist) {
+          const d = dist(t);
+          ratio = Math.max(0.5, Math.min(2.5, d / startDist));
+          box.style.transform = `translateX(0) scale(${ratio})`;
+          log('双指缩放 scale=' + ratio.toFixed(2));
+        }
+      });
+
+      stage.addEventListener('touchend', (e) => {
+        clearTimeout(tId);
+        const dx = curX - startX,
+          dy = curY - startY;
+        if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+          const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? '右' : '左') : dy > 0 ? '下' : '上';
+          log(`滑动结束 方向:${dir} 距离:${Math.round(Math.hypot(dx, dy))}px`);
+        } else {
+          log('触点抬起');
+        }
+        startDist = 0;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>移动端适配方案对比</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #f97316;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        font-size: 12.5px;
+        margin-bottom: 14px;
+      }
+      th,
+      td {
+        padding: 8px 9px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        color: var(--muted);
+      }
+      th {
+        background: rgba(249, 115, 22, 0.15);
+        color: #fed7aa;
+      }
+      td b {
+        color: var(--text);
+      }
+      .pros {
+        color: #86efac;
+      }
+      .cons {
+        color: #fca5a5;
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(249, 115, 22, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #fed7aa;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>移动端适配方案对比</h1>
+    <div class="sub">面试题 10 · rem / vw / px / 百分比</div>
+
+    <table>
+      <tr>
+        <th>方案</th>
+        <th>原理</th>
+        <th class="pros">优点</th>
+        <th class="cons">缺点</th>
+      </tr>
+      <tr>
+        <td><b>rem</b></td>
+        <td>根字号随屏宽 JS 计算</td>
+        <td class="pros">兼容性好，控制简单</td>
+        <td class="cons">需 JS / 字号非整数</td>
+      </tr>
+      <tr>
+        <td><b>vw/vh</b></td>
+        <td>视口百分比单位原生</td>
+        <td class="pros">无需 JS，纯 CSS</td>
+        <td class="cons">兼容需 iOS8+/Android4.4+</td>
+      </tr>
+      <tr>
+        <td><b>%百分比</b></td>
+        <td>相对父元素</td>
+        <td class="pros">弹性好</td>
+        <td class="cons">不能用于字号，嵌套难算</td>
+      </tr>
+      <tr>
+        <td><b>flex 弹性</b></td>
+        <td>自动分配空间</td>
+        <td class="pros">布局自适应</td>
+        <td class="cons">不精确控字号</td>
+      </tr>
+      <tr>
+        <td><b>px + 媒体查询</b></td>
+        <td>多套断点写死</td>
+        <td class="pros">像素精确</td>
+        <td class="cons">维护成本高，不流畅</td>
+      </tr>
+      <tr>
+        <td><b>flexible + rem</b></td>
+        <td>阿里方案，已过时</td>
+        <td class="pros">历史主流</td>
+        <td class="cons">已不推荐，用 vw 替代</td>
+      </tr>
+    </table>
+
+    <div class="tip">
+      💡 当前最佳实践：vw + rem fallback + postcss-px-to-viewport 自动转换，无需手算。
+    </div>
+  </body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>首屏优化方案</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #16a34a;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      .metric {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .m {
+        background: linear-gradient(135deg, rgba(22, 163, 74, 0.18), rgba(99, 102, 241, 0.1));
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 6px;
+        text-align: center;
+      }
+      .m .v {
+        font-size: 22px;
+        font-weight: 800;
+        color: #4ade80;
+      }
+      .m .l {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .card ul {
+        list-style: none;
+      }
+      .card li {
+        font-size: 13px;
+        color: var(--muted);
+        padding: 5px 0 5px 20px;
+        position: relative;
+      }
+      .card li::before {
+        content: '▸';
+        position: absolute;
+        left: 4px;
+        color: var(--accent);
+      }
+      .skeleton {
+        background: #1e293b;
+        height: 14px;
+        border-radius: 6px;
+        margin: 6px 0;
+        background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+        background-size: 200% 100%;
+        animation: sh 1.4s infinite;
+      }
+      .sk-line1 {
+        width: 60%;
+      }
+      .sk-line2 {
+        width: 90%;
+      }
+      .sk-line3 {
+        width: 75%;
+      }
+      @keyframes sh {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(22, 163, 74, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #bbf7d0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>首屏优化方案</h1>
+    <div class="sub">面试题 29 · 加快白屏到完整渲染</div>
+
+    <div class="metric">
+      <div class="m"><div class="v" id="lc">…</div><div class="l">LCP (秒)</div></div>
+      <div class="m"><div class="v" id="fp">…</div><div class="l">白屏 ms</div></div>
+      <div class="m"><div class="v" id="rt">…</div><div class="l">首屏完成 ms</div></div>
+    </div>
+
+    <div class="card">
+      <h2>骨架屏占位</h2>
+      <div class="skeleton sk-line1"></div>
+      <div class="skeleton sk-line2"></div>
+      <div class="skeleton sk-line3"></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:6px">用骨架替代白屏，用户感知更快。</p>
+    </div>
+
+    <div class="card">
+      <h2>加载策略</h2>
+      <ul>
+        <li>路由 / 组件懒加载 (import())</li>
+        <li>首屏关键 CSS 内联，非关键 CSS 异步加载</li>
+        <li>图片懒加载 + preload 关键图片</li>
+        <li>JS 拆包 + tree-shaking + 按需引入</li>
+        <li>接口并行 + 字段裁剪 + 预请求</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>渲染与服务端</h2>
+      <ul>
+        <li>SSR / 预渲染 (prerender) 直出 HTML</li>
+        <li>CDN 就近分发 + HTTP/2 + 长缓存</li>
+        <li>gzip / brotli 压缩，资源精简</li>
+        <li>Web Vitals 监控 LCP/CLS/INP</li>
+      </ul>
+    </div>
+
+    <div class="tip">💡 目标：LCP < 2.5s，CLS < 0.1，INP < 200ms，移动弱网下首屏白屏 < 1s。</div>
+
+    <script>
+      const nav = performance.getEntriesByType('navigation')[0] || {};
+      function paint(name) {
+        const e = performance.getEntriesByName(name)[0];
+        return e ? Math.round(e.startTime) : 0;
+      }
+      function fmt(s) {
+        return (s / 1000).toFixed(2) + 's';
+      }
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          try {
+            const fpd = paint('first-paint');
+            const fcp = paint('first-contentful-paint');
+            const t = performance.now();
+            document.getElementById('fp').textContent = fpd + 'ms';
+            document.getElementById('lc').textContent = fmt(fcp || t);
+            document.getElementById('rt').textContent = Math.round(t) + 'ms';
+          } catch {
+            document.getElementById('fp').textContent = '-';
+            document.getElementById('lc').textContent = '-';
+            document.getElementById('rt').textContent = '-';
+          }
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
