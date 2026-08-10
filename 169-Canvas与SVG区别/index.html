@@ -13,16 +13,29 @@
         --muted: #94a3b8;
         --accent: #d946ef;
       }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
       body {
-        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
         background: var(--bg);
         color: var(--text);
         line-height: 1.6;
         padding: 20px 16px 40px;
       }
-      h1 { font-size: 22px; text-align: center; margin-bottom: 6px; }
-      .sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+      h1 {
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
       .card {
         background: var(--card);
         border: 1px solid var(--border);
@@ -30,8 +43,16 @@
         padding: 14px;
         margin-bottom: 12px;
       }
-      .card h2 { font-size: 15px; color: var(--accent); margin-bottom: 8px; }
-      .card p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+      .card h2 {
+        font-size: 15px;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .card p {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
       .code {
         font-family: monospace;
         background: rgba(0, 0, 0, 0.35);
@@ -43,23 +64,58 @@
         margin: 8px 0;
         word-break: break-all;
       }
-      table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
-      th, td { border: 1px solid var(--border); padding: 7px 9px; text-align: left; vertical-align: top; }
-      th { background: rgba(217, 70, 239, 0.15); color: #f5d0fe; }
-      td { color: var(--muted); }
-      td b { color: var(--text); }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+        font-size: 13px;
+      }
+      th,
+      td {
+        border: 1px solid var(--border);
+        padding: 7px 9px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: rgba(217, 70, 239, 0.15);
+        color: #f5d0fe;
+      }
+      td {
+        color: var(--muted);
+      }
+      td b {
+        color: var(--text);
+      }
       .demo {
-        display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
         margin: 10px 0;
       }
       .demo > div {
-        flex: 1; min-width: 140px; text-align: center;
-        padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;
+        flex: 1;
+        min-width: 140px;
+        text-align: center;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
       }
-      canvas, svg {
-        background: #1e293b; border-radius: 6px; display: block; margin: 0 auto;
+      canvas,
+      svg {
+        background: #1e293b;
+        border-radius: 6px;
+        display: block;
+        margin: 0 auto;
       }
-      .demo .lbl { color: var(--muted); font-size: 12px; margin-top: 6px; }
+
+      .demo .lbl {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 6px;
+      }
+
       .tip {
         padding: 12px 14px;
         background: rgba(217, 70, 239, 0.12);
@@ -76,38 +132,91 @@
 
     <div class="card">
       <h2>本质区别</h2>
-      <p><b style="color:#f5d0fe">Canvas</b>：位图（栅格），用 JS 在像素上绘制，画完即固化。</p>
-      <p><b style="color:#f5d0fe">SVG</b>：矢量图（XML），标签描述图形，DOM 节点可单独操作。</p>
+      <p>
+        <b style="color: #f5d0fe">Canvas</b>：位图（栅格），用 JS
+        在像素上绘制，画完即固化。
+      </p>
+      <p>
+        <b style="color: #f5d0fe">SVG</b>：矢量图（XML），标签描述图形，DOM
+        节点可单独操作。
+      </p>
     </div>
 
     <div class="card">
       <h2>对比表</h2>
       <table>
-        <tr><th>对比项</th><th>Canvas</th><th>SVG</th></tr>
-        <tr><td>类型</td><td>位图（基于像素）</td><td>矢量（基于 XML 描述）</td></tr>
-        <tr><td>绘制方式</td><td>JS API 实时绘制</td><td>HTML 标签静态描述</td></tr>
-        <tr><td>是否为 DOM</td><td>不是，画完无节点</td><td>是，每个图形都是 DOM 节点</td></tr>
-        <tr><td>事件绑定</td><td>只能监听 canvas 整体，需自行计算坐标</td><td>可直接给每个图形绑事件</td></tr>
-        <tr><td>缩放</td><td>放大会失真（像素）</td><td>任意缩放不失真</td></tr>
-        <tr><td>性能</td><td>元素多时仍流畅（适合数千动效）</td><td>元素多时性能差（DOM 爆炸）</td></tr>
-        <tr><td>动画</td><td>需 requestAnimationFrame 手动重绘</td><td>原生 CSS / SMIL 动画</td></tr>
-        <tr><td>可访问性</td><td>差（仅一张位图）</td><td>好（标签有语义）</td></tr>
-        <tr><td>SEO</td><td>差</td><td>好，可被搜索</td></tr>
-        <tr><td>导出</td><td>toDataURL → PNG/JPG</td><td>直接保存 .svg 文件</td></tr>
-        <tr><td>适用场景</td><td>游戏、滤镜、热力图、复杂动效</td><td>图标、地图、图表、UI 图形</td></tr>
+        <tr>
+          <th>对比项</th>
+          <th>Canvas</th>
+          <th>SVG</th>
+        </tr>
+        <tr>
+          <td>类型</td>
+          <td>位图（基于像素）</td>
+          <td>矢量（基于 XML 描述）</td>
+        </tr>
+        <tr>
+          <td>绘制方式</td>
+          <td>JS API 实时绘制</td>
+          <td>HTML 标签静态描述</td>
+        </tr>
+        <tr>
+          <td>是否为 DOM</td>
+          <td>不是，画完无节点</td>
+          <td>是，每个图形都是 DOM 节点</td>
+        </tr>
+        <tr>
+          <td>事件绑定</td>
+          <td>只能监听 canvas 整体，需自行计算坐标</td>
+          <td>可直接给每个图形绑事件</td>
+        </tr>
+        <tr>
+          <td>缩放</td>
+          <td>放大会失真（像素）</td>
+          <td>任意缩放不失真</td>
+        </tr>
+        <tr>
+          <td>性能</td>
+          <td>元素多时仍流畅（适合数千动效）</td>
+          <td>元素多时性能差（DOM 爆炸）</td>
+        </tr>
+        <tr>
+          <td>动画</td>
+          <td>需 requestAnimationFrame 手动重绘</td>
+          <td>原生 CSS / SMIL 动画</td>
+        </tr>
+        <tr>
+          <td>可访问性</td>
+          <td>差（仅一张位图）</td>
+          <td>好（标签有语义）</td>
+        </tr>
+        <tr>
+          <td>SEO</td>
+          <td>差</td>
+          <td>好，可被搜索</td>
+        </tr>
+        <tr>
+          <td>导出</td>
+          <td>toDataURL → PNG/JPG</td>
+          <td>直接保存 .svg 文件</td>
+        </tr>
+        <tr>
+          <td>适用场景</td>
+          <td>游戏、滤镜、热力图、复杂动效</td>
+          <td>图标、地图、图表、UI 图形</td>
+        </tr>
       </table>
     </div>
 
     <div class="card">
       <h2>代码对比</h2>
-      <div class="code">Canvas:                       SVG:
-&lt;canvas id="c" width="120"   &lt;svg width="120" height="120"&gt;
-  height="120"&gt;&lt;/canvas&gt;       &lt;circle cx="60" cy="60"
-const ctx = c.getContext('2d');       r="40" fill="#d946ef" /&gt;
-ctx.fillStyle = '#d946ef';        &lt;/svg&gt;
-ctx.beginPath();
-ctx.arc(60, 60, 40, 0, Math.PI*2);
-ctx.fill();</div>
+      <div class="code">
+        Canvas: SVG: &lt;canvas id="c" width="120" &lt;svg width="120"
+        height="120"&gt; height="120"&gt;&lt;/canvas&gt; &lt;circle cx="60"
+        cy="60" const ctx = c.getContext('2d'); r="40" fill="#d946ef" /&gt;
+        ctx.fillStyle = '#d946ef'; &lt;/svg&gt; ctx.beginPath(); ctx.arc(60, 60,
+        40, 0, Math.PI*2); ctx.fill();
+      </div>
     </div>
 
     <div class="card">
@@ -120,7 +229,12 @@ ctx.fill();</div>
         <div>
           <svg width="120" height="120" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="40" fill="#d946ef">
-              <animate attributeName="r" values="40;32;40" dur="2s" repeatCount="indefinite" />
+              <animate
+                attributeName="r"
+                values="40;32;40"
+                dur="2s"
+                repeatCount="indefinite"
+              />
             </circle>
           </svg>
           <div class="lbl">SVG（矢量，原生动画不失真）</div>
@@ -130,23 +244,29 @@ ctx.fill();</div>
 
     <div class="card">
       <h2>选型建议</h2>
-      <p>• 图形数量少、需交互、要响应式 → <b style="color:#f5d0fe">SVG</b></p>
-      <p>• 图形数量多、像素级特效、游戏 → <b style="color:#f5d0fe">Canvas</b></p>
-      <p>• 大数据可视化：折线/柱状用 SVG（百级），热力/粒子用 Canvas（千级以上）</p>
+      <p>• 图形数量少、需交互、要响应式 → <b style="color: #f5d0fe">SVG</b></p>
+      <p>
+        • 图形数量多、像素级特效、游戏 → <b style="color: #f5d0fe">Canvas</b>
+      </p>
+      <p>
+        • 大数据可视化：折线/柱状用 SVG（百级），热力/粒子用 Canvas（千级以上）
+      </p>
       <p>• 3D / 复杂图形：Canvas + WebGL（Three.js / Babylon.js）</p>
     </div>
 
     <div class="tip">
-      💡 一句话：SVG 像画"积木"（DOM 可控可缩放），Canvas 像画"画布"（像素绘制高性能）。ECharts 在两类元素混合时用 ZRender 自动选择。
+      💡 一句话：SVG 像画"积木"（DOM 可控可缩放），Canvas
+      像画"画布"（像素绘制高性能）。ECharts 在两类元素混合时用 ZRender
+      自动选择。
     </div>
 
     <script>
-      const cv = document.getElementById('cv');
-      const ctx = cv.getContext('2d');
+      const cv = document.getElementById("cv");
+      const ctx = cv.getContext("2d");
       let t = 0;
       function draw() {
         ctx.clearRect(0, 0, 120, 120);
-        ctx.fillStyle = '#d946ef';
+        ctx.fillStyle = "#d946ef";
         ctx.beginPath();
         const r = 40 + Math.sin(t) * 6;
         ctx.arc(60, 60, r, 0, Math.PI * 2);
