@@ -290,7 +290,12 @@
       <p>在这里查找常见问题的解答</p>
       <div class="search-box">
         <span class="icon">🔍</span>
-        <input type="text" id="search" placeholder="搜索问题关键词，例如：退款、密码、登录" oninput="filterFAQ()" />
+        <input
+          type="text"
+          id="search"
+          placeholder="搜索问题关键词，例如：退款、密码、登录"
+          oninput="filterFAQ()"
+        />
       </div>
       <div class="hot-tags">
         热门：
@@ -591,7 +596,11 @@
         let visible = 0;
         items.forEach((it) => {
           const catOk = currentCat === 'all' || it.dataset.cat === currentCat;
-          const text = (it.dataset.key + ' ' + it.querySelector('.faq-q').textContent).toLowerCase();
+          const text = (
+            it.dataset.key +
+            ' ' +
+            it.querySelector('.faq-q').textContent
+          ).toLowerCase();
           const kwOk = !kw || text.includes(kw);
           const show = catOk && kwOk;
           it.style.display = show ? '' : 'none';

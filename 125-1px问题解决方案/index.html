@@ -131,12 +131,16 @@
     <div class="sub">面试题 4 · 4 种解决方案演示</div>
 
     <div class="cause">
-      💡 原因：高 DPR 屏幕上 1 个 CSS px 对应多个物理像素，写 1px 实际由 2~3 个物理像素渲染，看起来比设计稿粗。
+      💡 原因：高 DPR 屏幕上 1 个 CSS px 对应多个物理像素，写 1px 实际由 2~3
+      个物理像素渲染，看起来比设计稿粗。
     </div>
 
     <div class="grid">
       <div class="item">
-        <h3>方案1 · 伪元素 + transform 缩放 <span class="tag">推荐</span></h3>
+        <h3>
+          方案1 · 伪元素 + transform 缩放
+          <span class="tag">推荐</span>
+        </h3>
         <p>用伪元素画 1px 边框，再用 scaleY(0.5) 缩放，兼容性最好。</p>
         <div class="demo-box s1">transform 缩放下边框</div>
       </div>

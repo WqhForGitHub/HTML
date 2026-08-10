@@ -176,23 +176,48 @@
         week: {
           labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
           series: [
-            { name: '页面浏览', color: '#a78bfa', data: [3200, 4100, 3800, 5200, 6100, 7800, 6500] },
-            { name: '独立访客', color: '#f472b6', data: [1800, 2300, 2100, 2900, 3400, 4400, 3700] },
-            { name: '转化订单', color: '#34d399', data: [320, 410, 380, 520, 610, 780, 650] },
-          ],
-        },
-        month: {
-          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-          series: [
             {
               name: '页面浏览',
               color: '#a78bfa',
-              data: [18500, 16200, 22300, 24800, 27100, 29400, 31200, 33500, 30200, 35800, 42100, 38900],
+              data: [3200, 4100, 3800, 5200, 6100, 7800, 6500],
             },
             {
               name: '独立访客',
               color: '#f472b6',
-              data: [10200, 9100, 12300, 13800, 15100, 16400, 17200, 18500, 16800, 19800, 23100, 21400],
+              data: [1800, 2300, 2100, 2900, 3400, 4400, 3700],
+            },
+            { name: '转化订单', color: '#34d399', data: [320, 410, 380, 520, 610, 780, 650] },
+          ],
+        },
+        month: {
+          labels: [
+            '1月',
+            '2月',
+            '3月',
+            '4月',
+            '5月',
+            '6月',
+            '7月',
+            '8月',
+            '9月',
+            '10月',
+            '11月',
+            '12月',
+          ],
+          series: [
+            {
+              name: '页面浏览',
+              color: '#a78bfa',
+              data: [
+                18500, 16200, 22300, 24800, 27100, 29400, 31200, 33500, 30200, 35800, 42100, 38900,
+              ],
+            },
+            {
+              name: '独立访客',
+              color: '#f472b6',
+              data: [
+                10200, 9100, 12300, 13800, 15100, 16400, 17200, 18500, 16800, 19800, 23100, 21400,
+              ],
             },
             {
               name: '转化订单',
@@ -314,7 +339,8 @@
           }
 
           // Area fill
-          const areaPath = path + ` L ${pts[pts.length - 1].x} ${padT + chartH} L ${pts[0].x} ${padT + chartH} Z`;
+          const areaPath =
+            path + ` L ${pts[pts.length - 1].x} ${padT + chartH} L ${pts[0].x} ${padT + chartH} Z`;
           const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           area.setAttribute('d', areaPath);
           area.setAttribute('fill', `url(#area-grad-${i})`);
@@ -399,7 +425,9 @@
       // Controls
       document.querySelectorAll('.controls button[data-view]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.controls button[data-view]').forEach((b) => b.classList.remove('active'));
+          document
+            .querySelectorAll('.controls button[data-view]')
+            .forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           currentView = btn.dataset.view;
           activeSeries = [true, true, true];

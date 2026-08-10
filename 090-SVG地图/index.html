@@ -868,7 +868,9 @@
         if (el) el.classList.add('selected');
 
         // Update sidebar list
-        document.querySelectorAll('.province-list .item').forEach((it) => it.classList.remove('active'));
+        document
+          .querySelectorAll('.province-list .item')
+          .forEach((it) => it.classList.remove('active'));
         const listItem = provList.querySelector(`.item[data-idx="${idx}"]`);
         if (listItem) {
           listItem.classList.add('active');

@@ -127,17 +127,14 @@
     <div class="gallery" id="gal"></div>
 
     <div class="tip">
-      💡 原生：img 加 <code>loading="lazy"</code>；进阶：IntersectionObserver 监听元素进入视口再赋 src。
-      <div class="code">const io = new IntersectionObserver((es) => {
-  es.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.src = e.target.dataset.src;
-      e.target.classList.add('show');
-      io.unobserve(e.target);
-    }
-  });
-});
-imgs.forEach(i => io.observe(i));</div>
+      💡 原生：img 加
+      <code>loading="lazy"</code>
+      ；进阶：IntersectionObserver 监听元素进入视口再赋 src。
+      <div class="code">
+        const io = new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) {
+        e.target.src = e.target.dataset.src; e.target.classList.add('show'); io.unobserve(e.target);
+        } }); }); imgs.forEach(i => io.observe(i));
+      </div>
     </div>
 
     <script>

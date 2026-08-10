@@ -164,7 +164,11 @@
       <div class="tool-group">
         <label>渐变基色:</label>
         <input type="color" id="baseColor" value="#ff0080" />
-        <div class="color-preview" id="colorPreview" style="background: #ff0080; color: #ff0080"></div>
+        <div
+          class="color-preview"
+          id="colorPreview"
+          style="background: #ff0080; color: #ff0080"
+        ></div>
       </div>
       <div class="tool-group">
         <button class="action danger" id="clearBtn">清空</button>
@@ -174,7 +178,10 @@
     <div class="canvas-wrapper">
       <canvas id="drawCanvas" width="880" height="500"></canvas>
     </div>
-    <p class="hint">彩虹模式: 颜色随绘制循环变化 | 随机: 每段随机色 | 渐变: 基于基色过渡 | 互补色: 基色与互补色交替</p>
+    <p class="hint">
+      彩虹模式: 颜色随绘制循环变化 | 随机: 每段随机色 | 渐变: 基于基色过渡 | 互补色:
+      基色与互补色交替
+    </p>
 
     <script>
       (function () {

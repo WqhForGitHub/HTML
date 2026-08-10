@@ -411,7 +411,12 @@
   <body>
     <!-- 注解面板 -->
     <aside class="annotation" id="annotation">
-      <button class="close-btn" onclick="document.getElementById('annotation').style.display = 'none'">&times;</button>
+      <button
+        class="close-btn"
+        onclick="document.getElementById('annotation').style.display = 'none'"
+      >
+        &times;
+      </button>
       <h3>
         语义元素说明：
         <code>&lt;dialog&gt;</code>
@@ -480,8 +485,9 @@
         <h2>关于 dialog 元素</h2>
         <p>
           <code>&lt;dialog&gt;</code>
-          是 HTML5.2 规范引入的原生对话框元素。与传统的 div + JS 模态框相比，它有诸多优势：浏览器原生管理焦点陷阱、按
-          Esc 键自动关闭、原生遮罩层支持、无障碍可访问性更好。
+          是 HTML5.2 规范引入的原生对话框元素。与传统的 div + JS
+          模态框相比，它有诸多优势：浏览器原生管理焦点陷阱、按 Esc
+          键自动关闭、原生遮罩层支持、无障碍可访问性更好。
         </p>
         <p><strong>基本用法：</strong></p>
         <pre>
@@ -518,7 +524,8 @@
         >
           提示：按
           <code>Esc</code>
-          键可关闭任何打开的模态对话框（浏览器默认行为）。点击遮罩层区域也可关闭（本页通过 JS 实现）。
+          键可关闭任何打开的模态对话框（浏览器默认行为）。点击遮罩层区域也可关闭（本页通过 JS
+          实现）。
         </p>
       </section>
     </div>
@@ -527,11 +534,15 @@
     <dialog id="alertDialog" class="alert-dialog">
       <div class="dialog-header">
         <h2>系统提示</h2>
-        <button class="dialog-close" onclick="closeDialog('alertDialog')" aria-label="关闭">&times;</button>
+        <button class="dialog-close" onclick="closeDialog('alertDialog')" aria-label="关闭">
+          &times;
+        </button>
       </div>
       <div class="dialog-body">
         <div class="alert-icon">[!]</div>
-        <p style="text-align: center; font-size: 15px">您的会员即将于 7 天后到期，续费可享 8 折优惠。</p>
+        <p style="text-align: center; font-size: 15px">
+          您的会员即将于 7 天后到期，续费可享 8 折优惠。
+        </p>
       </div>
       <div class="dialog-footer">
         <button
@@ -550,7 +561,9 @@
     <dialog id="formDialog" class="form-dialog">
       <div class="dialog-header">
         <h2>用户反馈</h2>
-        <button class="dialog-close" onclick="closeDialog('formDialog')" aria-label="关闭">&times;</button>
+        <button class="dialog-close" onclick="closeDialog('formDialog')" aria-label="关闭">
+          &times;
+        </button>
       </div>
       <div class="dialog-body">
         <form id="feedbackForm" onsubmit="submitForm(event)">
@@ -575,8 +588,13 @@
             <label for="fcontent">详细内容</label>
             <textarea id="fcontent" placeholder="请详细描述您的反馈..." required></textarea>
           </div>
-          <div class="dialog-footer" style="padding: 16px 0 0; border-top: 1px solid #e2e8f0; margin-top: 8px">
-            <button type="button" class="btn-secondary" onclick="closeDialog('formDialog')">取消</button>
+          <div
+            class="dialog-footer"
+            style="padding: 16px 0 0; border-top: 1px solid #e2e8f0; margin-top: 8px"
+          >
+            <button type="button" class="btn-secondary" onclick="closeDialog('formDialog')">
+              取消
+            </button>
             <button type="submit" class="btn-primary">提交反馈</button>
           </div>
         </form>
@@ -591,8 +609,12 @@
       </div>
       <div class="dialog-body">
         <div class="confirm-icon">[?]</div>
-        <p style="text-align: center; font-size: 15px; margin-bottom: 6px">确定要删除这条记录吗？</p>
-        <p style="text-align: center; font-size: 13px; color: #a0aec0">此操作不可撤销，删除后数据将无法恢复</p>
+        <p style="text-align: center; font-size: 15px; margin-bottom: 6px">
+          确定要删除这条记录吗？
+        </p>
+        <p style="text-align: center; font-size: 13px; color: #a0aec0">
+          此操作不可撤销，删除后数据将无法恢复
+        </p>
       </div>
       <div class="dialog-footer">
         <button class="btn-secondary" onclick="cancelConfirm()">取消</button>
@@ -660,7 +682,10 @@
           // 检测点击是否发生在 dialog 本身（而非内部内容）
           const rect = dialog.getBoundingClientRect();
           const insideDialog =
-            e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+            e.clientX >= rect.left &&
+            e.clientX <= rect.right &&
+            e.clientY >= rect.top &&
+            e.clientY <= rect.bottom;
           if (!insideDialog) {
             dialog.close();
           }

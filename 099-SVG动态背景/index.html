@@ -252,7 +252,12 @@
         </g>
         <!-- 三角形 -->
         <g transform="translate(1700,300)">
-          <polygon points="0,-40 35,20 -35,20" fill="none" stroke="rgba(96,165,250,0.4)" stroke-width="2">
+          <polygon
+            points="0,-40 35,20 -35,20"
+            fill="none"
+            stroke="rgba(96,165,250,0.4)"
+            stroke-width="2"
+          >
             <animateTransform
               attributeName="transform"
               type="rotate"
@@ -367,15 +372,23 @@
       </g>
 
       <!-- 顶部光晕 -->
-      <ellipse cx="960" cy="0" rx="800" ry="200" fill="rgba(167,139,250,0.15)" filter="url(#blurFilter)" />
+      <ellipse
+        cx="960"
+        cy="0"
+        rx="800"
+        ry="200"
+        fill="rgba(167,139,250,0.15)"
+        filter="url(#blurFilter)"
+      />
     </svg>
 
     <div class="content">
       <h1 class="hero-title">SVG 动态背景</h1>
       <p class="hero-sub">DYNAMIC · ANIMATED · MESMERIZING</p>
       <p class="hero-desc">
-        使用纯 SVG 构建的多层动态背景，包含流动的色块、旋转的几何形状、漂浮的粒子与起伏的波浪线条。完美适用于网站 Hero
-        区域、登陆页面与展示背景。
+        使用纯 SVG
+        构建的多层动态背景，包含流动的色块、旋转的几何形状、漂浮的粒子与起伏的波浪线条。完美适用于网站
+        Hero 区域、登陆页面与展示背景。
       </p>
       <a class="cta" onclick="switchTheme()">切换主题</a>
     </div>
@@ -444,10 +457,22 @@
 
       // 主题切换
       const themes = {
-        purple: { bg: ['#0a0a1f', '#1a0a2e', '#0a0a1f'], blobs: ['#a78bfa', '#f0abfc', '#60a5fa', '#34d399'] },
-        ocean: { bg: ['#001220', '#003049', '#001220'], blobs: ['#00b4d8', '#90e0ef', '#0077b6', '#48cae4'] },
-        sunset: { bg: ['#1a0a0a', '#2d1b0a', '#1a0a0a'], blobs: ['#f72585', '#ff6b6b', '#ff9e00', '#ffba08'] },
-        forest: { bg: ['#0a1a0a', '#1a2d1a', '#0a1a0a'], blobs: ['#52b788', '#95d5b2', '#2d6a4f', '#74c69d'] },
+        purple: {
+          bg: ['#0a0a1f', '#1a0a2e', '#0a0a1f'],
+          blobs: ['#a78bfa', '#f0abfc', '#60a5fa', '#34d399'],
+        },
+        ocean: {
+          bg: ['#001220', '#003049', '#001220'],
+          blobs: ['#00b4d8', '#90e0ef', '#0077b6', '#48cae4'],
+        },
+        sunset: {
+          bg: ['#1a0a0a', '#2d1b0a', '#1a0a0a'],
+          blobs: ['#f72585', '#ff6b6b', '#ff9e00', '#ffba08'],
+        },
+        forest: {
+          bg: ['#0a1a0a', '#1a2d1a', '#0a1a0a'],
+          blobs: ['#52b788', '#95d5b2', '#2d6a4f', '#74c69d'],
+        },
       };
 
       function applyTheme(name) {

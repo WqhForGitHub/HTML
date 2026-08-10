@@ -177,13 +177,22 @@
   <body>
     <div class="container">
       <h1>SVG 加载动画集</h1>
-      <p class="subtitle">8+ 款纯 SVG 加载器 · 旋转环 / 脉冲圆 / 形变 / 进度弧 · CSS 与 SMIL 动画</p>
+      <p class="subtitle">
+        8+ 款纯 SVG 加载器 · 旋转环 / 脉冲圆 / 形变 / 进度弧 · CSS 与 SMIL 动画
+      </p>
 
       <div class="loader-grid">
         <!-- 1. Spinning rings -->
         <div class="loader-card">
           <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,198,255,0.2)" stroke-width="6" />
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="rgba(0,198,255,0.2)"
+              stroke-width="6"
+            />
             <circle
               cx="50"
               cy="50"
@@ -196,7 +205,14 @@
               class="spin-slow"
               style="transform-origin: 50px 50px"
             />
-            <circle cx="50" cy="50" r="28" fill="none" stroke="rgba(255,107,157,0.2)" stroke-width="4" />
+            <circle
+              cx="50"
+              cy="50"
+              r="28"
+              fill="none"
+              stroke="rgba(255,107,157,0.2)"
+              stroke-width="4"
+            />
             <circle
               cx="50"
               cy="50"
@@ -229,14 +245,20 @@
               cy="50"
               r="20"
               fill="#0072ff"
-              style="transform-origin: 50px 50px; animation: pulse-scale 1.5s ease-in-out infinite 0.5s"
+              style="
+                transform-origin: 50px 50px;
+                animation: pulse-scale 1.5s ease-in-out infinite 0.5s;
+              "
             />
             <circle
               cx="50"
               cy="50"
               r="20"
               fill="#ff6b9d"
-              style="transform-origin: 50px 50px; animation: pulse-scale 1.5s ease-in-out infinite 1s"
+              style="
+                transform-origin: 50px 50px;
+                animation: pulse-scale 1.5s ease-in-out infinite 1s;
+              "
             />
           </svg>
           <div class="name">脉冲圆点</div>
@@ -263,7 +285,14 @@
         <!-- 4. Progress arc -->
         <div class="loader-card">
           <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,114,255,0.15)" stroke-width="8" />
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="rgba(0,114,255,0.15)"
+              stroke-width="8"
+            />
             <circle
               cx="50"
               cy="50"
@@ -284,9 +313,27 @@
         <!-- 5. Bouncing balls -->
         <div class="loader-card">
           <svg viewBox="0 0 100 60">
-            <circle cx="20" cy="40" r="8" fill="#00c6ff" style="animation: bounce-y 1s ease-in-out infinite" />
-            <circle cx="50" cy="40" r="8" fill="#0072ff" style="animation: bounce-y 1s ease-in-out infinite 0.15s" />
-            <circle cx="80" cy="40" r="8" fill="#ff6b9d" style="animation: bounce-y 1s ease-in-out infinite 0.3s" />
+            <circle
+              cx="20"
+              cy="40"
+              r="8"
+              fill="#00c6ff"
+              style="animation: bounce-y 1s ease-in-out infinite"
+            />
+            <circle
+              cx="50"
+              cy="40"
+              r="8"
+              fill="#0072ff"
+              style="animation: bounce-y 1s ease-in-out infinite 0.15s"
+            />
+            <circle
+              cx="80"
+              cy="40"
+              r="8"
+              fill="#ff6b9d"
+              style="animation: bounce-y 1s ease-in-out infinite 0.3s"
+            />
           </svg>
           <div class="name">弹跳球</div>
           <div class="tech">translateY 延迟</div>
@@ -304,8 +351,19 @@
               stroke-dasharray="80"
               stroke-dashoffset="0"
             >
-              <animate attributeName="stroke-dashoffset" from="80" to="0" dur="1.5s" repeatCount="indefinite" />
-              <animate attributeName="stroke-dashoffset" values="80;0;80" dur="1.5s" repeatCount="indefinite" />
+              <animate
+                attributeName="stroke-dashoffset"
+                from="80"
+                to="0"
+                dur="1.5s"
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="stroke-dashoffset"
+                values="80;0;80"
+                dur="1.5s"
+                repeatCount="indefinite"
+              />
             </path>
             <path
               d="M20 60 Q35 90 50 60 T80 60"
@@ -315,7 +373,12 @@
               stroke-linecap="round"
               stroke-dasharray="80"
             >
-              <animate attributeName="stroke-dashoffset" values="0;80;0" dur="1.5s" repeatCount="indefinite" />
+              <animate
+                attributeName="stroke-dashoffset"
+                values="0;80;0"
+                dur="1.5s"
+                repeatCount="indefinite"
+              />
             </path>
           </svg>
           <div class="name">路径绘制波</div>
@@ -378,10 +441,34 @@
         <!-- 8. Dots spinner -->
         <div class="loader-card">
           <svg viewBox="0 0 100 60">
-            <circle cx="20" cy="30" r="7" fill="#00c6ff" style="animation: dots-fade 1.4s ease-in-out infinite" />
-            <circle cx="40" cy="30" r="7" fill="#00c6ff" style="animation: dots-fade 1.4s ease-in-out infinite 0.2s" />
-            <circle cx="60" cy="30" r="7" fill="#00c6ff" style="animation: dots-fade 1.4s ease-in-out infinite 0.4s" />
-            <circle cx="80" cy="30" r="7" fill="#00c6ff" style="animation: dots-fade 1.4s ease-in-out infinite 0.6s" />
+            <circle
+              cx="20"
+              cy="30"
+              r="7"
+              fill="#00c6ff"
+              style="animation: dots-fade 1.4s ease-in-out infinite"
+            />
+            <circle
+              cx="40"
+              cy="30"
+              r="7"
+              fill="#00c6ff"
+              style="animation: dots-fade 1.4s ease-in-out infinite 0.2s"
+            />
+            <circle
+              cx="60"
+              cy="30"
+              r="7"
+              fill="#00c6ff"
+              style="animation: dots-fade 1.4s ease-in-out infinite 0.4s"
+            />
+            <circle
+              cx="80"
+              cy="30"
+              r="7"
+              fill="#00c6ff"
+              style="animation: dots-fade 1.4s ease-in-out infinite 0.6s"
+            />
           </svg>
           <div class="name">渐隐点列</div>
           <div class="tech">opacity 延迟</div>
@@ -421,7 +508,14 @@
                 <stop offset="100%" stop-color="#ff6b9d" />
               </linearGradient>
             </defs>
-            <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6" />
+            <circle
+              cx="50"
+              cy="50"
+              r="35"
+              fill="none"
+              stroke="rgba(255,255,255,0.1)"
+              stroke-width="6"
+            />
             <circle
               cx="50"
               cy="50"

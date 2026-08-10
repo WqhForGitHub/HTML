@@ -90,22 +90,68 @@
     <h1>移动端兼容性</h1>
     <div class="sub">面试题 24 · iOS 与 Android 差异</div>
 
-    <div class="detect">您当前设备：<b id="dev">检测中…</b></div>
+    <div class="detect">
+      您当前设备：
+      <b id="dev">检测中…</b>
+    </div>
 
     <table>
-      <tr><th>问题</th><th class="ios">iOS</th><th class="and">Android</th></tr>
-      <tr><td><b>1px 边框</b></td><td class="ios">支持 0.5px</td><td class="and">多数不支持 0.5px，用 transform</td></tr>
-      <tr><td><b>padding 占高</b></td><td class="ios">会撑高输入框</td><td class="and">默认无 padding</td></tr>
-      <tr><td><b>软键盘</b></td><td class="ios">不挤压 webview</td><td class="and">resize 改变视口高度</td></tr>
-      <tr><td><b>fixed</b></td><td class="ios">键盘弹出 fixed 失效</td><td class="and">通常正常</td></tr>
-      <tr><td><b>安全区</b></td><td class="ios">刘海屏 env(safe-area)</td><td class="and">通常无</td></tr>
-      <tr><td><b>输入光标</b></td><td class="ios">line-height 影响位置</td><td class="and">较随意</td></tr>
-      <tr><td><b>滚动惯性</b></td><td class="ios">需 -webkit-overflow-scrolling:touch</td><td class="and">默认支持</td></tr>
-      <tr><td><b>事件</b></td><td class="ios">click 300ms 点透</td><td class="and">同理</td></tr>
-      <tr><td><b>日期格式</b></td><td class="ios">严格 (yyyy-MM-dd)</td><td class="and">宽松</td></tr>
+      <tr>
+        <th>问题</th>
+        <th class="ios">iOS</th>
+        <th class="and">Android</th>
+      </tr>
+      <tr>
+        <td><b>1px 边框</b></td>
+        <td class="ios">支持 0.5px</td>
+        <td class="and">多数不支持 0.5px，用 transform</td>
+      </tr>
+      <tr>
+        <td><b>padding 占高</b></td>
+        <td class="ios">会撑高输入框</td>
+        <td class="and">默认无 padding</td>
+      </tr>
+      <tr>
+        <td><b>软键盘</b></td>
+        <td class="ios">不挤压 webview</td>
+        <td class="and">resize 改变视口高度</td>
+      </tr>
+      <tr>
+        <td><b>fixed</b></td>
+        <td class="ios">键盘弹出 fixed 失效</td>
+        <td class="and">通常正常</td>
+      </tr>
+      <tr>
+        <td><b>安全区</b></td>
+        <td class="ios">刘海屏 env(safe-area)</td>
+        <td class="and">通常无</td>
+      </tr>
+      <tr>
+        <td><b>输入光标</b></td>
+        <td class="ios">line-height 影响位置</td>
+        <td class="and">较随意</td>
+      </tr>
+      <tr>
+        <td><b>滚动惯性</b></td>
+        <td class="ios">需 -webkit-overflow-scrolling:touch</td>
+        <td class="and">默认支持</td>
+      </tr>
+      <tr>
+        <td><b>事件</b></td>
+        <td class="ios">click 300ms 点透</td>
+        <td class="and">同理</td>
+      </tr>
+      <tr>
+        <td><b>日期格式</b></td>
+        <td class="ios">严格 (yyyy-MM-dd)</td>
+        <td class="and">宽松</td>
+      </tr>
     </table>
 
-    <div class="tip">💡 通用做法：CSS 重置 + viewport-fit=cover + env(safe-area-inset) + 按需前缀；优先用 flex/transform 等高兼容属性。</div>
+    <div class="tip">
+      💡 通用做法：CSS 重置 + viewport-fit=cover + env(safe-area-inset) + 按需前缀；优先用
+      flex/transform 等高兼容属性。
+    </div>
 
     <script>
       const ua = navigator.userAgent;

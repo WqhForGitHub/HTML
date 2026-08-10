@@ -218,7 +218,16 @@
       </div>
       <div class="grid-card" onclick="triggerCard(this, 1)">
         <svg viewBox="-60 -60 120 120">
-          <rect class="gshape" x="-40" y="-40" width="80" height="80" fill="none" stroke="#7b2ff7" stroke-width="3" />
+          <rect
+            class="gshape"
+            x="-40"
+            y="-40"
+            width="80"
+            height="80"
+            fill="none"
+            stroke="#7b2ff7"
+            stroke-width="3"
+          />
         </svg>
         <h4>倾斜变形</h4>
       </div>
@@ -236,7 +245,13 @@
       </div>
       <div class="grid-card" onclick="triggerCard(this, 3)">
         <svg viewBox="-60 -60 120 120">
-          <polygon class="gshape" points="0,-45 40,30 -40,30" fill="none" stroke="#fee440" stroke-width="3" />
+          <polygon
+            class="gshape"
+            points="0,-45 40,30 -40,30"
+            fill="none"
+            stroke="#fee440"
+            stroke-width="3"
+          />
         </svg>
         <h4>翻转动画</h4>
       </div>
@@ -397,7 +412,8 @@
 
       // 注入旋转动画
       const styleEl = document.createElement('style');
-      styleEl.textContent = '@keyframes spinSlow { from { transform: rotate(0); } to { transform: rotate(360deg); } }';
+      styleEl.textContent =
+        '@keyframes spinSlow { from { transform: rotate(0); } to { transform: rotate(360deg); } }';
       document.head.appendChild(styleEl);
 
       // 卡片变换

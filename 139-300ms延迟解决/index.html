@@ -2,7 +2,10 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>300ms 延迟解决</title>
     <style>
       :root {
@@ -130,8 +133,18 @@
     </div>
 
     <div class="pair">
-      <div class="btn" id="plain">原始 click<br /><span class="ms" id="t1">— ms</span>响应延迟</div>
-      <div class="btn fix" id="fast">touchend 触发<br /><span class="ms" id="t2">— ms</span>响应延迟</div>
+      <div class="btn" id="plain">
+        原始 click
+        <br />
+        <span class="ms" id="t1">— ms</span>
+        响应延迟
+      </div>
+      <div class="btn fix" id="fast">
+        touchend 触发
+        <br />
+        <span class="ms" id="t2">— ms</span>
+        响应延迟
+      </div>
     </div>
 
     <div class="sols">
@@ -145,7 +158,9 @@
       <div class="code">html { touch-action: manipulation; }</div>
     </div>
 
-    <div class="tip">💡 现代浏览器在 viewport 含 width=device-width 时已默认消除 300ms，故多数项目无需处理。</div>
+    <div class="tip">
+      💡 现代浏览器在 viewport 含 width=device-width 时已默认消除 300ms，故多数项目无需处理。
+    </div>
 
     <script>
       let plainStart = 0,

@@ -214,7 +214,8 @@
             const idx = Math.floor(s.x / 4);
             if (idx >= 0 && idx < accumulation.length) {
               accumulation[idx] = Math.min(accumulation[idx] + s.size * 0.3, 40);
-              if (idx > 0) accumulation[idx - 1] = Math.min(accumulation[idx - 1] + s.size * 0.1, 40);
+              if (idx > 0)
+                accumulation[idx - 1] = Math.min(accumulation[idx - 1] + s.size * 0.1, 40);
               if (idx < accumulation.length - 1)
                 accumulation[idx + 1] = Math.min(accumulation[idx + 1] + s.size * 0.1, 40);
             }

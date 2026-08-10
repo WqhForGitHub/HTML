@@ -98,19 +98,44 @@
     <div class="sub">面试题 16 · 在下方区域用手指 / 鼠标操作</div>
 
     <table>
-      <tr><th>PC 鼠标</th><th>移动触摸</th><th>说明</th></tr>
-      <tr><td><b>mousedown</b></td><td><b>touchstart</b></td><td>按下</td></tr>
-      <tr><td><b>mousemove</b></td><td><b>touchmove</b></td><td>移动</td></tr>
-      <tr><td><b>mouseup</b></td><td><b>touchend</b></td><td>抬起</td></tr>
-      <tr><td>-</td><td><b>touchcancel</b></td><td>被系统中断</td></tr>
-      <tr><td><b>click</b></td><td><b>tap (click)</b></td><td>移动端 click 有 300ms 延迟</td></tr>
+      <tr>
+        <th>PC 鼠标</th>
+        <th>移动触摸</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td><b>mousedown</b></td>
+        <td><b>touchstart</b></td>
+        <td>按下</td>
+      </tr>
+      <tr>
+        <td><b>mousemove</b></td>
+        <td><b>touchmove</b></td>
+        <td>移动</td>
+      </tr>
+      <tr>
+        <td><b>mouseup</b></td>
+        <td><b>touchend</b></td>
+        <td>抬起</td>
+      </tr>
+      <tr>
+        <td>-</td>
+        <td><b>touchcancel</b></td>
+        <td>被系统中断</td>
+      </tr>
+      <tr>
+        <td><b>click</b></td>
+        <td><b>tap (click)</b></td>
+        <td>移动端 click 有 300ms 延迟</td>
+      </tr>
     </table>
 
     <div class="pad" id="pad">触摸 / 点击 / 滑动此处</div>
     <div class="log" id="log">事件日志：\n</div>
 
     <div class="tip">
-      💡 区别：触摸事件支持多点 (touches 集合)；移动端 touch 后会触发 click；event 坐标 pageX/clientX 触摸需用 touches[0]。
+      💡 区别：触摸事件支持多点 (touches 集合)；移动端 touch 后会触发 click；event 坐标
+      pageX/clientX 触摸需用 touches[0]。
     </div>
 
     <script>
@@ -119,16 +144,22 @@
       function log(e) {
         const t = e.type;
         let pos = '';
-        if (e.touches && e.touches[0]) pos = `(${e.touches[0].clientX | 0},${e.touches[0].clientY | 0})`;
+        if (e.touches && e.touches[0])
+          pos = `(${e.touches[0].clientX | 0},${e.touches[0].clientY | 0})`;
         else if (e.clientX !== undefined) pos = `(${e.clientX | 0},${e.clientY | 0})`;
         logEl.textContent += `\n> ${t} ${pos}`;
         logEl.scrollTop = logEl.scrollHeight;
       }
-      ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mousemove', 'mouseup', 'click'].forEach((ev) =>
-        pad.addEventListener(ev, (e) => {
-          log(e);
-          if (ev === 'touchmove') e.preventDefault();
-        }, { passive: false })
+      ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mousemove', 'mouseup', 'click'].forEach(
+        (ev) =>
+          pad.addEventListener(
+            ev,
+            (e) => {
+              log(e);
+              if (ev === 'touchmove') e.preventDefault();
+            },
+            { passive: false }
+          )
       );
     </script>
   </body>

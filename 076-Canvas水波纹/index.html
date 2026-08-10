@@ -149,7 +149,14 @@
           const alpha = r.life * 0.7 * r.strength;
           const innerR = Math.max(0.1, r.radius - r.thickness * 3);
 
-          const g = ctx.createRadialGradient(r.x, r.y, innerR, r.x, r.y, Math.max(innerR + 1, r.radius));
+          const g = ctx.createRadialGradient(
+            r.x,
+            r.y,
+            innerR,
+            r.x,
+            r.y,
+            Math.max(innerR + 1, r.radius)
+          );
           g.addColorStop(0, 'rgba(200,230,255,0)');
           g.addColorStop(0.7, `rgba(200,230,255,${alpha * 0.3})`);
           g.addColorStop(0.9, `rgba(220,240,255,${alpha})`);

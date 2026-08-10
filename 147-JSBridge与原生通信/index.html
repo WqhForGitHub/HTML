@@ -127,7 +127,9 @@
 
     <div class="card">
       <h2>什么是 JSBridge</h2>
-      <p>JSBridge 是 H5 与原生 App 之间通信的桥梁：H5 调原生能力（相机/分享/扫码），原生回调 JS。</p>
+      <p>
+        JSBridge 是 H5 与原生 App 之间通信的桥梁：H5 调原生能力（相机/分享/扫码），原生回调 JS。
+      </p>
       <div class="flow">
         <div class="node">H5 (JS)</div>
         <div class="arrow">→调用→</div>
@@ -141,12 +143,19 @@
 
     <div class="card">
       <h2>两种通信方式</h2>
-      <p><b>1. 注入式（推荐）</b>：原生向 WebView 注入全局对象</p>
-      <div class="code">window.webkit.messageHandlers.app.postMessage({...})  // iOS
-window.Android.share('title', 'url')               // Android</div>
+      <p>
+        <b>1. 注入式（推荐）</b>
+        ：原生向 WebView 注入全局对象
+      </p>
+      <div class="code">
+        window.webkit.messageHandlers.app.postMessage({...}) // iOS window.Android.share('title',
+        'url') // Android
+      </div>
       <p><b>2. URL Scheme 拦截</b></p>
-      <div class="code">iframe.src = 'myapp://action?name=share&cb=cb123'
-// 原生拦截 URL 解析参数执行，再通过 evaluateJavaScript 回调 cb123</div>
+      <div class="code">
+        iframe.src = 'myapp://action?name=share&cb=cb123' // 原生拦截 URL 解析参数执行，再通过
+        evaluateJavaScript 回调 cb123
+      </div>
     </div>
 
     <div class="demo">
@@ -155,7 +164,10 @@ window.Android.share('title', 'url')               // Android</div>
       <div class="log" id="log">日志区（模拟，非 WebView 下使用 mock）\n</div>
     </div>
 
-    <div class="tip">💡 框架：jsBridge / dsBridge / WebViewJavascriptBridge；现多用注入式保证类型安全与异步 Promise 化封装。</div>
+    <div class="tip">
+      💡 框架：jsBridge / dsBridge / WebViewJavascriptBridge；现多用注入式保证类型安全与异步 Promise
+      化封装。
+    </div>
 
     <script>
       const logEl = document.getElementById('log');

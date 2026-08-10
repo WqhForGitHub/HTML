@@ -1,29 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<title>116-canvas</title>
-<style>
-body { font-family: sans-serif; max-width: 720px; margin: 2rem auto; line-height: 1.6; }
-canvas { border: 1px solid #ccc; display: block; margin-top: 1rem; }
-</style>
-</head>
-<body>
-<h1>&lt;canvas&gt; 元素</h1>
-<p>&lt;canvas&gt; 用来在页面中显示用 JavaScript 绘制的图像和动画。</p>
-<canvas id="demo" width="320" height="120">你的浏览器不支持 canvas。</canvas>
-<script>
-var c = document.getElementById('demo');
-var ctx = c.getContext('2d');
-ctx.fillStyle = '#333';
-ctx.fillRect(20, 20, 120, 80);
-ctx.beginPath();
-ctx.arc(240, 60, 40, 0, Math.PI * 2);
-ctx.fillStyle = '#e44';
-ctx.fill();
-ctx.fillStyle = '#fff';
-ctx.font = '14px sans-serif';
-ctx.fillText('Hello Canvas', 100, 110);
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>116-canvas</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 720px;
+        margin: 2rem auto;
+        line-height: 1.6;
+      }
+      canvas {
+        border: 1px solid #ccc;
+        display: block;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>&lt;canvas&gt; 元素</h1>
+    <p>&lt;canvas&gt; 用来在页面中显示用 JavaScript 绘制的图像和动画。</p>
+    <canvas id="demo" width="320" height="120">你的浏览器不支持 canvas。</canvas>
+    <script>
+      var c = document.getElementById('demo');
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#333';
+      ctx.fillRect(20, 20, 120, 80);
+      ctx.beginPath();
+      ctx.arc(240, 60, 40, 0, Math.PI * 2);
+      ctx.fillStyle = '#e44';
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('Hello Canvas', 100, 110);
+    </script>
+  </body>
 </html>

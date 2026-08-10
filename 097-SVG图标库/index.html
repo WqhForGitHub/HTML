@@ -330,8 +330,18 @@
           label: '向右',
           svg: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
         },
-        { name: 'chevron-up', cat: '箭头', label: '上展开', svg: '<polyline points="18 15 12 9 6 15"/>' },
-        { name: 'chevron-down', cat: '箭头', label: '下展开', svg: '<polyline points="6 9 12 15 18 9"/>' },
+        {
+          name: 'chevron-up',
+          cat: '箭头',
+          label: '上展开',
+          svg: '<polyline points="18 15 12 9 6 15"/>',
+        },
+        {
+          name: 'chevron-down',
+          cat: '箭头',
+          label: '下展开',
+          svg: '<polyline points="6 9 12 15 18 9"/>',
+        },
         {
           name: 'corner-down',
           cat: '箭头',
@@ -499,7 +509,12 @@
 
         let html = '';
         Object.keys(cats).forEach(function (cat) {
-          html += '<div class="category"><h2>' + cat + ' (' + cats[cat].length + ')</h2><div class="icon-grid">';
+          html +=
+            '<div class="category"><h2>' +
+            cat +
+            ' (' +
+            cats[cat].length +
+            ')</h2><div class="icon-grid">';
           cats[cat].forEach(function (ic) {
             html +=
               '<div class="icon-card" data-name="' +
@@ -520,7 +535,8 @@
         });
         container.innerHTML = html;
 
-        document.getElementById('stats').textContent = '显示 ' + filtered.length + ' / ' + icons.length + ' 个图标';
+        document.getElementById('stats').textContent =
+          '显示 ' + filtered.length + ' / ' + icons.length + ' 个图标';
 
         // 绑定点击
         document.querySelectorAll('.icon-card').forEach(function (card) {

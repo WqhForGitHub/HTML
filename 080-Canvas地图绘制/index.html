@@ -291,9 +291,13 @@
 
           const progress = (t * 0.005 + i * 0.3) % 1;
           const px =
-            (1 - progress) * (1 - progress) * a.x + 2 * (1 - progress) * progress * mx + progress * progress * b.x;
+            (1 - progress) * (1 - progress) * a.x +
+            2 * (1 - progress) * progress * mx +
+            progress * progress * b.x;
           const py =
-            (1 - progress) * (1 - progress) * a.y + 2 * (1 - progress) * progress * my + progress * progress * b.y;
+            (1 - progress) * (1 - progress) * a.y +
+            2 * (1 - progress) * progress * my +
+            progress * progress * b.y;
           const g = ctx.createRadialGradient(px, py, 0, px, py, Math.max(1, 6));
           g.addColorStop(0, 'rgba(255,220,120,0.9)');
           g.addColorStop(1, 'rgba(255,220,120,0)');

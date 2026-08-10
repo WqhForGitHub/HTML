@@ -124,18 +124,37 @@
     <div class="card">
       <h2>原理</h2>
       <p>1vw = 视口宽 1%；1vh = 视口高 1%。所有尺寸用 vw 表示即可等比缩放，纯 CSS 实现无需 JS。</p>
-      <div class="code">设计稿 375 宽，200px 元素：
-200 / 375 * 100 = 53.33vw</div>
+      <div class="code">设计稿 375 宽，200px 元素： 200 / 375 * 100 = 53.33vw</div>
     </div>
 
     <div class="demo-box">60vw 宽 · 4vw 字号 · 3vw 内边距</div>
 
     <table class="cmp">
-      <tr><td>对比项</td><td>rem</td><td>vw/vh</td></tr>
-      <tr><td><b>依赖</b></td><td>需 JS 设根字号</td><td>纯 CSS</td></tr>
-      <tr><td><b>性能</b></td><td>JS 阻塞</td><td>原生渲染快</td></tr>
-      <tr><td><b>兼容</b></td><td>极好</td><td>iOS8+/Android4.4+</td></tr>
-      <tr><td><b>横屏</b></td><td>按宽变化</td><td>vw 按宽；vh 按高</td></tr>
+      <tr>
+        <td>对比项</td>
+        <td>rem</td>
+        <td>vw/vh</td>
+      </tr>
+      <tr>
+        <td><b>依赖</b></td>
+        <td>需 JS 设根字号</td>
+        <td>纯 CSS</td>
+      </tr>
+      <tr>
+        <td><b>性能</b></td>
+        <td>JS 阻塞</td>
+        <td>原生渲染快</td>
+      </tr>
+      <tr>
+        <td><b>兼容</b></td>
+        <td>极好</td>
+        <td>iOS8+/Android4.4+</td>
+      </tr>
+      <tr>
+        <td><b>横屏</b></td>
+        <td>按宽变化</td>
+        <td>vw 按宽；vh 按高</td>
+      </tr>
     </table>
 
     <div class="tip">
@@ -143,7 +162,9 @@
     </div>
 
     <script>
-      const upd = () => (document.getElementById('info').textContent = '1vw = ' + (window.innerWidth / 100).toFixed(2) + ' px');
+      const upd = () =>
+        (document.getElementById('info').textContent =
+          '1vw = ' + (window.innerWidth / 100).toFixed(2) + ' px');
       upd();
       window.addEventListener('resize', upd);
     </script>

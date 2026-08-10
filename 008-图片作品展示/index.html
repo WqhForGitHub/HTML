@@ -162,7 +162,12 @@
       .overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.85) 0%,
+          rgba(0, 0, 0, 0.3) 50%,
+          transparent 100%
+        );
         opacity: 0;
         transition: 0.35s;
         display: flex;
@@ -336,7 +341,9 @@
         <br />
         用作品传递灵感
       </h1>
-      <p>我们是 Studio Lumen，一支专注于 Web 设计、品牌视觉与摄影的创意工作室。以下是近年精选作品。</p>
+      <p>
+        我们是 Studio Lumen，一支专注于 Web 设计、品牌视觉与摄影的创意工作室。以下是近年精选作品。
+      </p>
     </section>
 
     <div class="filters" id="filters">
@@ -494,7 +501,7 @@
             it.classList.toggle('hide', !match);
             if (match) visibleItems.push(it);
           });
-        }),
+        })
       );
       // Initialize visibleItems
       visibleItems = Array.from(items);
@@ -522,7 +529,9 @@
         lbDesc.textContent = desc;
       }
       items.forEach((it) => it.addEventListener('click', () => openLb(it)));
-      document.getElementById('lbClose').addEventListener('click', () => lb.classList.remove('open'));
+      document
+        .getElementById('lbClose')
+        .addEventListener('click', () => lb.classList.remove('open'));
       document.getElementById('lbPrev').addEventListener('click', () => {
         current = (current - 1 + visibleItems.length) % visibleItems.length;
         showLb();

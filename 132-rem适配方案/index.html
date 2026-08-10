@@ -105,17 +105,21 @@
 
     <div class="card">
       <h2>核心原理</h2>
-      <p style="font-size: 13.5px; color: var(--muted)">rem = root em，相对根节点 html 字号。JS 监听屏宽动态设置 html.style.fontSize，元素尺寸用 rem，缩放即整体等比。</p>
-      <div class="code">document.documentElement.style.fontSize =
-  innerWidth / 设计稿宽 * 100 + 'px'</div>
+      <p style="font-size: 13.5px; color: var(--muted)">
+        rem = root em，相对根节点 html 字号。JS 监听屏宽动态设置 html.style.fontSize，元素尺寸用
+        rem，缩放即整体等比。
+      </p>
+      <div class="code">
+        document.documentElement.style.fontSize = innerWidth / 设计稿宽 * 100 + 'px'
+      </div>
     </div>
 
     <div class="card">
       <h2>rem 值计算公式</h2>
-      <div class="code">rem = 设计稿像素 / 根字号基准(rem 与 px 比值)
-例：设计稿 375 宽，基准 100
-则 1rem = 100px
-设计稿 200px → 200/100 = 2rem</div>
+      <div class="code">
+        rem = 设计稿像素 / 根字号基准(rem 与 px 比值) 例：设计稿 375 宽，基准 100 则 1rem = 100px
+        设计稿 200px → 200/100 = 2rem
+      </div>
       <div class="calc">
         <div class="v" id="root">1rem = ? px</div>
         <span id="info">设计稿 200px = ? rem</span>
@@ -134,7 +138,8 @@
       document.documentElement.style.fontSize = (w / 375) * base + 'px';
       const ratio = parseFloat(getComputedStyle(document.documentElement).fontSize);
       document.getElementById('root').textContent = '1rem = ' + ratio.toFixed(1) + 'px';
-      document.getElementById('info').textContent = '设计稿 200px = ' + (200 / ratio).toFixed(3) + 'rem';
+      document.getElementById('info').textContent =
+        '设计稿 200px = ' + (200 / ratio).toFixed(3) + 'rem';
     </script>
   </body>
 </html>

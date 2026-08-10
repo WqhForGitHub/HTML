@@ -132,44 +132,40 @@
 
     <div class="card">
       <h2>什么是 PWA</h2>
-      <p>PWA (Progressive Web App)：可安装、可离线、可推送的 Web 应用，由 manifest.json + Service Worker 实现"用得像原生 App"的体验。</p>
+      <p>
+        PWA (Progressive Web App)：可安装、可离线、可推送的 Web 应用，由 manifest.json + Service
+        Worker 实现"用得像原生 App"的体验。
+      </p>
     </div>
 
     <div class="card">
       <h2>1. manifest.json</h2>
-      <div class="code">{
-  "name": "MyApp",
-  "short_name": "App",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#000",
-  "theme_color": "#2563eb",
-  "icons": [{"src":"icon.png","sizes":"192x192"}]
-}</div>
-      <p>HTML 引入：<code style="color:#bfdbfe">&lt;link rel="manifest" href="/manifest.json"&gt;</code></p>
+      <div class="code">
+        { "name": "MyApp", "short_name": "App", "start_url": "/", "display": "standalone",
+        "background_color": "#000", "theme_color": "#2563eb", "icons":
+        [{"src":"icon.png","sizes":"192x192"}] }
+      </div>
+      <p>
+        HTML 引入：
+        <code style="color: #bfdbfe">&lt;link rel="manifest" href="/manifest.json"&gt;</code>
+      </p>
     </div>
 
     <div class="card">
       <h2>2. 注册 Service Worker</h2>
-      <div class="code">if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(reg => console.log('注册成功'))
-    .catch(err => console.log('失败', err));
-}</div>
+      <div class="code">
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js') .then(reg =>
+        console.log('注册成功')) .catch(err => console.log('失败', err)); }
+      </div>
     </div>
 
     <div class="card">
       <h2>3. sw.js (缓存 + 离线)</h2>
-      <div class="code">const CACHE = 'v1';
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE)
-    .then(c => c.addAll(['/','/index.html','/app.js'])));
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
-});</div>
+      <div class="code">
+        const CACHE = 'v1'; self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE)
+        .then(c => c.addAll(['/','/index.html','/app.js']))); }); self.addEventListener('fetch', e
+        => { e.respondWith( caches.match(e.request).then(r => r || fetch(e.request)) ); });
+      </div>
     </div>
 
     <div class="demo">
@@ -178,7 +174,10 @@ self.addEventListener('fetch', e => {
       <div class="status" id="st">本页在 https / localhost 才能注册 SW</div>
     </div>
 
-    <div class="tip">💡 Service Worker 是浏览器后台脚本，拦截 fetch、管理 Cache、处理 push 通知；必须在 HTTPS 环境。</div>
+    <div class="tip">
+      💡 Service Worker 是浏览器后台脚本，拦截 fetch、管理 Cache、处理 push 通知；必须在 HTTPS
+      环境。
+    </div>
 
     <script>
       const st = document.getElementById('st');
@@ -206,8 +205,11 @@ self.addEventListener('fetch', e => {
         const keys = await caches.keys();
         st.textContent = keys.length ? '已缓存: ' + keys.join(', ') : '暂无缓存（先注册 SW）';
       }
-      document.getElementById('c4').textContent = 'manifest ' + ('Manifest' in window || document.querySelector('link[rel=manifest]') ? '✓' : '✗');
-      document.getElementById('c5').textContent = 'installable ' + ('BeforeInstallPromptEvent' in window ? '✓' : '?');
+      document.getElementById('c4').textContent =
+        'manifest ' +
+        ('Manifest' in window || document.querySelector('link[rel=manifest]') ? '✓' : '✗');
+      document.getElementById('c5').textContent =
+        'installable ' + ('BeforeInstallPromptEvent' in window ? '✓' : '?');
     </script>
   </body>
 </html>

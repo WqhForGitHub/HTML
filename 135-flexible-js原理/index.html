@@ -89,26 +89,34 @@
 
     <div class="card">
       <h2>原理</h2>
-      <p>监听 resize/pageshow，把视口宽度除以 10，得到根字号，并给页面设置 meta viewport 缩放为 1/dpr。</p>
-      <div class="code">function setRem() {
-  const w = document.documentElement.clientWidth;
-  document.documentElement.style.fontSize = w / 10 + 'px';
-}
-setRem();
-window.addEventListener('resize', setRem);</div>
+      <p>
+        监听 resize/pageshow，把视口宽度除以 10，得到根字号，并给页面设置 meta viewport 缩放为
+        1/dpr。
+      </p>
+      <div class="code">
+        function setRem() { const w = document.documentElement.clientWidth;
+        document.documentElement.style.fontSize = w / 10 + 'px'; } setRem();
+        window.addEventListener('resize', setRem);
+      </div>
     </div>
 
     <div class="card">
       <h2>所做的两件事</h2>
-      <p>1️⃣ 计算 rem 基准值（html 字号 = 屏宽 / 10）<br />2️⃣ 设置 viewport meta 的 scale = 1/dpr，让物理像素 1:1 还原设计稿</p>
+      <p>
+        1️⃣ 计算 rem 基准值（html 字号 = 屏宽 / 10）
+        <br />
+        2️⃣ 设置 viewport meta 的 scale = 1/dpr，让物理像素 1:1 还原设计稿
+      </p>
     </div>
 
     <div class="warn">
-      ⚠️ 不推荐使用：flexible.js 已停止维护，因为有 viewport 缩放方案副作用大，且 vw/vh 单位兼容性已足够好。
+      ⚠️ 不推荐使用：flexible.js 已停止维护，因为有 viewport 缩放方案副作用大，且 vw/vh
+      单位兼容性已足够好。
     </div>
 
     <div class="tip">
-      💡 现代替代：postcss-px-to-viewport 把 px 自动转 vw，无需 JS；若需兼容低端机可引入 flexible 作 fallback。
+      💡 现代替代：postcss-px-to-viewport 把 px 自动转 vw，无需 JS；若需兼容低端机可引入 flexible 作
+      fallback。
     </div>
   </body>
 </html>

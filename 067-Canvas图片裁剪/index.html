@@ -500,7 +500,8 @@
           resultCanvas.height = sel.h;
           resultCtx.putImageData(imgData, 0, 0);
           resultSize.textContent = sel.w + ' x ' + sel.h;
-          resultInfo.textContent = '裁剪成功！尺寸: ' + Math.round(sel.w) + ' x ' + Math.round(sel.h);
+          resultInfo.textContent =
+            '裁剪成功！尺寸: ' + Math.round(sel.w) + ' x ' + Math.round(sel.h);
           info.textContent = '裁剪完成';
         });
 
@@ -508,7 +509,8 @@
           if (imgLoaded) {
             sel = { x: 20, y: 20, w: srcCanvas.width - 40, h: srcCanvas.height - 40 };
             redraw();
-            selInfo.textContent = '选区: x=20, y=20, 宽=' + (srcCanvas.width - 40) + ', 高=' + (srcCanvas.height - 40);
+            selInfo.textContent =
+              '选区: x=20, y=20, 宽=' + (srcCanvas.width - 40) + ', 高=' + (srcCanvas.height - 40);
           }
         });
 

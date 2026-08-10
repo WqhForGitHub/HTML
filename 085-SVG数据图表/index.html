@@ -284,7 +284,7 @@
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute(
           'd',
-          `M ${x1} ${y1} A ${r2} ${r2} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${r1} ${r1} 0 ${large} 0 ${x4} ${y4} Z`,
+          `M ${x1} ${y1} A ${r2} ${r2} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${r1} ${r1} 0 ${large} 0 ${x4} ${y4} Z`
         );
         path.setAttribute('fill', d.color);
         path.classList.add('donut-slice');
@@ -371,7 +371,8 @@
           grad.setAttribute('y1', '0%');
           grad.setAttribute('x2', '0%');
           grad.setAttribute('y2', '100%');
-          grad.innerHTML = '<stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0891b2"/>';
+          grad.innerHTML =
+            '<stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#0891b2"/>';
           defs.appendChild(grad);
         }
 
@@ -472,7 +473,9 @@
         }
 
         if (fillArea) {
-          const areaPath = path + ` L ${pts[pts.length - 1].x} ${lpadT + lchartH} L ${pts[0].x} ${lpadT + lchartH} Z`;
+          const areaPath =
+            path +
+            ` L ${pts[pts.length - 1].x} ${lpadT + lchartH} L ${pts[0].x} ${lpadT + lchartH} Z`;
           const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           area.setAttribute('d', areaPath);
           area.setAttribute('fill', 'url(#lineGradArea)');

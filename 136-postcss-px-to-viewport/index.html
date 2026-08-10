@@ -84,48 +84,36 @@
 
     <div class="card">
       <h2>1. 安装</h2>
-      <div class="code">npm i postcss-px-to-viewport -D
-# 或新版
-npm i postcss-px-to-viewport-8-plugin -D</div>
+      <div class="code">
+        npm i postcss-px-to-viewport -D # 或新版 npm i postcss-px-to-viewport-8-plugin -D
+      </div>
     </div>
 
     <div class="card">
       <h2>2. 配置 (postcss.config.js)</h2>
-      <div class="code">module.exports = {
-  plugins: {
-    'postcss-px-to-viewport': {
-      viewportWidth: 375,      // 设计稿宽
-      unitPrecision: 5,       // 小数精度
-      unitToConvert: 'px',    // 转换单位
-      viewportUnit: 'vw',     // 转成什么
-      selectorBlackList: [],   // 忽略选择器
-      minPixelValue: 1,        // 小于1px不转
-      mediaQuery: false,
-      exclude: /node_modules/
-    }
-  }
-}</div>
+      <div class="code">
+        module.exports = { plugins: { 'postcss-px-to-viewport': { viewportWidth: 375, // 设计稿宽
+        unitPrecision: 5, // 小数精度 unitToConvert: 'px', // 转换单位 viewportUnit: 'vw', //
+        转成什么 selectorBlackList: [], // 忽略选择器 minPixelValue: 1, // 小于1px不转 mediaQuery:
+        false, exclude: /node_modules/ } } }
+      </div>
     </div>
 
     <div class="card">
       <h2>3. 效果预览（编译前后）</h2>
-      <div class="code">/* 你写的源码 */
-.card {
-  width: 200px;
-  font-size: 16px;
-  border-radius: 8px;
-}</div>
+      <div class="code">
+        /* 你写的源码 */ .card { width: 200px; font-size: 16px; border-radius: 8px; }
+      </div>
       <div class="arrow">↓ PostCSS 编译</div>
-      <div class="code out">/* 生成产物 (375 设计稿) */
-.card {
-  width: 53.33333vw;
-  font-size: 4.26667vw;
-  border-radius: 2.13333vw;
-}</div>
+      <div class="code out">
+        /* 生成产物 (375 设计稿) */ .card { width: 53.33333vw; font-size: 4.26667vw; border-radius:
+        2.13333vw; }
+      </div>
     </div>
 
     <div class="tip">
-      💡 优势：开发照常用 px 写设计稿，插件自动转 vw；不想转换的属性可用 /* 不转 */ 注释或大写 PX 标记。
+      💡 优势：开发照常用 px 写设计稿，插件自动转 vw；不想转换的属性可用 /* 不转 */ 注释或大写 PX
+      标记。
     </div>
   </body>
 </html>

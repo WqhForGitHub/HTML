@@ -129,17 +129,30 @@
       <div class="label">您当前设备信息</div>
       <div class="value" id="dpr">DPR: ...</div>
       <div class="row">
-        <span>逻辑宽：<b id="cw">-</b></span>
-        <span>物理宽：<b id="pw">-</b></span>
+        <span>
+          逻辑宽：
+          <b id="cw">-</b>
+        </span>
+        <span>
+          物理宽：
+          <b id="pw">-</b>
+        </span>
       </div>
       <div class="row">
-        <span>屏宽：<b id="sw">-</b></span>
-        <span>UA：<b id="ua">-</b></span>
+        <span>
+          屏宽：
+          <b id="sw">-</b>
+        </span>
+        <span>
+          UA：
+          <b id="ua">-</b>
+        </span>
       </div>
     </div>
 
     <div class="tip">
-      💡 Retina 屏 DPR=2/3，所以 1px CSS 边框在高 DPR 屏幕下会显示得更细，这就是「1px 问题」的根本原因。
+      💡 Retina 屏 DPR=2/3，所以 1px CSS 边框在高 DPR 屏幕下会显示得更细，这就是「1px
+      问题」的根本原因。
     </div>
 
     <script>
@@ -148,7 +161,9 @@
       document.getElementById('cw').textContent = window.innerWidth + 'px';
       document.getElementById('pw').textContent = window.screen.width * dpr + 'px';
       document.getElementById('sw').textContent = window.screen.width + 'px';
-      document.getElementById('ua').textContent = /Mobi|Android/i.test(navigator.userAgent) ? '移动端' : 'PC端';
+      document.getElementById('ua').textContent = /Mobi|Android/i.test(navigator.userAgent)
+        ? '移动端'
+        : 'PC端';
     </script>
   </body>
 </html>

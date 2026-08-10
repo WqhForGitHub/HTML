@@ -218,7 +218,8 @@
 
         if (mouse.x > -1000) {
           const r = mode === 'attract' ? 60 : mode === 'repel' ? 80 : 50;
-          const c = mode === 'attract' ? '120,220,255' : mode === 'repel' ? '255,120,120' : '255,200,120';
+          const c =
+            mode === 'attract' ? '120,220,255' : mode === 'repel' ? '255,120,120' : '255,200,120';
           ctx.strokeStyle = `rgba(${c},0.5)`;
           ctx.lineWidth = 1.5;
           ctx.setLineDash([5, 5]);

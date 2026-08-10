@@ -136,7 +136,7 @@
     </div>
 
     <div class="card">
-      <h2 style="color:var(--accent)">动画对比 (transform vs left)</h2>
+      <h2 style="color: var(--accent)">动画对比 (transform vs left)</h2>
       <div class="stage"><div class="ball" id="ball1"></div></div>
       <div class="stat" id="stat">点击下方按钮移动小球</div>
       <div class="ctrl">
@@ -146,7 +146,7 @@
     </div>
 
     <div class="card">
-      <h2 style="color:#4ade80">优化技巧</h2>
+      <h2 style="color: #4ade80">优化技巧</h2>
       <div class="pt">动画用 transform / opacity（仅合成层，不重排）</div>
       <div class="pt">批量改样式：用 class 替代多次 style.x= 赋值</div>
       <div class="pt">读写分离：先读完 offsetTop 再写，避免强制同步布局</div>
@@ -175,7 +175,8 @@
           pos = (pos + 30) % 200;
           ball.style.transform = `translateX(${pos}px)`;
         }
-        stat.textContent = 'transform 模式 (GPU 合成) 耗时：' + (performance.now() - t0).toFixed(2) + 'ms';
+        stat.textContent =
+          'transform 模式 (GPU 合成) 耗时：' + (performance.now() - t0).toFixed(2) + 'ms';
       }
     </script>
   </body>

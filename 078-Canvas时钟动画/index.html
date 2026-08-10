@@ -59,7 +59,14 @@
 
         ctx.shadowColor = 'rgba(160,120,220,0.6)';
         ctx.shadowBlur = 40;
-        const outerG = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.2, cx, cy, Math.max(1, R));
+        const outerG = ctx.createRadialGradient(
+          cx - R * 0.3,
+          cy - R * 0.3,
+          R * 0.2,
+          cx,
+          cy,
+          Math.max(1, R)
+        );
         outerG.addColorStop(0, '#3a2a50');
         outerG.addColorStop(0.7, '#1a1030');
         outerG.addColorStop(1, '#0a0518');
@@ -132,11 +139,11 @@
         ctx.beginPath();
         ctx.moveTo(
           cx - Math.cos((sec / 60) * Math.PI * 2 - Math.PI / 2) * R * 0.15,
-          cy - Math.sin((sec / 60) * Math.PI * 2 - Math.PI / 2) * R * 0.15,
+          cy - Math.sin((sec / 60) * Math.PI * 2 - Math.PI / 2) * R * 0.15
         );
         ctx.lineTo(
           cx + Math.cos((sec / 60) * Math.PI * 2 - Math.PI / 2) * R * 0.75,
-          cy + Math.sin((sec / 60) * Math.PI * 2 - Math.PI / 2) * R * 0.75,
+          cy + Math.sin((sec / 60) * Math.PI * 2 - Math.PI / 2) * R * 0.75
         );
         ctx.stroke();
 

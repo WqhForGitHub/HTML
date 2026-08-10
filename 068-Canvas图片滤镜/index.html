@@ -340,7 +340,8 @@
             cool: '冷色',
             vintage: '老照片',
           };
-          filterStatus.textContent = '当前滤镜: ' + names[currentFilter] + ' (强度 ' + intensity.value + '%)';
+          filterStatus.textContent =
+            '当前滤镜: ' + names[currentFilter] + ' (强度 ' + intensity.value + '%)';
         }
 
         function boxBlur(data, w, h, radius) {

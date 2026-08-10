@@ -319,7 +319,10 @@
           const poly = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           poly.setAttribute('d', path);
           poly.setAttribute('fill', 'none');
-          poly.setAttribute('stroke', lvl === levels ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)');
+          poly.setAttribute(
+            'stroke',
+            lvl === levels ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)'
+          );
           poly.setAttribute('stroke-width', '1');
           if (lvl < levels) poly.setAttribute('stroke-dasharray', '3 4');
           g.appendChild(poly);

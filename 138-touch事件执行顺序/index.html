@@ -112,20 +112,33 @@
     <div class="sub">面试题 17 · 触摸生命周期</div>
 
     <div class="flow" id="flow">
-      <div class="step" data-e="touchstart"><div class="n">1</div><div class="name">touchstart</div></div>
+      <div class="step" data-e="touchstart">
+        <div class="n">1</div>
+        <div class="name">touchstart</div>
+      </div>
       <div class="arr">→</div>
-      <div class="step" data-e="touchmove"><div class="n">2</div><div class="name">touchmove</div></div>
+      <div class="step" data-e="touchmove">
+        <div class="n">2</div>
+        <div class="name">touchmove</div>
+      </div>
       <div class="arr">→</div>
-      <div class="step" data-e="touchend"><div class="n">3</div><div class="name">touchend</div></div>
+      <div class="step" data-e="touchend">
+        <div class="n">3</div>
+        <div class="name">touchend</div>
+      </div>
       <div class="arr">→</div>
-      <div class="step" data-e="click"><div class="n">4</div><div class="name">click(延迟300ms)</div></div>
+      <div class="step" data-e="click">
+        <div class="n">4</div>
+        <div class="name">click(延迟300ms)</div>
+      </div>
     </div>
 
     <div class="pad" id="pad">在此触摸 / 点击</div>
     <div class="info" id="info">高亮当前触发的事件阶段</div>
 
     <div class="tip">
-      💡 特点：touchstart 只触发一次；touchmove 连续多次；touchend 抬起后约 300ms 才触发 click（移动端特有延迟）。
+      💡 特点：touchstart 只触发一次；touchmove 连续多次；touchend 抬起后约 300ms 才触发
+      click（移动端特有延迟）。
     </div>
 
     <script>
@@ -141,10 +154,14 @@
         lastTime = now;
       }
       ['touchstart', 'touchmove', 'touchend', 'click'].forEach((ev) =>
-        pad.addEventListener(ev, (e) => {
-          highlight(ev);
-          if (ev === 'touchmove') e.preventDefault();
-        }, { passive: false })
+        pad.addEventListener(
+          ev,
+          (e) => {
+            highlight(ev);
+            if (ev === 'touchmove') e.preventDefault();
+          },
+          { passive: false }
+        )
       );
     </script>
   </body>

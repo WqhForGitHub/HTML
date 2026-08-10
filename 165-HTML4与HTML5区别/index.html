@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML4 与 HTML5 的区别</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #8b5cf6;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 { font-size: 22px; text-align: center; margin-bottom: 6px; }
+      .sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 { font-size: 15px; color: var(--accent); margin-bottom: 8px; }
+      .card p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+      .code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #ddd6fe;
+        white-space: pre-wrap;
+        margin: 8px 0;
+        word-break: break-all;
+      }
+      table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+      th, td { border: 1px solid var(--border); padding: 7px 9px; text-align: left; vertical-align: top; }
+      th { background: rgba(139, 92, 246, 0.15); color: #ddd6fe; }
+      td { color: var(--muted); }
+      td b { color: var(--text); }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(139, 92, 246, 0.12);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        font-size: 13px;
+        color: #ddd6fe;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HTML4 与 HTML5 的区别</h1>
+    <div class="sub">面试题 14 · 标准演进对比</div>
+
+    <div class="card">
+      <h2>核心对比表</h2>
+      <table>
+        <tr><th>对比项</th><th>HTML4</th><th>HTML5</th></tr>
+        <tr><td>DOCTYPE</td><td>冗长 DTD：PUBLIC "-//W3C//DTD HTML 4.01//EN" "..."</td><td><b>&lt;!DOCTYPE html&gt;</b></td></tr>
+        <tr><td>字符编码</td><td>&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</td><td><b>&lt;meta charset="UTF-8"&gt;</b></td></tr>
+        <tr><td>结构标签</td><td>div + class/id 一切</td><td>header/nav/main/article/section/aside/footer</td></tr>
+        <tr><td>多媒体</td><td>依赖 Flash/插件</td><td><b>原生 audio/video</b></td></tr>
+        <tr><td>绘图</td><td>无（用 Flash/img）</td><td><b>Canvas / SVG</b></td></tr>
+        <tr><td>表单控件</td><td>text/password/checkbox/radio/submit</td><td>新增 email/url/date/range/color/number 等 + 校验属性</td></tr>
+        <tr><td>本地存储</td><td>仅 Cookie</td><td><b>localStorage / sessionStorage / IndexedDB</b></td></tr>
+        <tr><td>离线应用</td><td>无（cookie 限制大）</td><td>Application Cache（已弃） / Service Worker</td></tr>
+        <tr><td>通信</td><td>Ajax（短轮询）</td><td>WebSocket / postMessage / Server-Sent Events</td></tr>
+        <tr><td>线程</td><td>单线程</td><td><b>Web Worker</b> 多线程</td></tr>
+        <tr><td>拖放</td><td>需鼠标事件模拟</td><td>原生 Draggable API</td></tr>
+        <tr><td>地理位置</td><td>需 IP 库</td><td>原生 Geolocation API</td></tr>
+        <tr><td>语法</td><td>严格（XHTML 关闭必须 /）</td><td>宽松（标签可任意大小写、可省略闭合）</td></tr>
+        <tr><td>文档类型</td><td>SGML 衍生</td><td>独立标准，不再依赖 SGML</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>废弃标签</h2>
+      <p>HTML5 移除表现性标签：<code style="color:#ddd6fe">frame/frameset/noframes/basefont/big/center/font/s/strike/u</code></p>
+      <p>这些应交给 CSS 处理，标签只承担语义。</p>
+    </div>
+
+    <div class="card">
+      <h2>新增 API</h2>
+      <div class="code">Canvas 2D / WebGL          // 图形
+Geolocation                // 地理位置
+Drag and Drop             // 拖放
+Web Storage               // 本地存储
+Web Worker                // 后台线程
+Server-Sent Events        // 服务端推送
+WebSocket                 // 全双工通信
+History API               // 前端路由
+Fullscreen / Visibility   // 全屏 / 可见性</div>
+    </div>
+
+    <div class="tip">
+      💡 一句话总结：HTML4 是"文档标记语言"，HTML5 是"Web 应用平台"——多媒体、存储、图形、通信、线程一站式解决。
+    </div>
+  </body>
+</html>

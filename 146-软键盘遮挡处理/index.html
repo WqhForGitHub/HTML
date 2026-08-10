@@ -170,7 +170,9 @@
         input.value = '';
       }
       function upd() {
-        const vh = window.visualViewport ? Math.round(window.visualViewport.height) : window.innerHeight;
+        const vh = window.visualViewport
+          ? Math.round(window.visualViewport.height)
+          : window.innerHeight;
         info.textContent = `visualViewport 高度：${vh}px | window：${window.innerHeight}px`;
       }
       window.visualViewport && window.visualViewport.addEventListener('resize', upd);

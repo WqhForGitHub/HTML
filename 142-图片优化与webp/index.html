@@ -113,11 +113,17 @@
       <div class="pic">
         <div>
           <img src="https://picsum.photos/seed/jpgdemo/240/160.jpg" alt="jpg" loading="lazy" />
-          <div class="lbl">JPG <span class="size" id="s1">…</span></div>
+          <div class="lbl">
+            JPG
+            <span class="size" id="s1">…</span>
+          </div>
         </div>
         <div>
           <img src="https://picsum.photos/seed/webpdemo/240/160.webp" alt="webp" loading="lazy" />
-          <div class="lbl">WEBP <span class="size" id="s2">…</span></div>
+          <div class="lbl">
+            WEBP
+            <span class="size" id="s2">…</span>
+          </div>
         </div>
       </div>
       <div class="pts">
@@ -129,9 +135,20 @@
       <h2>图片优化手段</h2>
       <div class="pts">
         <div>✓ 选择合适格式：照片 jpg/webp，图标 svg，透明 png/webp</div>
-        <div>✓ 按设备 DPR 提供 <code>srcset</code> 多倍图</div>
-        <div>✓ <code>&lt;picture&gt;</code> 自动降级：webp → jpg</div>
-        <div>✓ 懒加载 <code>loading="lazy"</code></div>
+        <div>
+          ✓ 按设备 DPR 提供
+          <code>srcset</code>
+          多倍图
+        </div>
+        <div>
+          ✓
+          <code>&lt;picture&gt;</code>
+          自动降级：webp → jpg
+        </div>
+        <div>
+          ✓ 懒加载
+          <code>loading="lazy"</code>
+        </div>
         <div>✓ 占位图 / 模糊缩略图 (LQIP)</div>
         <div>✓ CDN 动态裁剪裁剪宽度 ?w=200</div>
       </div>
@@ -140,7 +157,15 @@
     <div class="card">
       <h2>picture 降级示例</h2>
       <div class="pts">
-        <code>&lt;picture&gt;<br>&lt;source srcset="a.webp" type="image/webp"&gt;<br>&lt;img src="a.jpg" loading="lazy"&gt;<br>&lt;/picture&gt;</code>
+        <code>
+          &lt;picture&gt;
+          <br />
+          &lt;source srcset="a.webp" type="image/webp"&gt;
+          <br />
+          &lt;img src="a.jpg" loading="lazy"&gt;
+          <br />
+          &lt;/picture&gt;
+        </code>
       </div>
     </div>
 

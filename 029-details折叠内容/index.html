@@ -238,7 +238,12 @@
   <body>
     <!-- 注解面板 -->
     <aside class="annotation" id="annotation">
-      <button class="close-btn" onclick="document.getElementById('annotation').style.display = 'none'">&times;</button>
+      <button
+        class="close-btn"
+        onclick="document.getElementById('annotation').style.display = 'none'"
+      >
+        &times;
+      </button>
       <h3>
         语义元素说明：
         <code>&lt;details&gt;</code>
@@ -346,7 +351,9 @@
               </details>
               <details class="nested">
                 <summary>阶段三：框架与工程化</summary>
-                <div class="answer">学习 Vue/React 等主流框架，以及构建工具、状态管理等工程化内容。</div>
+                <div class="answer">
+                  学习 Vue/React 等主流框架，以及构建工具、状态管理等工程化内容。
+                </div>
               </details>
             </div>
           </details>
@@ -367,8 +374,8 @@
           </p>
           <p><code>summary::-webkit-details-marker { display: none; }</code></p>
           <p>
-            隐藏后可以自定义图标，例如用 CSS 伪元素或字体图标实现自己的展开/折叠指示符。本页面的每个 summary
-            都隐藏了默认标记，并用自定义的箭头图标替代，展开时旋转 180 度。
+            隐藏后可以自定义图标，例如用 CSS 伪元素或字体图标实现自己的展开/折叠指示符。本页面的每个
+            summary 都隐藏了默认标记，并用自定义的箭头图标替代，展开时旋转 180 度。
           </p>
           <p>
             另外，给 summary 添加
@@ -405,7 +412,8 @@
             </li>
           </ul>
           <p>
-            本页面顶部的"全部展开"和"全部折叠"按钮就是通过 JS 操作所有 details 的 open 属性实现的。同时，本页还实现了
+            本页面顶部的"全部展开"和"全部折叠"按钮就是通过 JS 操作所有 details 的 open
+            属性实现的。同时，本页还实现了
             <strong>手风琴效果</strong>
             --展开一个问题时自动折叠其他问题。
           </p>

@@ -144,7 +144,8 @@
     <div class="sub">面试题 5 · 复现与解决方案</div>
 
     <div class="cause">
-      💡 原因：触摸事件 touchend 触发后约 300ms 浏览器会再派发 click，若弹层在 touchend 中立即隐藏，click 会"穿透"到下方元素。
+      💡 原因：触摸事件 touchend 触发后约 300ms 浏览器会再派发 click，若弹层在 touchend
+      中立即隐藏，click 会"穿透"到下方元素。
     </div>
 
     <div class="ctrl">
@@ -154,9 +155,7 @@
 
     <div class="stage">
       <button class="under-btn" onclick="log('⚠️ 下层按钮被触发！穿透发生')">下层按钮</button>
-      <div class="overlay" id="overlay">
-        弹层：点我关闭（touchend 关闭）
-      </div>
+      <div class="overlay" id="overlay">弹层：点我关闭（touchend 关闭）</div>
     </div>
 
     <div class="log" id="log">日志：等待操作...\n</div>

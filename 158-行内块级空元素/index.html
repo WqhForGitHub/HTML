@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>行内元素、块级元素、空元素</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #64748b;
+        --c1: #22d3ee;
+        --c2: #fb923c;
+        --c3: #c084fc;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 20px 16px 40px;
+      }
+      h1 { font-size: 22px; text-align: center; margin-bottom: 6px; }
+      .sub { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h2 { font-size: 15px; margin-bottom: 8px; }
+      .card p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+      .code {
+        font-family: monospace;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #fde68a;
+        white-space: pre-wrap;
+        margin: 8px 0;
+        word-break: break-all;
+      }
+      .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+      .t {
+        padding: 4px 10px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-family: monospace;
+      }
+      .inline { background: rgba(34,211,238,0.18); color: #a5f3fc; border: 1px solid rgba(34,211,238,0.3); }
+      .block { background: rgba(251,146,60,0.18); color: #fed7aa; border: 1px solid rgba(251,146,60,0.3); }
+      .void { background: rgba(192,132,252,0.18); color: #e9d5ff; border: 1px solid rgba(192,132,252,0.3); }
+      .demo {
+        padding: 10px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 8px;
+        margin-top: 8px;
+        font-size: 13px;
+      }
+      .demo .row-block { padding: 6px; background: rgba(251,146,60,0.15); border-radius: 4px; margin: 4px 0; }
+      .demo .inline-demo { padding: 2px 6px; background: rgba(34,211,238,0.15); border-radius: 4px; }
+      .tip {
+        padding: 12px 14px;
+        background: rgba(100, 116, 139, 0.18);
+        border-left: 3px solid #94a3b8;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #cbd5e1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>行内元素 / 块级元素 / 空元素</h1>
+    <div class="sub">面试题 7 · 元素分类</div>
+
+    <div class="card">
+      <h2 style="color:var(--c1)">① 行内元素</h2>
+      <p>不独占一行，宽高由内容决定，width/height/margin 上下无效。</p>
+      <div class="tags">
+        <span class="t inline">a</span><span class="t inline">span</span>
+        <span class="t inline">strong</span><span class="t inline">b</span>
+        <span class="t inline">em</span><span class="t inline">i</span>
+        <span class="t inline">label</span><span class="t inline">code</span>
+        <span class="t inline">mark</span><span class="t inline">small</span>
+        <span class="t inline">sub</span><span class="t inline">sup</span>
+        <span class="t inline">abbr</span><span class="t inline">br</span>
+        <span class="t inline">img</span><span class="t inline">input</span>
+      </div>
+      <div class="demo">
+        <span class="inline-demo">span</span>
+        <a class="inline-demo">a链接不准换行</a>
+        <strong class="inline-demo">strong</strong>
+        <span style="color:var(--muted)">— 都在一行</span>
+      </div>
+      <span class="tip">注：HTML5 已不再严格区分行内/块级，改用 Content Model。但仍常按此分类记忆。</span>
+    </div>
+
+    <div class="card">
+      <h2 style="color:var(--c2)">② 块级元素</h2>
+      <p>独占一行，可设置 width/height、margin、padding 全方向生效。</p>
+      <div class="tags">
+        <span class="t block">div</span><span class="t block">p</span>
+        <span class="t block">h1-h6</span><span class="t block">ul</span>
+        <span class="t block">ol</span><span class="t block">li</span>
+        <span class="t block">table</span><span class="t block">form</span>
+        <span class="t block">section</span><span class="t block">article</span>
+        <span class="t block">header</span><span class="t block">footer</span>
+        <span class="t block">nav</span><span class="t block">aside</span>
+        <span class="t block">main</span><span class="t block">figure</span>
+      </div>
+      <div class="demo">
+        <div class="row-block">div 独占一行</div>
+        <p class="row-block">p 独占一行</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="color:var(--c3)">③ 空（void）元素</h2>
+      <p>没有闭合标签、没有子内容，自闭合。</p>
+      <div class="tags">
+        <span class="t void">br</span><span class="t void">hr</span>
+        <span class="t void">img</span><span class="t void">input</span>
+        <span class="t void">meta</span><span class="t void">link</span>
+        <span class="t void">area</span><span class="t void">base</span>
+        <span class="t void">col</span><span class="t void">embed</span>
+        <span class="t void">param</span><span class="t void">source</span>
+        <span class="t void">track</span><span class="t void">wbr</span>
+      </div>
+      <div class="code">&lt;img src="x.jpg" /&gt;
+&lt;br /&gt;
+&lt;meta charset="UTF-8" /&gt;</div>
+    </div>
+
+    <div class="card">
+      <h2 style="color:var(--accent)">补充：行内块元素</h2>
+      <p>既能在一行内显示，又能设置宽高（inline-block）。img / input / button 都是行内可替换元素，效果类似块。</p>
+    </div>
+
+    <div class="tip">
+      💡 HTML5 把块级 / 行内的概念替换成了更细的 Content Categories（Flow/Phrasing/Heading...）。但面试仍以"是否独占一行"作答即可。
+    </div>
+  </body>
+</html>

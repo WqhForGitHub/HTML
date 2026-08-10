@@ -478,7 +478,11 @@
       </div>
 
       <div class="grid" id="grid">
-        <div class="card tall" data-cat="nature" data-img="https://picsum.photos/seed/ph1/1200/1500.jpg">
+        <div
+          class="card tall"
+          data-cat="nature"
+          data-img="https://picsum.photos/seed/ph1/1200/1500.jpg"
+        >
           <img src="https://picsum.photos/seed/ph1/600/800.jpg" alt="" />
           <div class="info">
             <div class="cat">自然</div>
@@ -494,7 +498,11 @@
             <p>上海外滩 · 2026</p>
           </div>
         </div>
-        <div class="card" data-cat="portrait" data-img="https://picsum.photos/seed/ph3/1200/1500.jpg">
+        <div
+          class="card"
+          data-cat="portrait"
+          data-img="https://picsum.photos/seed/ph3/1200/1500.jpg"
+        >
           <img src="https://picsum.photos/seed/ph3/600/800.jpg" alt="" />
           <div class="info">
             <div class="cat">人像</div>
@@ -502,7 +510,11 @@
             <p>工作室 · 2025</p>
           </div>
         </div>
-        <div class="card wide" data-cat="arch" data-img="https://picsum.photos/seed/ph4/1200/900.jpg">
+        <div
+          class="card wide"
+          data-cat="arch"
+          data-img="https://picsum.photos/seed/ph4/1200/900.jpg"
+        >
           <img src="https://picsum.photos/seed/ph4/600/450.jpg" alt="" />
           <div class="info">
             <div class="cat">建筑</div>
@@ -518,7 +530,11 @@
             <p>九寨沟 · 2025</p>
           </div>
         </div>
-        <div class="card tall" data-cat="city" data-img="https://picsum.photos/seed/ph6/1200/1500.jpg">
+        <div
+          class="card tall"
+          data-cat="city"
+          data-img="https://picsum.photos/seed/ph6/1200/1500.jpg"
+        >
           <img src="https://picsum.photos/seed/ph6/600/800.jpg" alt="" />
           <div class="info">
             <div class="cat">城市</div>
@@ -534,7 +550,11 @@
             <p>深圳 · 2025</p>
           </div>
         </div>
-        <div class="card" data-cat="portrait" data-img="https://picsum.photos/seed/ph8/1200/1200.jpg">
+        <div
+          class="card"
+          data-cat="portrait"
+          data-img="https://picsum.photos/seed/ph8/1200/1200.jpg"
+        >
           <img src="https://picsum.photos/seed/ph8/600/600.jpg" alt="" />
           <div class="info">
             <div class="cat">人像</div>
@@ -542,7 +562,11 @@
             <p>杭州 · 2026</p>
           </div>
         </div>
-        <div class="card wide" data-cat="nature" data-img="https://picsum.photos/seed/ph9/1200/900.jpg">
+        <div
+          class="card wide"
+          data-cat="nature"
+          data-img="https://picsum.photos/seed/ph9/1200/900.jpg"
+        >
           <img src="https://picsum.photos/seed/ph9/600/450.jpg" alt="" />
           <div class="info">
             <div class="cat">自然</div>
@@ -620,7 +644,7 @@
             c.classList.toggle('hide', !match);
             if (match) visibleCards.push(c);
           });
-        }),
+        })
       );
       // Lightbox
       const lb = document.getElementById('lightbox');
@@ -641,7 +665,9 @@
         lbDesc.textContent = c.querySelector('p').textContent;
       }
       cards.forEach((c) => c.addEventListener('click', () => openLb(c)));
-      document.getElementById('lbClose').addEventListener('click', () => lb.classList.remove('open'));
+      document
+        .getElementById('lbClose')
+        .addEventListener('click', () => lb.classList.remove('open'));
       lb.addEventListener('click', (e) => {
         if (e.target === lb) lb.classList.remove('open');
       });

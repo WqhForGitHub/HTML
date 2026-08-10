@@ -410,8 +410,8 @@
           <div class="post-body">
             <p>
               语义化标签是 HTML5
-              规范中最具代表性的改进之一。它让开发者能够用具有明确含义的元素来描述页面结构，而非仅仅依赖没有语义的 div
-              与 span。这不仅关乎代码可读性，更影响搜索引擎优化与无障碍体验。
+              规范中最具代表性的改进之一。它让开发者能够用具有明确含义的元素来描述页面结构，而非仅仅依赖没有语义的
+              div 与 span。这不仅关乎代码可读性，更影响搜索引擎优化与无障碍体验。
             </p>
 
             <section>
@@ -540,12 +540,20 @@
 
         <section class="widget">
           <h3>订阅</h3>
-          <p style="font-size: 13px; color: var(--muted); margin-bottom: 10px">输入邮箱，第一时间获取更新。</p>
+          <p style="font-size: 13px; color: var(--muted); margin-bottom: 10px">
+            输入邮箱，第一时间获取更新。
+          </p>
           <form onsubmit="return false;">
             <input
               type="email"
               placeholder="你的邮箱"
-              style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 8px"
+              style="
+                width: 100%;
+                padding: 8px;
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                margin-bottom: 8px;
+              "
               required
             />
             <button
