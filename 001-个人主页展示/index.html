@@ -26,7 +26,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
         background: var(--bg);
         color: var(--text);
         line-height: 1.6;
@@ -79,16 +79,34 @@
         padding: 100px 8% 60px;
         position: relative;
         background:
-          radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.25), transparent 40%),
-          radial-gradient(circle at 80% 30%, rgba(236, 72, 153, 0.2), transparent 40%),
-          radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.18), transparent 45%), var(--bg);
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(99, 102, 241, 0.25),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 80% 30%,
+            rgba(236, 72, 153, 0.2),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 50% 80%,
+            rgba(168, 85, 247, 0.18),
+            transparent 45%
+          ),
+          var(--bg);
       }
       .avatar {
         width: 160px;
         height: 160px;
         border-radius: 50%;
         margin: 0 auto 28px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent2),
+          var(--accent3)
+        );
         padding: 4px;
         animation: float 6s ease-in-out infinite;
       }
@@ -322,7 +340,11 @@
       /* Contact */
       .contact {
         text-align: center;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.1));
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.15),
+          rgba(236, 72, 153, 0.1)
+        );
       }
       .contact p {
         color: var(--muted);
@@ -416,8 +438,8 @@
         <div class="about-text">
           <p>
             我是一名拥有 6
-            年经验的前端工程师，毕业于计算机科学专业。热爱将创意转化为可交互的产品，擅长 React、Vue
-            等现代框架，对动画、可视化与性能优化有深入研究。
+            年经验的前端工程师，毕业于计算机科学专业。热爱将创意转化为可交互的产品，擅长
+            React、Vue 等现代框架，对动画、可视化与性能优化有深入研究。
           </p>
           <p>
             工作之余，我喜欢写技术博客、参与开源项目，也热衷于摄影与旅行，从生活中汲取设计灵感。相信好的产品源于细节，更源于对用户的真诚。
@@ -441,7 +463,11 @@
           <img
             src="https://picsum.photos/seed/coding/500/400.jpg"
             alt="工作场景"
-            style="width: 100%; border-radius: 16px; border: 1px solid var(--border)"
+            style="
+              width: 100%;
+              border-radius: 16px;
+              border: 1px solid var(--border);
+            "
           />
         </div>
       </div>
@@ -493,7 +519,9 @@
           <div class="project-body">
             <span class="tag">Web 应用</span>
             <h3>云端协作白板</h3>
-            <p>基于 WebSocket 的实时多人协作绘图工具，支持无限画布与离线编辑。</p>
+            <p>
+              基于 WebSocket 的实时多人协作绘图工具，支持无限画布与离线编辑。
+            </p>
           </div>
         </article>
         <article class="project">
